@@ -3,16 +3,41 @@ import Navbar from './components/Navbar';
 import ProductCard from './components/ProductCard';
 import { supabase } from './lib/supabase'; // Real DB
 import { products as initialSeedData } from './data/products';
-import { Info, RotateCcw, Trash2, X, Database } from 'lucide-react';
+import { Info, RotateCcw, Trash2, X, Database, Lock } from 'lucide-react';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const [loginError, setLoginError] = useState(false);
+
   const [products, setProducts] = useState([]);
-  const [trash, setTrash] = useState([]); // In future this could be a 'deleted_at' column in DB
+  const [trash, setTrash] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [activeCategory, setActiveCategory] = useState("Todos");
   const [searchTerm, setSearchTerm] = useState("");
   const [showTrash, setShowTrash] = useState(false);
+
+  // --- AUTH LOGIC ---
+  const handleLogin = (e) => {
+    e.preventDefault();
+    // SENHA DEFINIDA AQUI (Você pode mudar depois)
+    const SECRET_PASS = "hionas060226";
+
+    if (passwordInput === SECRET_PASS) {
+      setIsAuthenticated(true);
+      localStorage.setItem("gelar_auth", "true"); // Lembrar login
+    } else {
+      setLoginError(true);
+      setTimeout(() => setLoginError(false), 2000);
+    }
+  };
+
+  useEffect(() => {
+    // Verificar se já logou antes
+    const savedAuth = localStorage.getItem("gelar_auth");
+    if (savedAuth === "true") setIsAuthenticated(true);
+  }, []);
 
   // --- DATABASE SYNC ---
 
@@ -28,18 +53,13 @@ function App() {
       console.error('Erro ao buscar produtos:', error);
     } else {
       setProducts(data || []);
-
-      // Auto-Seed: Se o banco estiver vazio, sugere popular
-      if (data && data.length === 0) {
-        // Optional: auto-seed logic could go here
-      }
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    if (isAuthenticated) fetchProducts();
+  }, [isAuthenticated]); // Só carrega se estiver logado
 
   // 2. Create Product
   const handleAddProduct = async () => {
@@ -68,7 +88,6 @@ function App() {
 
   // 3. Update Product
   const handleUpdateProduct = async (updatedProduct) => {
-    // Optimistic Update (atualiza na tela antes do banco)
     setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
 
     const { error } = await supabase
@@ -86,21 +105,11 @@ function App() {
   };
 
   // 4. Delete (Move to Trash / Soft Delete)
-  // For this MVP, we are using local trash state, but for persistent trash 
-  // we would need a 'deleted' column. To keep it simple and persistent:
-  // We will DELETE from DB but keep in 'trash' state locally until page refresh.
-  // OR BETTER: We create a 'trash' table? 
-  // Let's stick to true DELETE for 'Permanent' and 'Local State' for Undo buffer.
   const handleDeleteProduct = (id) => {
     const productToDelete = products.find(p => p.id === id);
     if (productToDelete) {
-      setTrash([productToDelete, ...trash]); // Add to local trash
-      setProducts(products.filter(p => p.id !== id)); // Remove from local view
-
-      // We DON'T delete from DB yet, giving chance to restore.
-      // If user closes page, item effectively remains in DB but 'hidden' ??
-      // No, for a real app, 'soft delete' is best.
-      // Let's do Real Delete on 'Excluir Definitivamente' and Temporary Hide here.
+      setTrash([productToDelete, ...trash]);
+      setProducts(products.filter(p => p.id !== id));
     }
   };
 
@@ -126,10 +135,9 @@ function App() {
     if (!window.confirm("Isso vai inserir todos os produtos iniciais no banco. Pode duplicar se já existirem. Continuar?")) return;
 
     setLoading(true);
-    // Format data for DB (remove IDs to let DB generate UUIDs)
     const seed = initialSeedData.map(({ id, image, ...rest }) => ({
       ...rest,
-      image_url: null // Start without images to avoid complexity
+      image_url: null
     }));
 
     const { error } = await supabase.from('products').insert(seed);
@@ -141,18 +149,18 @@ function App() {
     setLoading(false);
   };
 
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("gelar_auth");
+  }
+
 
   // --- COMPONENT LOGIC ---
 
-  // Search Normalization Helper
   const normalizeText = (text) => {
-    return text
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase();
+    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   };
 
-  // Filter Logic
   const filteredProducts = products.filter(product => {
     const matchesCategory = activeCategory === "Todos" || product.category === activeCategory;
     const normName = normalizeText(product.name || "");
@@ -160,6 +168,81 @@ function App() {
     return matchesCategory && normName.includes(normSearch);
   });
 
+  // --- RENDER: LOGIN SCREEN ---
+  if (!isAuthenticated) {
+    return (
+      <div className="login-screen">
+        <div className="login-card">
+          <div className="login-logo">
+            <img src="/logo.png" alt="Gelar" style={{ height: 80 }} onError={(e) => e.target.style.display = 'none'} />
+          </div>
+          <p>Acesso Restrito</p>
+          <form onSubmit={handleLogin}>
+            <div className="input-group">
+              <Lock size={18} className="input-icon" />
+              <input
+                type="password"
+                placeholder="Digite a senha..."
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                className={loginError ? 'error' : ''}
+                autoFocus
+              />
+            </div>
+            {loginError && <span className="error-msg">Senha incorreta</span>}
+            <button type="submit" className="btn btn-primary full-width">ENTRAR</button>
+          </form>
+        </div>
+        <style>{`
+          .login-screen {
+            height: 100vh;
+            width: 100vw;
+            background: #020617;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+          }
+          .login-card {
+            background: #0f172a;
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+            border: 1px solid #1e293b;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+          }
+          .login-logo h1 { margin: 10px 0 0 0; letter-spacing: 2px; }
+          .login-card p { color: #64748b; margin-bottom: 2rem; font-size: 0.9rem; }
+          .input-group { position: relative; margin-bottom: 1rem; }
+          .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #64748b; }
+          .login-card input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+          }
+          .login-card input:focus { border-color: #38bdf8; box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2); }
+          .login-card input.error { border-color: #ef4444; animation: shake 0.3s; }
+          .error-msg { color: #ef4444; font-size: 0.8rem; display: block; margin-bottom: 1rem; margin-top: -0.5rem; }
+          .full-width { width: 100%; padding: 12px; margin-top: 5px; }
+          @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  // --- RENDER: APP ---
   return (
     <div className="app-container">
       <Navbar
@@ -227,6 +310,7 @@ function App() {
       <footer className="footer">
         <div className="container">
           <p>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por @cviolla</p>
+          <button onClick={handleLogout} className="btn-logout-footer">Sair do Sistema</button>
         </div>
       </footer>
 
@@ -242,6 +326,8 @@ function App() {
         }
 
         .footer { background: #020617; border-top: 1px solid #1e293b; color: #94a3b8; text-align: center; padding: 2rem 1rem; margin-top: auto; }
+        .btn-logout-footer { background: none; border: none; color: #475569; font-size: 0.8rem; cursor: pointer; margin-top: 1rem; text-decoration: underline; }
+        .btn-logout-footer:hover { color: #ef4444; }
 
         /* Trash Styles */
         .trash-view { background: #18181b; padding: 2rem; border-radius: 12px; border: 1px solid #334155; }
