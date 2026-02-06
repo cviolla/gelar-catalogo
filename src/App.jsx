@@ -173,8 +173,8 @@ function App() {
     return (
       <div className="login-screen">
         <div className="login-card">
-          <div className="login-logo" style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-            <img src="/logo.png" alt="Gelar" style={{ height: 55 }} onError={(e) => e.target.style.display = 'none'} />
+          <div className="login-logo" style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem' }}>
+            <img src="/logo.png" alt="Gelar" style={{ height: 45 }} onError={(e) => e.target.style.display = 'none'} />
           </div>
           <p>Acesso Restrito</p>
           <form onSubmit={handleLogin}>
