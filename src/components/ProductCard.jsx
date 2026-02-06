@@ -181,33 +181,13 @@ export default function ProductCard({ product, onUpdate, onDelete }) {
           )}
         </div>
 
-        <div style={{ marginBottom: '0.5rem' }}>
-          {isEditing ? (
-            <select
-              className="input-select"
-              value={editedProduct.category}
-              onChange={(e) => handleChange('category', e.target.value)}
-            >
-              {categories.filter(c => c !== 'Todos').map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          ) : (
-            <span className="category-badge">{editedProduct.category}</span>
-          )}
-        </div>
-
         {uploading && (
           <div className="uploading-indicator">
             <Loader2 className="spin" size={16} /> Enviando imagem...
           </div>
         )}
 
-        {uploading && (
-          <div className="uploading-indicator">
-            <Loader2 className="spin" size={16} /> Enviando imagem...
-          </div>
-        )}
+
 
         <div className="card-header">
           {isEditing ? (

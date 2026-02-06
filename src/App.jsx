@@ -166,9 +166,7 @@ function App() {
   };
 
   const filteredProducts = products.filter(product => {
-    const matchesCategory = activeCategory === "Todos" || product.category === activeCategory;
-
-    // Normalize fields for search
+    // Normalização
     const normSearch = normalizeText(searchTerm);
     const normName = normalizeText(product.name || "");
     const normVolume = normalizeText(product.volume || "");
@@ -179,7 +177,15 @@ function App() {
       normVolume.includes(normSearch) ||
       normProductCategory.includes(normSearch);
 
-    return matchesCategory && matchesSearch;
+    // Lógica inteligente: Se tem busca, ignora a categoria ativa e busca em tudo.
+    // Se não tem busca, respeita a categoria.
+    const isGlobalSearch = searchTerm.length > 0;
+
+    if (isGlobalSearch) {
+      return matchesSearch;
+    } else {
+      return (activeCategory === "Todos" || product.category === activeCategory);
+    }
   });
 
   // --- RENDER: LOGIN SCREEN ---
