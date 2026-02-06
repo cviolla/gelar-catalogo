@@ -1,10 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { Edit2, Save, X, Upload, Image as ImageIcon, Plus, Trash2, RotateCcw } from 'lucide-react';
+import { Edit2, Save, X, Upload, Image as ImageIcon, Plus, Trash2, RotateCcw, Loader2 } from 'lucide-react';
 import { categories } from '../data/products';
+import { supabase } from '../lib/supabase'; // Import Supabase Client
 
 export default function ProductCard({ product, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedProduct, setEditedProduct] = useState({ ...product });
+  const [uploading, setUploading] = useState(false); // Estado de load
   const fileInputRef = useRef(null);
 
   // Tabela de Palavras-Chave -> Categoria
@@ -63,13 +65,42 @@ export default function ProductCard({ product, onUpdate, onDelete }) {
     }));
   };
 
-  // Handle Image Upload (Local Preview)
-  const handleImageUpload = (e) => {
+  // Handle Image Upload (SUPABASE STORAGE)
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      // Create local URL for preview
-      const previewUrl = URL.createObjectURL(file);
-      setEditedProduct(prev => ({ ...prev, image: previewUrl, imageFile: file }));
+    if (!file) return;
+
+    try {
+      setUploading(true);
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      // Upload to 'products' bucket
+      const { error: uploadError } = await supabase.storage
+        .from('products')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Get Public URL
+      const { data } = supabase.storage
+        .from('products')
+        .getPublicUrl(filePath);
+
+      // Update State immediately with the new cloud URL
+      setEditedProduct(prev => ({
+        ...prev,
+        image_url: data.publicUrl,
+        image: data.publicUrl // Fallback for immediate preview if needed
+      }));
+
+    } catch (error) {
+      alert('Erro ao enviar imagem: ' + error.message);
+      console.error(error);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -149,6 +180,34 @@ export default function ProductCard({ product, onUpdate, onDelete }) {
             <span className="category-badge">{editedProduct.category}</span>
           )}
         </div>
+
+        <div style={{ marginBottom: '0.5rem' }}>
+          {isEditing ? (
+            <select
+              className="input-select"
+              value={editedProduct.category}
+              onChange={(e) => handleChange('category', e.target.value)}
+            >
+              {categories.filter(c => c !== 'Todos').map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          ) : (
+            <span className="category-badge">{editedProduct.category}</span>
+          )}
+        </div>
+
+        {uploading && (
+          <div className="uploading-indicator">
+            <Loader2 className="spin" size={16} /> Enviando imagem...
+          </div>
+        )}
+
+        {uploading && (
+          <div className="uploading-indicator">
+            <Loader2 className="spin" size={16} /> Enviando imagem...
+          </div>
+        )}
 
         <div className="card-header">
           {isEditing ? (
@@ -474,6 +533,17 @@ export default function ProductCard({ product, onUpdate, onDelete }) {
           padding: 2px 6px;
           border-radius: 4px;
         }
+
+        .uploading-indicator {
+          color: var(--color-secondary);
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.8rem;
+          margin-bottom: 0.5rem;
+        }
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         .full-width {
           width: 100%;

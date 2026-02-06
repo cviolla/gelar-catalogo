@@ -1,0 +1,1443 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gelar Hub - O Seu Depósito</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Novo Background Deep Navy */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            background-image: radial-gradient(at 0% 0%, hsla(222, 47%, 11%, 1) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(210, 30%, 15%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(222, 47%, 11%, 1) 0, transparent 50%);
+            color: #e2e8f0;
+        }
+
+        .glass {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(148, 163, 184, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-bg {
+            background-color: #111827;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 4px 15px -3px rgba(37, 99, 235, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -3px rgba(37, 99, 235, 0.5);
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .sidebar-active {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.15) 0%, transparent 100%);
+            border-left: 4px solid #3b82f6;
+            color: #60a5fa;
+        }
+
+        .sidebar-item {
+            border-left: 4px solid transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        .input-modern {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .input-modern:focus {
+            background-color: rgba(15, 23, 42, 0.9);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .tone-checkbox:checked+div {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+        }
+
+        .minimized .history-content {
+            max-height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .category-content {
+            transition: opacity 0.3s ease-out;
+            opacity: 1;
+        }
+
+        .category-content.hidden {
+            display: none;
+            opacity: 0;
+        }
+
+        .rotate-chevron {
+            transition: transform 0.3s ease;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+
+        .product-card {
+            background: rgba(30, 41, 59, 0.3);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            background: rgba(30, 41, 59, 0.5);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .price-tag {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 0.75rem 1rem;
+            border-radius: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .category-badge {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+    </style>
+</head>
+
+<body class="overflow-hidden">
+    <!-- Overlay de Carregamento -->
+    <div id="loading-overlay"
+        class="fixed inset-0 z-[100] bg-[#0f172a] flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="relative w-20 h-20">
+            <div class="absolute inset-0 border-4 border-blue-500/20 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-t-blue-500 rounded-full animate-spin"></div>
+        </div>
+        <p class="mt-4 font-bold text-blue-400 italic tracking-widest uppercase text-sm">Carregando Gelar Hub...</p>
+    </div>
+
+    <!-- Modal de Erro SQL -->
+    <div id="sql-error-modal"
+        class="fixed inset-0 z-[110] bg-black/90 backdrop-blur-md hidden flex flex-col items-center justify-center p-4">
+        <div
+            class="glass p-8 rounded-3xl max-w-2xl w-full relative border border-red-500/30 shadow-2xl shadow-red-900/40">
+            <button onclick="document.getElementById('sql-error-modal').classList.add('hidden')"
+                class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
+                <i data-lucide="x" size="24"></i>
+            </button>
+            <div class="flex items-center gap-3 text-red-500 mb-4">
+                <div class="p-3 bg-red-500/10 rounded-xl"><i data-lucide="database-zap" size="32"></i></div>
+                <h3 class="text-2xl font-bold uppercase italic">Correção de Banco de Dados</h3>
+            </div>
+            <p class="text-slate-300 mb-6 leading-relaxed text-sm">
+                Detectamos que seu Supabase ainda não tem a coluna de imagens ou tabelas necessárias. Copie o código
+                abaixo e rode no <strong>SQL Editor</strong> do seu projeto Supabase:
+            </p>
+            <div class="bg-[#0b1120] rounded-xl p-4 border border-slate-700/50 relative group">
+                <button onclick="copySQL()"
+                    class="absolute top-3 right-3 btn-primary text-white text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">Copiar
+                    Código</button>
+                <code id="sql-code" class="text-xs text-blue-300 font-mono whitespace-pre-wrap">
+-- 1. Cria ou Atualiza Tabela de Produtos
+create table if not exists products (
+  id uuid default gen_random_uuid() primary key,
+  name text,
+  price float8,
+  category text,
+  stock int,
+  image text,
+  created_at timestamp with time zone default now()
+);
+
+-- 2. ADICIONA COLUNAS ESTRUTURAIS
+-- 2. ADICIONA COLUNAS ESTRUTURAIS
+alter table products add column if not exists image text;
+alter table products add column if not exists is_deleted boolean default false;
+
+-- Opcional: Se der erro de politica duplicada (policy already exists), rode:
+-- drop policy if exists "Acesso Total Produtos" on products;
+
+-- 3. Cria ou Atualiza Tabela de Histórico
+create table if not exists ideashistory (
+  id uuid default gen_random_uuid() primary key,
+  title text,
+  type text,
+  caption text,
+  visual text,
+  cta text,
+  archived boolean default false,
+  created_at timestamp with time zone default now()
+);
+
+-- 4. Adiciona a coluna de arquivamento se faltar
+alter table ideashistory add column if not exists archived boolean default false;
+                </code>
+            </div>
+            <p class="mt-6 text-center text-xs text-slate-500 uppercase font-bold tracking-widest">Após rodar no
+                Supabase, tente importar novamente.</p>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div id="edit-modal"
+        class="fixed inset-0 z-[105] bg-[#0f172a]/90 backdrop-blur-md hidden flex flex-col items-center justify-center p-4">
+        <div class="glass p-8 rounded-3xl w-full max-w-lg border border-blue-500/20 shadow-2xl">
+            <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                <span class="p-2 bg-blue-500/20 rounded-lg text-blue-400"><i data-lucide="pencil" size="20"></i></span>
+                Editar Produto
+            </h3>
+            <form id="edit-form" onsubmit="handleEditSubmit(event)" class="space-y-5">
+                <input type="hidden" name="id" id="edit-id">
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Nome</label>
+                    <input name="name" id="edit-name" required
+                        class="w-full input-modern rounded-xl p-3.5 text-white outline-none">
+                </div>
+                <div>
+                    <label
+                        class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Categoria</label>
+                    <select name="category" id="edit-category"
+                        class="w-full input-modern rounded-xl p-3.5 text-white outline-none">
+                        <option>Litrão</option>
+                        <option>600ml</option>
+                        <option>Cracudinhas</option>
+                        <option>Refrigerantes</option>
+                        <option>Águas</option>
+                        <option>Gelo</option>
+                        <option>Long Neck / Latão</option>
+                        <option>Latão 473ml</option>
+                        <option>Outros</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Preço
+                            (R$)</label>
+                        <input name="price" id="edit-price" type="number" step="0.01" required
+                            class="w-full input-modern rounded-xl p-3.5 text-white outline-none">
+                    </div>
+                    <div>
+                        <label
+                            class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Estoque</label>
+                        <input name="stock" id="edit-stock" type="number" required
+                            class="w-full input-modern rounded-xl p-3.5 text-white outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Imagem (Upload
+                        ou URL)</label>
+                    <div class="relative w-full">
+                        <input name="image" id="edit-image" placeholder="Cole URL ou use o botão ->"
+                            class="w-full input-modern rounded-xl p-3.5 text-white outline-none pr-12">
+                        <input type="file" id="file-upload-edit" class="hidden" accept="image/*"
+                            onchange="handleFileSelect(this, 'edit-image')">
+                        <button type="button" onclick="document.getElementById('file-upload-edit').click()"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-400 transition-colors"
+                            title="Upload Local">
+                            <i data-lucide="image-plus" size="20"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="document.getElementById('edit-modal').classList.add('hidden')"
+                        class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3.5 rounded-xl transition-all border border-slate-700">Cancelar</button>
+                    <button type="submit"
+                        class="flex-1 btn-primary text-white font-bold py-3.5 rounded-xl">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Imagem Gerada -->
+    <div id="image-modal"
+        class="fixed inset-0 z-[120] bg-black/90 backdrop-blur-md hidden flex flex-col items-center justify-center p-6">
+        <div class="relative max-w-4xl w-full flex flex-col items-center">
+            <button onclick="document.getElementById('image-modal').classList.add('hidden')"
+                class="absolute -top-12 right-0 text-white hover:text-blue-400 transition-colors flex items-center gap-2">
+                <span class="text-sm font-bold uppercase tracking-widest">Fechar</span> <i data-lucide="x"
+                    size="24"></i>
+            </button>
+            <div id="generated-image-wrapper"
+                class="rounded-3xl overflow-hidden shadow-2xl border border-slate-700 w-full aspect-video bg-slate-900 flex items-center justify-center relative group">
+                <img id="generated-image-display" src="" alt="Imagem Gerada"
+                    class="w-full h-full object-contain hidden">
+                <div id="image-loading-state" class="flex flex-col items-center gap-4 text-blue-400">
+                    <i data-lucide="loader-2" class="animate-spin" size="48"></i>
+                    <p class="text-sm font-bold uppercase tracking-widest animate-pulse">Criando agora, aguarde...</p>
+                </div>
+            </div>
+
+            <a id="download-image-btn" href="#" download="post-gelar.jpg"
+                class="mt-6 btn-primary text-white font-bold px-8 py-3 rounded-xl flex items-center gap-3 hidden">
+                <i data-lucide="download" size="20"></i> Baixar Imagem
+            </a>
+        </div>
+    </div>
+
+    <div class="flex h-screen w-full">
+        <!-- Logs Modal -->
+        <div id="logs-modal" class="fixed inset-0 z-50 hidden">
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                onclick="document.getElementById('logs-modal').classList.add('hidden')"></div>
+            <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#0f172a] rounded-3xl p-8 w-11/12 max-w-md border border-slate-800 shadow-2xl animate-in zoom-in-90 duration-300">
+                <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <i data-lucide="history" class="text-blue-400"></i> Histórico de Alterações
+                </h3>
+                <div id="logs-list" class="space-y-4 max-h-[60vh] overflow-y-auto custom-scrollbar pr-2">
+                    <!-- Injected via JS -->
+                </div>
+                <button onclick="document.getElementById('logs-modal').classList.add('hidden')"
+                    class="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors">
+                    <i data-lucide="x" size="24"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Sidebar -->
+        <nav class="w-20 md:w-64 sidebar-bg flex flex-col p-4 z-50 transition-all duration-300">
+            <div class="flex items-center gap-3 px-2 mb-10 mt-4 justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-900/50">
+                        <i data-lucide="snowflake" class="text-white" size="24"></i>
+                    </div>
+                    <span class="text-xl font-bold text-white tracking-tight hidden md:block">GelarHub</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2 flex-1">
+                <button onclick="switchTab('dashboard')" id="btn-dashboard"
+                    class="nav-item active flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all group">
+                    <i data-lucide="layout-dashboard" class="group-hover:text-blue-400 transition-colors" size="20"></i>
+                    <span class="font-medium hidden md:block text-sm">Painel</span>
+                </button>
+                <button onclick="switchTab('products')" id="btn-products"
+                    class="nav-item flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/50 transition-all group">
+                    <i data-lucide="package" class="group-hover:text-blue-400 transition-colors" size="20"></i>
+                    <span class="font-medium hidden md:block text-sm">Produtos</span>
+                </button>
+                <button onclick="switchTab('generator')" id="btn-generator"
+                    class="sidebar-item text-slate-400 hover:text-white hover:bg-white/5 w-full flex items-center gap-4 p-3.5 rounded-xl transition-all duration-200">
+                    <i data-lucide="wand-2" size="20"></i>
+                    <span class="hidden md:block font-semibold text-sm">Gelar AI</span>
+                </button>
+                <button onclick="switchTab('history')" id="btn-history"
+                    class="sidebar-item text-slate-400 hover:text-white hover:bg-white/5 w-full flex items-center gap-4 p-3.5 rounded-xl transition-all duration-200">
+                    <i data-lucide="history" size="20"></i>
+                    <span class="hidden md:block font-semibold text-sm">Histórico</span>
+                </button>
+
+                <div class="my-2 border-t border-slate-800 mx-4"></div>
+
+                <button onclick="switchTab('trash')" id="btn-trash"
+                    class="sidebar-item text-slate-400 hover:text-white hover:bg-red-900/20 w-full flex items-center gap-4 p-3.5 rounded-xl transition-all duration-200 relative group">
+                    <i data-lucide="trash-2" class="group-hover:text-red-400 transition-colors" size="20"></i>
+                    <!-- Badge de Contador -->
+                    <span class="hidden md:block font-semibold text-sm">Lixeira</span>
+                    <span id="trash-count"
+                        class="absolute right-3 top-3 bg-red-500 text-white text-[9px] font-bold min-w-[18px] h-[18px] rounded-full flex items-center justify-center hidden shadow-sm border border-red-400/50">0</span>
+                </button>
+            </div>
+
+            <!-- Footer com Designer -->
+            <div class="mt-auto hidden md:block space-y-4">
+                <div class="p-4 rounded-2xl bg-[#0b1120] border border-slate-800">
+                    <div class="flex items-center gap-2 mb-1">
+                        <div id="status-dot" class="w-2 h-2 rounded-full bg-slate-600"></div>
+                        <span id="status-text" class="text-xs font-medium text-slate-400">Verificando...</span>
+                    </div>
+                </div>
+
+                <a href="https://wa.me/5521965226788" target="_blank" class="block text-center group cursor-pointer">
+                    <p
+                        class="text-[10px] text-slate-600 font-medium uppercase tracking-widest group-hover:text-blue-500 transition-colors">
+                        designer by <span class="font-bold text-slate-500 group-hover:text-blue-400">cviolla</span>
+                    </p>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto custom-scrollbar p-6 md:p-12 relative">
+
+            <!-- Header -->
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+                <div>
+                    <h1
+                        class="text-4xl font-extrabold text-white tracking-tight leading-none mb-3 flex items-center gap-4">
+                        Depósito Gelar
+                        <a href="https://www.instagram.com/gelarseudeposito/" target="_blank" title="@gelarseudeposito"
+                            class="text-slate-500 hover:text-pink-500 transition-colors bg-slate-800/50 p-2 rounded-xl border border-slate-700/50 hover:border-pink-500/30 hover:bg-pink-500/10">
+                            <i data-lucide="instagram" size="24"></i>
+                        </a>
+                    </h1>
+                </div>
+                <button onclick="switchTab('generator')"
+                    class="btn-primary text-white font-bold h-12 px-8 rounded-xl flex items-center justify-center gap-3">
+                    <i data-lucide="sparkles" size="18"></i>
+                    <span class="text-sm">Nova Campanha</span>
+                </button>
+            </header>
+
+            <!-- Dashboard Tab -->
+            <section id="tab-dashboard" class="tab-content animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div onclick="switchTab('products')"
+                        class="glass p-8 rounded-[2rem] cursor-pointer hover:border-blue-500/30 hover:bg-slate-800/40 transition-all group relative overflow-hidden">
+                        <div
+                            class="absolute -right-6 -top-6 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all">
+                        </div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div
+                                class="p-3 bg-blue-500/10 rounded-xl text-blue-400 group-hover:scale-110 transition-transform">
+                                <i data-lucide="package" size="24"></i>
+                            </div>
+                            <i data-lucide="arrow-right"
+                                class="text-slate-600 group-hover:text-blue-400 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"></i>
+                        </div>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Catálogo</p>
+                        <p id="stat-products" class="text-4xl font-black text-white">0</p>
+                    </div>
+
+                    <div onclick="switchTab('history')"
+                        class="glass p-8 rounded-[2rem] cursor-pointer hover:border-purple-500/30 hover:bg-slate-800/40 transition-all group relative overflow-hidden">
+                        <div
+                            class="absolute -right-6 -top-6 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all">
+                        </div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div
+                                class="p-3 bg-purple-500/10 rounded-xl text-purple-400 group-hover:scale-110 transition-transform">
+                                <i data-lucide="zap" size="24"></i>
+                            </div>
+                            <i data-lucide="arrow-right"
+                                class="text-slate-600 group-hover:text-purple-400 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"></i>
+                        </div>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Ideias Criadas</p>
+                        <p id="stat-ideas" class="text-4xl font-black text-white">0</p>
+                    </div>
+
+                    <div class="glass p-8 rounded-[2rem] relative overflow-hidden">
+                        <div class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl"></div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="p-3 bg-emerald-500/10 rounded-xl text-emerald-400"><i data-lucide="database"
+                                    size="24"></i></div>
+                        </div>
+                        <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Status Sistema</p>
+                        <p class="text-xl font-bold text-white flex items-center gap-2 mt-2"><span
+                                class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Online</p>
+                    </div>
+
+                    <!-- Seeder Alert -->
+                    <div id="seeder-area"
+                        class="col-span-full hidden py-16 border border-dashed border-slate-700 rounded-[2.5rem] text-center bg-slate-900/30">
+                        <div
+                            class="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-6 text-slate-400 shadow-lg">
+                            <i data-lucide="server-off" size="32"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-2">Catálogo Vazio</h3>
+                        <p class="text-slate-400 font-medium mb-8 max-w-md mx-auto text-sm">Sua base de dados ainda não
+                            possui produtos. Importe a lista padrão para começar.</p>
+                        <button onclick="seedDatabase()" id="btn-import"
+                            class="btn-primary text-white px-10 py-3.5 rounded-xl font-bold text-sm shadow-lg hover:shadow-blue-500/25 transition-all">Importar
+                            Tabela Gelar</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Other Tabs -->
+            <!-- Products Tab -->
+            <section id="tab-products"
+                class="tab-content hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div class="glass p-8 rounded-[2.5rem] mb-8 border border-blue-500/10">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2 bg-blue-500/10 rounded-lg text-blue-400"><i data-lucide="plus-circle"
+                                size="20"></i></div>
+                        <h3 class="font-bold text-white text-lg">Adicionar Produto</h3>
+                    </div>
+                    <form id="product-form" onsubmit="handleProductSubmit(event)"
+                        class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <input name="name" required placeholder="Nome do Produto"
+                            class="input-modern rounded-xl p-4 text-sm w-full outline-none">
+                        <select name="category" class="input-modern rounded-xl p-4 text-sm w-full outline-none">
+                            <option>Litrão</option>
+                            <option>600ml</option>
+                            <option>Cracudinhas</option>
+                            <option>Refrigerantes</option>
+                            <option>Águas</option>
+                            <option>Gelo</option>
+                            <option>Long Neck / Latão</option>
+                            <option>Latão 473ml</option>
+                            <option>Outros</option>
+                        </select>
+                        <input name="price" type="number" step="0.01" required placeholder="Preço (R$)"
+                            class="input-modern rounded-xl p-4 text-sm w-full outline-none">
+                        <div class="flex gap-3">
+                            <div class="relative w-full">
+                                <input name="image_url" id="new-prod-image-url" placeholder="Imagem (URL/Arquivo)"
+                                    class="input-modern rounded-xl p-4 text-sm w-full outline-none pr-10">
+                                <input type="file" id="file-upload-new" class="hidden" accept="image/*"
+                                    onchange="handleFileSelect(this, 'new-prod-image-url')">
+                                <button type="button" onclick="document.getElementById('file-upload-new').click()"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-400 transition-colors"
+                                    title="Upload Local">
+                                    <i data-lucide="image-plus" size="18"></i>
+                                </button>
+                            </div>
+                            <input name="stock" type="number" required placeholder="Qtd"
+                                class="input-modern rounded-xl p-4 text-sm w-24 outline-none text-center">
+                            <button type="submit"
+                                class="btn-primary text-white w-16 rounded-xl flex items-center justify-center hover:scale-105 transition-all"><i
+                                    data-lucide="plus"></i></button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="relative mb-8 group">
+                    <i data-lucide="search"
+                        class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors"
+                        size={18}></i>
+                    <input type="text" oninput="handleSearch(this.value)" placeholder="Filtrar produtos..."
+                        class="w-full bg-[#0f172a] border border-slate-800 rounded-2xl py-4 pl-14 pr-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-slate-600 font-medium shadow-inner">
+                </div>
+
+                <div class="glass p-0 rounded-[2.5rem] overflow-hidden shadow-2xl border border-slate-800/50">
+                    <table class="w-full text-left border-collapse" id="products-table">
+                        <!-- Tabela renderizada via JS para garantir estrutura correta -->
+                    </table>
+                </div>
+            </section>
+            <!-- Generator Tab -->
+            <section id="tab-generator"
+                class="tab-content hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div class="glass p-8 rounded-[2.5rem] mb-8 border border-blue-500/10">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2 bg-purple-500/10 rounded-lg text-purple-400"><i data-lucide="wand-2"
+                                size="20"></i></div>
+                        <h3 class="font-bold text-white text-lg">Criador de Conteúdo</h3>
+                    </div>
+
+                    <div class="flex flex-col gap-6">
+                        <input id="ai-topic"
+                            placeholder="O que você quer postar? Ex: Promoção de Carnaval, Sextou com Churrasco..."
+                            class="w-full input-modern rounded-xl p-5 text-white outline-none placeholder:text-slate-600">
+
+                        <div>
+                            <label
+                                class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3 block ml-1">Estilo
+                                do Texto</label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="cursor-pointer group">
+                                    <input type="checkbox" value="Divertido" class="tone-checkbox hidden">
+                                    <div
+                                        class="px-5 py-2.5 rounded-xl border border-slate-700 bg-slate-800/50 text-slate-400 text-xs font-semibold group-hover:bg-slate-800 transition-all select-none flex items-center gap-2">
+                                        <i data-lucide="smile" size="14"></i> Divertido
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer group">
+                                    <input type="checkbox" value="Institucional" class="tone-checkbox hidden">
+                                    <div
+                                        class="px-5 py-2.5 rounded-xl border border-slate-700 bg-slate-800/50 text-slate-400 text-xs font-semibold group-hover:bg-slate-800 transition-all select-none flex items-center gap-2">
+                                        <i data-lucide="building-2" size="14"></i> Institucional
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer group">
+                                    <input type="checkbox" value="Futebolístico" class="tone-checkbox hidden">
+                                    <div
+                                        class="px-5 py-2.5 rounded-xl border border-slate-700 bg-slate-800/50 text-slate-400 text-xs font-semibold group-hover:bg-slate-800 transition-all select-none flex items-center gap-2">
+                                        <i data-lucide="trophy" size="14"></i> Futebol
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer group">
+                                    <input type="checkbox" value="Cinema/Pop" class="tone-checkbox hidden">
+                                    <div
+                                        class="px-5 py-2.5 rounded-xl border border-slate-700 bg-slate-800/50 text-slate-400 text-xs font-semibold group-hover:bg-slate-800 transition-all select-none flex items-center gap-2">
+                                        <i data-lucide="clapperboard" size="14"></i> Cinema
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer group">
+                                    <input type="checkbox" value="Humor/Meme" class="tone-checkbox hidden">
+                                    <div
+                                        class="px-5 py-2.5 rounded-xl border border-slate-700 bg-slate-800/50 text-slate-400 text-xs font-semibold group-hover:bg-slate-800 transition-all select-none flex items-center gap-2">
+                                        <i data-lucide="laugh" size="14"></i> Humor
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer group">
+                                    <input type="checkbox" value="Urgente/Promoção" class="tone-checkbox hidden">
+                                    <div
+                                        class="px-5 py-2.5 rounded-xl border border-slate-700 bg-slate-800/50 text-slate-400 text-xs font-semibold group-hover:bg-slate-800 transition-all select-none flex items-center gap-2">
+                                        <i data-lucide="megaphone" size="14"></i> Urgente
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button onclick="generateIdea()"
+                            class="btn-primary text-white font-bold h-14 px-8 rounded-xl shadow-lg mt-2 flex items-center justify-center gap-3 text-sm tracking-wide uppercase">
+                            <i data-lucide="sparkles" size="18"></i> Gerar Postagem
+                        </button>
+                    </div>
+                </div>
+
+                <div id="ai-loading" class="hidden py-24 text-center animate-in fade-in zoom-in-95">
+                    <div class="relative w-24 h-24 mx-auto mb-8">
+                        <div class="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full animate-pulse"></div>
+                        <i data-lucide="loader-2" class="animate-spin text-blue-500 relative z-10 w-full h-full"
+                            stroke-width="1.5"></i>
+                    </div>
+                    <p class="font-bold text-2xl text-white tracking-tight">Criando Magia...</p>
+                    <p class="text-slate-500 mt-2 text-sm font-medium">A IA está analisando seu estoque e referências
+                    </p>
+                </div>
+
+                <div id="ai-result" class="max-w-3xl mx-auto py-4 hidden animate-in zoom-in-95 duration-500">
+                    <div
+                        class="glass p-10 rounded-[3rem] border border-blue-500/30 relative overflow-hidden group shadow-2xl">
+                        <div
+                            class="absolute -top-32 -right-32 w-64 h-64 bg-blue-600/20 blur-[100px] group-hover:bg-blue-600/30 transition-all">
+                        </div>
+                        <div class="flex justify-between items-center mb-8 relative z-10">
+                            <span id="idea-type"
+                                class="px-4 py-1.5 rounded-full bg-blue-600/20 border border-blue-500/30 text-[10px] font-bold uppercase tracking-widest text-blue-300">REELS</span>
+                            <button onclick="copyToClipboard()"
+                                class="text-slate-400 hover:text-white flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest transition-colors bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-700">
+                                <i data-lucide="copy" size="14"></i> Copiar
+                            </button>
+                        </div>
+                        <h2 id="idea-title"
+                            class="text-3xl md:text-4xl font-bold text-white mb-8 leading-tight relative z-10">Título da
+                            Ideia</h2>
+                        <div
+                            class="p-6 bg-[#0b1120]/80 rounded-[2rem] border border-slate-800/50 mb-8 backdrop-blur-sm relative z-10">
+                            <p id="idea-caption" class="text-slate-300 text-lg leading-relaxed font-light">"Legenda
+                                gerada pela IA..."</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                            <div
+                                class="p-6 bg-blue-500/5 rounded-3xl border border-blue-500/10 hover:bg-blue-500/10 transition-colors relative group-visual">
+                                <p
+                                    class="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                    <i data-lucide="camera" size="14"></i> Visual
+                                </p>
+                                <p id="idea-visual" class="text-xs text-slate-400 leading-relaxed font-medium">...</p>
+                                <!-- Botão Gerar Imagem -->
+                                <button onclick="generateImageFromPrompt()"
+                                    class="absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-500 text-white p-2 rounded-lg shadow-lg opacity-0 group-visual-hover:opacity-100 transition-all transform scale-90 group-visual-hover:scale-100"
+                                    title="Gerar Imagem com IA">
+                                    <i data-lucide="image" size="16"></i>
+                                </button>
+                                <button onclick="generateImageFromPrompt()"
+                                    class="mt-4 w-full py-2 bg-blue-600/20 text-blue-400 text-xs font-bold rounded-lg border border-blue-500/30 hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center gap-2">
+                                    <i data-lucide="palette" size="14"></i> Gerar Imagem da Ideia
+                                </button>
+                            </div>
+                            <div
+                                class="p-6 bg-emerald-500/5 rounded-3xl border border-emerald-500/10 hover:bg-emerald-500/10 transition-colors">
+                                <p
+                                    class="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                    <i data-lucide="megaphone" size="14"></i> Chamada (CTA)
+                                </p>
+                                <p id="idea-cta" class="text-sm font-bold text-white uppercase tracking-wide">...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- History Tab -->
+            <section id="tab-history" class="tab-content hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div class="flex justify-end mb-8">
+                    <div class="inline-flex bg-[#0f172a] p-1.5 rounded-xl border border-slate-800 shadow-lg">
+                        <button onclick="setHistoryFilter('active')" id="filter-active"
+                            class="px-5 py-2.5 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-md transition-all">Ativos</button>
+                        <button onclick="setHistoryFilter('archived')" id="filter-archived"
+                            class="px-5 py-2.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-300 transition-all">Arquivados</button>
+                    </div>
+                </div>
+                <div id="history-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Injetado via JS -->
+                </div>
+            </section>
+
+            <!-- Trash Tab -->
+            <section id="tab-trash" class="tab-content hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div class="mb-10">
+                    <h2 class="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                        <span class="p-3 bg-red-500/10 rounded-xl text-red-500 border border-red-500/20"><i
+                                data-lucide="trash-2" size="24"></i></span>
+                        Lixeira
+                    </h2>
+                    <p class="text-slate-400">Itens excluídos. Restaure-os ou apague definitivamente.</p>
+                </div>
+
+                <div id="trash-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Injected via JS -->
+                </div>
+
+                <div id="trash-empty" class="hidden flex flex-col items-center justify-center py-20 text-slate-500">
+                    <i data-lucide="check-circle" size="48" class="mb-4 text-slate-600"></i>
+                    <p class="text-lg font-medium">Lixeira vazia!</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Body content will be inserted here -->
+
+    <script>
+        // --- CONFIGURAÇÃO DE PRODUÇÃO ---
+        const SUPABASE_URL = "https://pdxfwssrayevvhtfbgco.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_V_A898Qo4GqrhTCsKCMRKg_gaGUf9eh";
+        // -------------------------------------------------------------------------
+        // ATENÇÃO: SUBSTITUA O CÓDIGO ABAIXO PELA SUA NOVA CHAVE GERADA NO GOOGLE
+        // -------------------------------------------------------------------------
+        const GEMINI_API_KEY = "AIzaSyAQ28cOfysoH5sbIZQfRseSLKpmFxA2FsY";
+        // -------------------------------------------------------------------------
+
+                        const TABELA_GELAR = [
+            { name: "LitrÃ£o Brahma", category: "LitrÃ£o", image_suffix: "BrahmaLitrao", variants: [{ label: "Caixa", price: 95.00, icon: "box" }, { label: "Gelado (Unidade)", price: 10.00, icon: "snowflake" }] },
+            { name: "LitrÃ£o AntÃ¡rtica", category: "LitrÃ£o", image_suffix: "AntarticaLitrao", variants: [{ label: "Caixa", price: 95.00, icon: "box" }, { label: "Gelado", price: 9.00, icon: "snowflake" }] },
+            { name: "LitrÃ£o Itaipava", category: "LitrÃ£o", image_suffix: "ItaipavaLitrao", variants: [{ label: "Caixa", price: 73.50, icon: "box" }, { label: "Gelado", price: 8.00, icon: "snowflake" }] },
+            
+            { name: "Brahma 600ml", category: "Garrafa 600ml", image_suffix: "Brahma600", variants: [{ label: "Caixa", price: 151.00, icon: "box" }, { label: "Gelado (Unidade)", price: 8.50, icon: "snowflake" }] },
+            { name: "AntÃ¡rtica 600ml", category: "Garrafa 600ml", image_suffix: "Antartica600", variants: [{ label: "Caixa", price: 144.00, icon: "box" }, { label: "Gelado (Unidade)", price: 7.50, icon: "snowflake" }] },
+            { name: "ImpÃ©rio Lager 600ml", category: "Garrafa 600ml", image_suffix: "Imperio600", variants: [{ label: "Gelado", price: 8.50, icon: "snowflake" }] },
+            { name: "A Outra 600ml", category: "Garrafa 600ml", image_suffix: "AOutra600", variants: [{ label: "Caixa", price: 85.00, icon: "box" }, { label: "Unidade Gelada", price: 5.00, icon: "snowflake" }] },
+            
+            { name: "Cracudinha Brahma", category: "Cracudinha 300ml", image_suffix: "CracudinhaBrahma", variants: [{ label: "Caixa", price: 58.00, icon: "box" }, { label: "Unidade Gelada", price: 3.50, icon: "snowflake" }, { label: "PromoÃ§Ã£o (3 un)", price: 10.00, icon: "tag" }] },
+            { name: "Cracudinha AntÃ¡rtica", category: "Cracudinha 300ml", image_suffix: "CracudinhaAntartica", variants: [{ label: "Caixa", price: 58.00, icon: "box" }] },
+            
+            { name: "Coca-Cola RetornÃ¡vel", category: "Refrigerante", image_suffix: "CocaRet", variants: [{ label: "Caixa", price: 75.00, icon: "box" }, { label: "Gelada", price: 7.50, icon: "snowflake" }] },
+            { name: "Coca-Cola 2L", category: "Refrigerante", image_suffix: "Coca2L", variants: [{ label: "Fardo (6 un)", price: 55.00, icon: "package" }, { label: "Gelada", price: 12.00, icon: "snowflake" }] },
+            { name: "GuaranÃ¡ AntÃ¡rtica 2L", category: "Refrigerante", image_suffix: "Guarana2L", variants: [{ label: "Fardo", price: 47.50, icon: "package" }] },
+            { name: "Fanta Laranja 2L", category: "Refrigerante", image_suffix: "FantaLaranja", variants: [{ label: "Fardo", price: 47.00, icon: "package" }] },
+            { name: "Fanta Uva 2L", category: "Refrigerante", image_suffix: "FantaUva", variants: [{ label: "Fardo", price: 47.00, icon: "package" }] },
+            { name: "Sprite 2L", category: "Refrigerante", image_suffix: "Sprite", variants: [{ label: "Fardo", price: 47.00, icon: "package" }] },
+            { name: "Mineirinho 2L", category: "Refrigerante", image_suffix: "Mineirinho2L", variants: [{ label: "Fardo", price: 48.00, icon: "package" }] },
+            
+            { name: "Pakera", category: "Refrigerante", image_suffix: "Pakera", variants: [{ label: "Fardo (6 un)", price: 24.50, icon: "package" }, { label: "Gelado", price: 5.50, icon: "snowflake" }] },
+            { name: "Guaravita", category: "Bebidas Diversas", image_suffix: "Guaravita", variants: [{ label: "Caixa (24 un)", price: 24.00, icon: "box" }] },
+            
+            { name: "Ãgua s/ GÃ¡s 510ml", category: "Ãgua", image_suffix: "AguaSemGas", variants: [{ label: "Fardo (12 un)", price: 13.00, icon: "package" }] },
+            { name: "Ãgua c/ GÃ¡s 510ml", category: "Ãgua", image_suffix: "AguaComGas", variants: [{ label: "Fardo (12 un)", price: 22.50, icon: "package" }] },
+            { name: "Ãgua GalÃ£o 20L", category: "Ãgua", image_suffix: "Galao20L", variants: [{ label: "LÃ­quido", price: 10.00, icon: "droplet" }] },
+            
+            { name: "Gelo Escama", category: "Gelo", image_suffix: "GeloEscama", variants: [{ label: "Saco", price: 15.00, icon: "snowflake" }] },
+            { name: "Gelo Filtrado", category: "Gelo", image_suffix: "GeloFiltrado", variants: [{ label: "Saco", price: 18.00, icon: "snowflake" }] },
+            
+            { name: "Heineken 330ml", category: "Long Neck", image_suffix: "HeinekenLN", variants: [{ label: "Pack (24 un)", price: 140.00, icon: "package" }, { label: "Gelada (Unidade)", price: 7.00, icon: "snowflake" }] },
+            { name: "Heineken LatÃ£o", category: "LatÃ£o", image_suffix: "HeinekenLatao", variants: [{ label: "Pack (12 un)", price: 70.00, icon: "package" }, { label: "Gelado (Unidade)", price: 7.50, icon: "snowflake" }] },
+            { name: "Stella 330ml", category: "Long Neck", image_suffix: "StellaLN", variants: [{ label: "Pack (24 un)", price: 133.00, icon: "package" }, { label: "Gelada", price: 6.50, icon: "snowflake" }] },
+            { name: "Budweiser 330ml", category: "Long Neck", image_suffix: "BudweiserLN", variants: [{ label: "Pack (24 un)", price: 122.50, icon: "package" }, { label: "Gelada", price: 5.50, icon: "snowflake" }] },
+            { name: "Corona 330ml", category: "Long Neck", image_suffix: "CoronaLN", variants: [{ label: "Pack (24 un)", price: 148.00, icon: "package" }, { label: "Gelado", price: 7.00, icon: "snowflake" }] },
+            { name: "ImpÃ©rio Gold 210ml", category: "Long Neck", image_suffix: "ImperioGold", variants: [{ label: "Caixa (18 un)", price: 64.99, icon: "box" }, { label: "Gelado", price: 5.00, icon: "snowflake" }] },
+
+            { name: "LatÃ£o Brahma 473ml", category: "LatÃ£o 473ml", image_suffix: "BrahmaLatao", variants: [{ label: "Pack (12 un)", price: 48.00, icon: "package" }, { label: "Pack Gelado", price: 60.00, icon: "snowflake" }, { label: "Gelado (Und)", price: 5.99, icon: "snowflake" }] },
+            { name: "LatÃ£o AntÃ¡rtica 473ml", category: "LatÃ£o 473ml", image_suffix: "AntarticaLatao", variants: [{ label: "Pack (12 un)", price: 48.00, icon: "package" }, { label: "Pack Gelado", price: 60.00, icon: "snowflake" }, { label: "Gelado (Und)", price: 5.99, icon: "snowflake" }] },
+            { name: "LatÃ£o Amstel 473ml", category: "LatÃ£o 473ml", image_suffix: "AmstelLatao", variants: [{ label: "Pack (12 un)", price: 55.00, icon: "package" }, { label: "Pack Gelado", price: 60.00, icon: "snowflake" }, { label: "Gelado (Und)", price: 5.99, icon: "snowflake" }] },
+            { name: "LatÃ£o ImpÃ©rio 473ml", category: "LatÃ£o 473ml", image_suffix: "ImperioLatao", variants: [{ label: "Pack (12 un)", price: 46.00, icon: "package" }, { label: "Pack Gelado", price: 55.00, icon: "snowflake" }, { label: "Gelado (Und)", price: 4.99, icon: "snowflake" }] },
+            { name: "LatÃ£o Itaipava 473ml", category: "LatÃ£o 473ml", image_suffix: "ItaipavaLatao", variants: [{ label: "Pack (12 un)", price: 40.00, icon: "package" }, { label: "Pack Gelado", price: 48.00, icon: "snowflake" }, { label: "Gelado (Und)", price: 3.99, icon: "snowflake" }] }
+        ].map(p => ({
+            ...p,
+            stock: 20,
+            image: `https://placehold.co/400x400/0f172a/white?text=${p.image_suffix || 'IMG'}`
+        }));
+        let allHistory = [];
+        let activeTab = 'dashboard';
+        let historyFilter = 'active';
+
+        window.onload = async () => {
+            lucide.createIcons();
+
+            setTimeout(() => {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    overlay.classList.add('opacity-0');
+                    setTimeout(() => overlay.classList.add('hidden'), 500);
+                }
+            }, 1000);
+
+            if (SUPABASE_URL !== "" && SUPABASE_ANON_KEY !== "" && window.supabase) {
+                try {
+                    supabaseInstance = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    updateStatus(true);
+                    fetchData();
+                } catch (e) {
+                    console.error("Erro Supabase:", e);
+                    updateStatus(false);
+                }
+            } else {
+                updateStatus(false);
+            }
+        };
+
+        function updateStatus(online) {
+            const dot = document.getElementById('status-dot');
+            const txt = document.getElementById('status-text');
+            if (!dot || !txt) return;
+
+            if (online) {
+                dot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]";
+                txt.innerText = "Conectado";
+                txt.className = "text-xs font-medium text-emerald-400";
+            } else {
+                dot.className = "w-2 h-2 rounded-full bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]";
+                txt.innerText = "Desconectado";
+                txt.className = "text-xs font-medium text-red-400";
+            }
+        }
+
+        let allTrash = [];
+
+        async function fetchData() {
+            if (!supabaseInstance) return;
+            try {
+                // Fetch Active Products (not deleted)
+                const { data: prods } = await supabaseInstance.from('products').select('*').or('is_deleted.is.null,is_deleted.eq.false').order('created_at', { ascending: false });
+
+                // Fetch Trash (deleted)
+                const { data: trash } = await supabaseInstance.from('products').select('*').eq('is_deleted', true).order('created_at', { ascending: false });
+
+                const { data: hist } = await supabaseInstance.from('ideashistory').select('*').order('created_at', { ascending: false });
+
+                allProducts = prods || [];
+                allTrash = trash || [];
+                allHistory = hist || [];
+
+                renderDashboard();
+                renderProducts(allProducts);
+                renderTrash(allTrash);
+                renderHistory(allHistory);
+                updateSidebarCounts();
+
+            } catch (err) {
+                console.error("Erro ao buscar dados:", err);
+            }
+        }
+
+        function updateSidebarCounts() {
+            const trashCountElement = document.getElementById('trash-count');
+            if (trashCountElement) {
+                trashCountElement.innerText = allTrash.length;
+                if (allTrash.length > 0) {
+                    trashCountElement.classList.remove('hidden');
+                } else {
+                    trashCountElement.classList.add('hidden');
+                }
+            }
+        }
+
+        function renderTrash(trashItems) {
+            const list = document.getElementById('trash-list');
+            const empty = document.getElementById('trash-empty');
+
+            if (!trashItems || trashItems.length === 0) {
+                list.innerHTML = '';
+                list.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            list.classList.remove('hidden');
+
+            list.innerHTML = trashItems.map(product => `
+                <div class="glass p-5 rounded-2xl group flex flex-col relative border border-red-500/10 hover:border-red-500/30 transition-all">
+                   <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 bg-slate-800 rounded-xl overflow-hidden flex-shrink-0">
+                            <img src="${product.image || 'https://placehold.co/100x100/1e293b/475569?text=IMG'}" class="w-full h-full object-cover opacity-50 grayscale">
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-300 line-through decoration-red-500">${product.name}</h3>
+                            <p class="text-xs text-red-400 font-bold uppercase tracking-wider">Na Lixeira</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mt-auto">
+                        <button onclick="restoreProduct('${product.id}')" 
+                            class="flex-1 py-2 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 border border-emerald-500/20">
+                            <i data-lucide="rotate-ccw" size="14"></i> Restaurar
+                        </button>
+                        <button onclick="permanentDeleteProduct('${product.id}')" 
+                            class="flex-1 py-2 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 border border-red-500/20">
+                            <i data-lucide="x" size="14"></i> Apagar
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        async function restoreProduct(id) {
+            if (!supabaseInstance) return;
+            const item = allTrash.find(p => p.id === id);
+
+            const { error } = await supabaseInstance.from('products').update({ is_deleted: false }).eq('id', id);
+            if (!error) {
+                fetchData();
+                logAction('Produto Restaurado', item ? item.name : 'Item');
+            } else {
+                alert("Erro ao restaurar: " + error.message);
+            }
+        }
+
+        async function permanentDeleteProduct(id) {
+            if (!confirm("ATENÇÃO: Isso apagará o item PARA SEMPRE. Continuar?")) return;
+
+            if (supabaseInstance) {
+                const { error } = await supabaseInstance.from('products').delete().eq('id', id);
+                if (!error) {
+                    fetchData();
+                    // Não logamos exclusão permanente para não poluir, ou podemos logar se quiser
+                } else {
+                    alert("Erro ao apagar: " + error.message);
+                }
+            }
+        }
+
+        // SOFT DELETE (Move to Trash)
+        async function deleteProduct(id) {
+            const prod = allProducts.find(p => p.id === id);
+            const name = prod ? prod.name : 'Item';
+
+            if (!confirm(`Mover "${name}" para a lixeira?`)) return;
+
+            if (supabaseInstance) {
+                // Tenta Soft Delete primeiro
+                const { error } = await supabaseInstance.from('products').update({ is_deleted: true }).eq('id', id);
+
+                if (error) {
+                    // Se der erro (ex: coluna não existe), avisa o usuário para atualizar o banco
+                    if (error.message.includes('column')) {
+                        document.getElementById('sql-error-modal').classList.remove('hidden');
+                    } else {
+                        alert("Erro: " + error.message);
+                    }
+                } else {
+                    fetchData();
+                    logAction('Enviado para Lixeira', name);
+                }
+            }
+        }
+
+        function switchTab(tab) {
+            activeTab = tab;
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            const targetTab = document.getElementById(`tab-${tab}`);
+            if (targetTab) targetTab.classList.remove('hidden');
+
+            document.querySelectorAll('.sidebar-item').forEach(b => {
+                b.classList.remove('sidebar-active', 'text-blue-400');
+                b.classList.add('text-slate-400');
+                // Remove gradiente de fundo se houver
+                b.style.background = '';
+                b.style.borderLeft = '4px solid transparent';
+            });
+
+            const activeBtn = document.getElementById(`btn-${tab}`);
+            if (activeBtn) {
+                activeBtn.classList.add('sidebar-active');
+                activeBtn.classList.remove('text-slate-400');
+            }
+        }
+
+        function renderDashboard() {
+            const statProds = document.getElementById('stat-products');
+            const statIdeas = document.getElementById('stat-ideas');
+            const seeder = document.getElementById('seeder-area');
+
+            if (statProds) statProds.innerText = allProducts.length;
+            if (statIdeas) statIdeas.innerText = allHistory.length;
+
+            if (seeder) {
+                if (allProducts.length === 0) seeder.classList.remove('hidden');
+                else seeder.classList.add('hidden');
+            }
+        }
+
+        async function seedDatabase() {
+            if (!supabaseInstance) return;
+            const btn = document.getElementById('btn-import');
+            const originalText = btn.innerText;
+            btn.innerText = "Processando...";
+            btn.disabled = true;
+
+            const { error } = await supabaseInstance.from('products').insert(TABELA_GELAR);
+
+            if (!error) {
+                await fetchData();
+                alert("Sucesso! Catálogo importado.");
+            } else {
+                // DETECÇÃO DE ERRO ESPECÍFICA: Coluna faltando ou tabela não existe
+                const msg = error.message || "";
+                if (error.code === '42P01' || msg.includes('does not exist') || msg.includes('column') || msg.includes('image')) {
+                    document.getElementById('sql-error-modal').classList.remove('hidden');
+                } else {
+                    alert("Erro: " + msg);
+                }
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function copySQL() {
+            const sqlText = document.getElementById('sql-code').innerText;
+            navigator.clipboard.writeText(sqlText).then(() => alert("SQL copiado!"));
+        }
+
+        function handleFileSelect(input, targetInputId) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    if (document.getElementById(targetInputId)) {
+                        document.getElementById(targetInputId).value = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function toggleCategory(catId) {
+            const content = document.getElementById(`cat-content-${catId}`);
+            const icon = document.getElementById(`cat-icon-${catId}`);
+            if (!content) return;
+
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(-90deg)';
+            }
+        }
+
+                // --- UI INJECTION FOR LOGS BUTTON ---
+        function injectLogsButton() {
+            const container = document.querySelector('#products form').parentElement;
+            if (container && !document.getElementById('btn-logs')) {
+                const header = container.previousElementSibling; // Header "Catálogo de Produtos"
+                // Injeta botão de logs no header se possível, ou cria uma barra
+                const btn = document.createElement('button');
+                btn.id = 'btn-logs';
+                btn.onclick = showCatalogLogs;
+                btn.className = 'ml-4 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-bold border border-slate-700 transition-all flex items-center gap-2';
+                btn.innerHTML = '<i data-lucide="clipboard-list" size="16"></i> Logs';
+
+                // Tenta achar o lugar certo para inserir (ao lado do search ou no topo)
+                const searchContainer = document.querySelector('#products input[type="text"]').parentElement;
+                if (searchContainer) {
+                    searchContainer.parentElement.appendChild(btn);
+                    searchContainer.parentElement.classList.add('flex', 'items-center', 'gap-2');
+                }
+                lucide.createIcons();
+            }
+        }
+
+        // Chamada no final do renderProducts para garantir que existe
+        const originalRenderProducts = renderProducts;
+        renderProducts = function (list) {
+            originalRenderProducts(list);
+            setTimeout(injectLogsButton, 500);
+        };
+
+        async function handleProductSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const imageUrl = document.getElementById('new-prod-image-url').value;
+            const newItem = {
+                name: formData.get('name'),
+                category: formData.get('category'),
+                price: parseFloat(formData.get('price')),
+                stock: parseInt(formData.get('stock')),
+                image: imageUrl || `https://placehold.co/400x400/202020/white?text=${encodeURIComponent(formData.get('name'))}`
+            };
+            if (supabaseInstance) {
+                const { error } = await supabaseInstance.from('products').insert([newItem]);
+                if (!error) {
+                    e.target.reset();
+                    fetchData();
+                    logAction('Produto Criado', newItem.name);
+                }
+                else {
+                    const msg = error.message || "";
+                    if (msg.includes('column') || msg.includes('image')) {
+                        document.getElementById('sql-error-modal').classList.remove('hidden');
+                    } else {
+                        alert("Erro: " + msg);
+                    }
+                }
+            }
+        }
+
+        async function deleteProduct(id) {
+            if (!confirm("Excluir item?")) return;
+            const prod = allProducts.find(p => p.id === id);
+            const name = prod ? prod.name : 'Item';
+
+            if (supabaseInstance) {
+                const { error } = await supabaseInstance.from('products').delete().eq('id', id);
+                if (!error) {
+                    fetchData();
+                    logAction('Produto Excluído', name);
+                }
+            }
+        }
+
+        function openEditModal(id) {
+            const product = allProducts.find(p => p.id === id);
+            if (!product) return;
+            document.getElementById('edit-id').value = product.id;
+            document.getElementById('edit-name').value = product.name;
+            document.getElementById('edit-category').value = product.category;
+            document.getElementById('edit-price').value = product.price;
+            document.getElementById('edit-stock').value = product.stock;
+            document.getElementById('edit-image').value = product.image || '';
+            document.getElementById('edit-modal').classList.remove('hidden');
+        }
+
+        async function handleEditSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const id = formData.get('id');
+            const updates = {
+                name: formData.get('name'),
+                category: formData.get('category'),
+                price: parseFloat(formData.get('price')),
+                stock: parseInt(formData.get('stock')),
+                image: formData.get('image')
+            };
+            if (supabaseInstance) {
+                const { error } = await supabaseInstance.from('products').update(updates).eq('id', id);
+                if (!error) {
+                    document.getElementById('edit-modal').classList.add('hidden');
+                    fetchData();
+                    logAction('Produto Editado', updates.name);
+                }
+                else alert("Erro: " + error.message);
+            }
+        }
+
+        async function generateIdea() {
+            // VERIFICA SE A CHAVE AINDA É O PLACEHOLDER
+            if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("COLE_SUA_NOVA_CHAVE")) {
+                alert("ERRO: Você precisa gerar uma nova chave no aistudio.google.com e colar no código!");
+                return;
+            }
+
+            switchTab('generator');
+            const loading = document.getElementById('ai-loading');
+            const result = document.getElementById('ai-result');
+            const userInput = document.getElementById('ai-topic').value;
+            const selectedTones = Array.from(document.querySelectorAll('.tone-checkbox:checked')).map(cb => cb.value);
+
+            if (loading) loading.classList.remove('hidden');
+            if (result) result.classList.add('hidden');
+
+            const prodsList = allProducts.map(p => p.name).join(', ');
+            let prompt = `Atue como Especialista Social Media para o Depósito Gelar. Gere post Instagram. Produtos: ${prodsList}.`;
+            if (selectedTones.length > 0) prompt += ` TONS: ${selectedTones.join(', ')}.`;
+            if (userInput.trim() !== "") prompt += ` TEMA: "${userInput}".`;
+            prompt += ` JSON obrigatório: {"title": "...", "type": "...", "caption": "...", "visual": "...", "cta": "..."}`;
+
+            try {
+                const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } })
+                });
+                const data = await resp.json();
+
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
+
+                const idea = JSON.parse(data.candidates[0].content.parts[0].text);
+
+                document.getElementById('idea-type').innerText = idea.type;
+                document.getElementById('idea-title').innerText = idea.title;
+                document.getElementById('idea-caption').innerText = idea.caption;
+                document.getElementById('idea-visual').innerText = idea.visual;
+                document.getElementById('idea-cta').innerText = idea.cta;
+
+                if (loading) loading.classList.add('hidden');
+                if (result) result.classList.remove('hidden');
+
+                if (supabaseInstance) {
+                    await supabaseInstance.from('ideashistory').insert([idea]);
+                    fetchData();
+                }
+            } catch (err) {
+                console.error(err);
+                if (loading) loading.classList.add('hidden');
+                alert("Erro na IA: " + err.message);
+            }
+        }
+
+        // --- AUDIT LOGS SYSTEM ---
+        async function logAction(action, details) {
+            const msg = `${action}: ${details}`;
+            console.log("LOG:", msg);
+
+            // Tenta salvar no Supabase se existir tabela, senão salva em memória/local
+            if (supabaseInstance) {
+                // Tenta inserir na tabela 'audit_logs'. Se não existir, falha silenciosamente (ideal seria criar a tabela)
+                try {
+                    await supabaseInstance.from('audit_logs').insert([{ action: action, details: details }]);
+                } catch (e) {
+                    console.warn("Tabela de logs não criada. Apenas log no console.");
+                }
+            }
+        }
+
+        async function showCatalogLogs() {
+            const modal = document.getElementById('logs-modal');
+            const list = document.getElementById('logs-list');
+            if (!modal || !list) return;
+
+            modal.classList.remove('hidden');
+            list.innerHTML = '<p class="text-center text-slate-500 animate-pulse">Carregando histórico...</p>';
+
+            let history = [];
+
+            if (supabaseInstance) {
+                const { data, error } = await supabaseInstance.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(50);
+                if (!error && data) history = data;
+            }
+
+            if (history.length === 0) {
+                list.innerHTML = '<p class="text-center text-slate-500 italic">Nenhum registro de alteração recente encontrado.</p>';
+                return;
+            }
+
+            list.innerHTML = history.map(log => `
+                <div class="border-l-2 border-blue-500 pl-4 py-2 relative">
+                    <div class="absolute -left-[9px] top-3 w-4 h-4 rounded-full bg-[#0f172a] border-2 border-blue-500"></div>
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-bold text-blue-400 uppercase tracking-wider">${log.action}</span>
+                        <span class="text-[10px] text-slate-500">${new Date(log.created_at).toLocaleString()}</span>
+                    </div>
+                    <p class="text-sm text-slate-300 mt-1">${log.details}</p>
+                </div>
+            `).join('');
+        }
+
+        // --- IMAGE GENERATION (MULTI-SERVICE) ---
+        function copyToClipboard() {
+            const fullText = `*${document.getElementById('idea-title').innerText}*\n\n${document.getElementById('idea-caption').innerText}\n\n${document.getElementById('idea-cta').innerText}`;
+            navigator.clipboard.writeText(fullText).then(() => alert("Copiado!"));
+        }
+
+        // --- HISTORY MANAGEMENT ---
+        function setHistoryFilter(type) {
+            historyFilter = type;
+            renderHistory(allHistory);
+        }
+
+        function updateHistoryButtons(list) {
+            const safeList = list || [];
+            const activeCount = safeList.filter(h => !h.archived).length;
+            const archivedCount = safeList.filter(h => h.archived).length;
+
+            const activeBtn = document.getElementById('filter-active');
+            const archBtn = document.getElementById('filter-archived');
+
+            if (activeBtn) activeBtn.innerHTML = `Ativos <span class="bg-white/20 ml-2 px-2 py-0.5 rounded-full text-[10px]">${activeCount}</span>`;
+            if (archBtn) archBtn.innerHTML = `Arquivados <span class="bg-slate-700 ml-2 px-2 py-0.5 rounded-full text-[10px]">${archivedCount}</span>`;
+
+            // Atualiza estilos
+            if (historyFilter === 'active') {
+                if (activeBtn) activeBtn.className = 'flex items-center px-5 py-2.5 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-md transition-all border border-blue-500';
+                if (archBtn) archBtn.className = 'flex items-center px-5 py-2.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-300 transition-all border border-transparent';
+            } else {
+                if (activeBtn) activeBtn.className = 'flex items-center px-5 py-2.5 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-300 transition-all border border-transparent';
+                if (archBtn) archBtn.className = 'flex items-center px-5 py-2.5 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-md transition-all border border-blue-500';
+            }
+        }
+
+        async function archiveIdea(id) {
+            if (supabaseInstance) {
+                const { error } = await supabaseInstance.from('ideashistory').update({ archived: true }).eq('id', id);
+                if (!error) {
+                    fetchData();
+                    logAction('Ideia Arquivada', `ID: ${id}`);
+                }
+                else {
+                    const msg = error.message || "";
+                    if (msg.includes('column') || msg.includes('archived')) {
+                        document.getElementById('sql-error-modal').classList.remove('hidden');
+                    } else {
+                        alert("Erro ao arquivar: " + msg);
+                    }
+                }
+            }
+        }
+
+        async function unarchiveIdea(id) {
+            if (supabaseInstance) {
+                const { error } = await supabaseInstance.from('ideashistory').update({ archived: false }).eq('id', id);
+                if (!error) fetchData();
+            }
+        }
+
+        async function deleteIdea(id) {
+            if (!confirm("Excluir permanentemente?")) return;
+            if (supabaseInstance) {
+                const { error } = await supabaseInstance.from('ideashistory').delete().eq('id', id);
+                if (!error) fetchData();
+            }
+        }
+
+        function toggleMinimize(id) {
+            const el = document.getElementById(`history-item-${id}`);
+            const btn = document.getElementById(`toggle-btn-${id}`);
+            el.classList.toggle('minimized');
+            btn.style.transform = el.classList.contains('minimized') ? 'rotate(-90deg)' : 'rotate(0deg)';
+        }
+
+        function renderHistory(list) {
+            updateHistoryButtons(list); // Atualiza os contadores
+
+            const grid = document.getElementById('history-grid');
+            if (!grid) return;
+            const filtered = list.filter(h => {
+                const isArchived = h.archived === true;
+                return historyFilter === 'active' ? !isArchived : isArchived;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-20 text-center text-slate-500 italic font-medium">Nenhum item ${historyFilter === 'active' ? 'ativo' : 'arquivado'}</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(h => `
+                <div id="history-item-${h.id}" class="glass p-6 rounded-[2rem] border border-blue-500/10 hover:border-blue-500/30 transition-all flex flex-col group shadow-lg">
+                    <div class="history-header flex justify-between items-start mb-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest bg-slate-800/50 px-2 py-1 rounded-md border border-slate-700">${new Date(h.created_at).toLocaleDateString()}</span>
+                                <span class="text-[10px] text-blue-400 font-bold uppercase tracking-widest bg-blue-500/10 px-2 py-1 rounded-md border border-blue-500/20">${h.type}</span>
+                            </div>
+                            <h4 class="font-bold text-white text-lg leading-tight">${h.title}</h4>
+                        </div>
+                        <button id="toggle-btn-${h.id}" onclick="toggleMinimize('${h.id}')" class="p-2 text-slate-500 hover:text-white transition-all bg-slate-800/50 rounded-lg hover:bg-slate-700 border border-transparent hover:border-slate-600" title="Minimizar">
+                            <i data-lucide="chevron-down" size="16"></i>
+                        </button>
+                    </div>
+                    <div class="history-content flex-1">
+                        <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800/50 mb-4">
+                            <p class="text-xs text-slate-400 leading-relaxed italic">"${h.caption}"</p>
+                        </div>
+                        <div class="pt-2 border-t border-slate-800/50 flex justify-end gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
+                            ${historyFilter === 'active'
+                    ? `<button onclick="archiveIdea('${h.id}')" class="p-2 text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-all" title="Arquivar"><i data-lucide="archive" size="16"></i></button>`
+                    : `<button onclick="unarchiveIdea('${h.id}')" class="p-2 text-slate-400 hover:text-green-400 hover:bg-green-500/10 rounded-lg transition-all" title="Restaurar"><i data-lucide="archive-restore" size="16"></i></button>`
+                }
+                            <button onclick="deleteIdea('${h.id}')" class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all" title="Excluir"><i data-lucide="trash-2" size="16"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function handleSearch(val) {
+            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(val.toLowerCase()) || p.category.toLowerCase().includes(val.toLowerCase()));
+            renderProducts(filtered);
+        }
+
+        async function seedDatabase() {
+            if (!supabaseInstance) return;
+            if (!confirm("Isso adicionará produtos padrão se a tabela estiver vazia. Continuar?")) return;
+
+            // Verifica se já tem algo para não duplicar desnecessariamente, mas se o usuario quiser pode forçar.
+            if (allProducts.length > 0 && !confirm("Já existem produtos. Deseja adicionar os padrões mesmo assim?")) return;
+
+            const seedData = TABELA_GELAR.map(p => ({
+                ...p,
+                is_deleted: false // Ensure new seed items appear as active
+            }));
+
+            const { error } = await supabaseInstance.from('products').insert(seedData);
+
+            if (error) {
+                // If column error, show modal instructions
+                if (error.message.includes('column') || error.message.includes('is_deleted')) {
+                    document.getElementById('sql-error-modal').classList.remove('hidden');
+                } else {
+                    alert("Erro ao importar: " + error.message);
+                }
+            } else {
+                alert("Produtos importados com sucesso!");
+                fetchData();
+                logAction('Importação Inicial', 'Tabela Padrão');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+
+</html>
+
+

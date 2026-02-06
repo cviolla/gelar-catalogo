@@ -174,7 +174,7 @@ function App() {
       <div className="login-screen">
         <div className="login-card">
           <div className="login-logo" style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem' }}>
-            <img src="/logo.png" alt="Gelar" style={{ height: 45 }} onError={(e) => e.target.style.display = 'none'} />
+            <img src="/logo.png" alt="Gelar" style={{ height: 38 }} onError={(e) => e.target.style.display = 'none'} />
           </div>
           <p>Acesso Restrito</p>
           <form onSubmit={handleLogin}>
@@ -202,37 +202,59 @@ function App() {
             align-items: center;
             justify-content: center;
             color: white;
+            background-image: radial-gradient(circle at 50% 10%, #1e293b 0%, #020617 100%);
           }
           .login-card {
-            background: #0f172a;
-            padding: 2.5rem;
-            border-radius: 16px;
+            background: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(12px);
+            padding: 1.25rem; /* Ultra Compact */
+            border-radius: 12px;
             width: 100%;
-            max-width: 360px;
+            max-width: 280px; /* Slimmer */
             text-align: center;
-            border: 1px solid #1e293b;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
           }
-          .login-logo h1 { margin: 10px 0 0 0; letter-spacing: 2px; }
-          .login-card p { color: #64748b; margin-bottom: 2rem; font-size: 0.9rem; }
-          .input-group { position: relative; margin-bottom: 1rem; }
-          .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #64748b; }
+          .login-logo { margin-bottom: 0.75rem !important; }
+          
+          .login-card p { 
+            color: #64748b; 
+            margin-bottom: 1rem; 
+            font-size: 0.7rem; 
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 600;
+          }
+          
+          .input-group { position: relative; margin-bottom: 0.5rem; }
+          .input-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #475569; width: 14px; height: 14px; }
+          
           .login-card input {
             width: 100%;
-            padding: 12px 12px 12px 40px;
-            background: #1e293b;
+            padding: 8px 8px 8px 32px; /* Super compact */
+            background: rgba(30, 41, 59, 0.5);
             border: 1px solid #334155;
-            border-radius: 8px;
+            border-radius: 6px;
             color: white;
-            font-size: 1rem;
+            font-size: 0.85rem;
             outline: none;
             transition: all 0.2s;
           }
-          .login-card input:focus { border-color: #38bdf8; box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2); }
-          .login-card input.error { border-color: #ef4444; animation: shake 0.3s; }
-          .error-msg { color: #ef4444; font-size: 0.8rem; display: block; margin-bottom: 1rem; margin-top: -0.5rem; }
-          .full-width { width: 100%; padding: 12px; margin-top: 5px; }
-          @keyframes shake {
+          .login-card input:focus { 
+            border-color: #38bdf8; 
+            background: rgba(30, 41, 59, 0.9);
+            box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.3); 
+          }
+          
+          .full-width { 
+            width: 100%; 
+            padding: 8px; 
+            margin-top: 0.25rem; 
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            border-radius: 6px;
+          }
+          .error-msg { color: #ef4444; font-size: 0.7rem; margin-bottom: 0.25rem; }          @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
             75% { transform: translateX(5px); }
