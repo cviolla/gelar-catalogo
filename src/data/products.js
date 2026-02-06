@@ -257,7 +257,7 @@ export const products = [
     id: 'heineken-long',
     name: 'Heineken Long Neck',
     volume: '330 ml',
-    category: 'Long Neck / Latão',
+    category: 'Long Neck',
     image: null,
     prices: [
       { label: 'Pack (24un)', value: '140,00' },
@@ -268,7 +268,7 @@ export const products = [
     id: 'heineken-latao',
     name: 'Heineken Latão',
     volume: '473 ml',
-    category: 'Long Neck / Latão',
+    category: 'Latas',
     image: null,
     prices: [
       { label: 'Pack (12un)', value: '70,00' },
@@ -279,7 +279,7 @@ export const products = [
     id: 'stella-long',
     name: 'Stella Artois Long Neck',
     volume: '330 ml',
-    category: 'Long Neck / Latão',
+    category: 'Long Neck',
     image: null,
     prices: [
       { label: 'Pack (24un)', value: '133,00' },
@@ -290,7 +290,7 @@ export const products = [
     id: 'budweiser-long',
     name: 'Budweiser Long Neck',
     volume: '330 ml',
-    category: 'Long Neck / Latão',
+    category: 'Long Neck',
     image: null,
     prices: [
       { label: 'Pack (24un)', value: '122,50' },
@@ -301,7 +301,7 @@ export const products = [
     id: 'corona-long',
     name: 'Corona Long Neck',
     volume: '330 ml',
-    category: 'Long Neck / Latão',
+    category: 'Long Neck',
     image: null,
     prices: [
       { label: 'Pack (24un)', value: '148,00' },
@@ -312,7 +312,7 @@ export const products = [
     id: 'imperio-gold-long',
     name: 'Império Gold Long Neck',
     volume: '210 ml',
-    category: 'Long Neck / Latão',
+    category: 'Long Neck',
     image: null,
     prices: [
       { label: 'Caixa (18un)', value: '64,99' },
@@ -325,7 +325,7 @@ export const products = [
     id: 'brahma-latao',
     name: 'Brahma Latão',
     volume: '473 ml',
-    category: 'Latão 473ml',
+    category: 'Latas',
     image: null,
     prices: [
       { label: 'Pack (12un)', value: '48,00' },
@@ -337,7 +337,7 @@ export const products = [
     id: 'antarctica-latao',
     name: 'Antarctica Latão',
     volume: '473 ml',
-    category: 'Latão 473ml',
+    category: 'Latas',
     image: null,
     prices: [
       { label: 'Pack (12un)', value: '48,00' },
@@ -349,7 +349,7 @@ export const products = [
     id: 'amstel-latao',
     name: 'Amstel Latão',
     volume: '473 ml',
-    category: 'Latão 473ml',
+    category: 'Latas',
     image: null,
     prices: [
       { label: 'Pack (12un)', value: '55,00' },
@@ -361,7 +361,7 @@ export const products = [
     id: 'imperio-latao',
     name: 'Império Latão',
     volume: '473 ml',
-    category: 'Latão 473ml',
+    category: 'Latas',
     image: null,
     prices: [
       { label: 'Pack (12un)', value: '46,00' },
@@ -373,7 +373,7 @@ export const products = [
     id: 'itaipava-latao',
     name: 'Itaipava Latão',
     volume: '473 ml',
-    category: 'Latão 473ml',
+    category: 'Latas',
     image: null,
     prices: [
       { label: 'Pack (12un)', value: '40,00' },
@@ -412,7 +412,7 @@ export const categories = [
   "Refrigerantes",
   "Águas",
   "Gelo",
-  "Long Neck / Latão",
-  "Latão 473ml",
+  "Long Neck",
+  "Latas",
   "Carvão"
 ];
