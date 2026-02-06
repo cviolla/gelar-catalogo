@@ -158,14 +158,28 @@ function App() {
   // --- COMPONENT LOGIC ---
 
   const normalizeText = (text) => {
-    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    return text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, "") // Remove espaços
+      .toLowerCase();
   };
 
   const filteredProducts = products.filter(product => {
     const matchesCategory = activeCategory === "Todos" || product.category === activeCategory;
-    const normName = normalizeText(product.name || "");
+
+    // Normalize fields for search
     const normSearch = normalizeText(searchTerm);
-    return matchesCategory && normName.includes(normSearch);
+    const normName = normalizeText(product.name || "");
+    const normVolume = normalizeText(product.volume || "");
+    const normProductCategory = normalizeText(product.category || "");
+
+    const matchesSearch =
+      normName.includes(normSearch) ||
+      normVolume.includes(normSearch) ||
+      normProductCategory.includes(normSearch);
+
+    return matchesCategory && matchesSearch;
   });
 
   // --- RENDER: LOGIN SCREEN ---
