@@ -325,6 +325,10 @@ export default function ProductCard({ product, onUpdate, onDelete }) {
           width: 100%;
           height: 100%;
           object-fit: contain; /* Mostra o produto inteiro */
+          transition: transform 0.3s ease;
+          /* Truque para suavizar bordas brancas de JPGs */
+          mask-image: radial-gradient(circle at center, black 60%, transparent 95%);
+          -webkit-mask-image: radial-gradient(circle at center, black 60%, transparent 95%);
           padding: 1rem;
         }
 
