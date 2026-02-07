@@ -5,11 +5,12 @@ import CartComponent from './components/Cart';
 import OrderHistory from './components/OrderHistory';
 import { supabase } from './lib/supabase'; // Real DB
 import { products as initialSeedData, categories } from './data/products';
-import { CartProvider } from './context/CartContext';
-import { Info, RotateCcw, Trash2, X, Database, Lock } from 'lucide-react';
+import { useCart } from './context/CartContext';
+import { Info, RotateCcw, Trash2, X, Database, Lock, Plus } from 'lucide-react';
 import { normalizeText, NAVBAR_HEIGHT_DESKTOP, NAVBAR_HEIGHT_MOBILE } from './utils/helpers';
 
 function App() {
+    const { addToCart } = useCart();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [showLogin, setShowLogin] = useState(false); // Modal de Login
     const [passwordInput, setPasswordInput] = useState("");
@@ -24,6 +25,7 @@ function App() {
     const [showTrash, setShowTrash] = useState(false);
     const [showOrderHistory, setShowOrderHistory] = useState(false);
     const [isScrollingFromClick, setIsScrollingFromClick] = useState(false);
+    const [expandedProduct, setExpandedProduct] = useState(null);
 
     const categoryRefs = React.useRef({});
 
@@ -275,172 +277,228 @@ function App() {
 
     // --- RENDER: APP ---
     return (
-        <CartProvider>
-            <div className="app-container">
-                {/* LOGIN OVERLAY */}
-                {showLogin && (
-                    <div className="login-overlay">
-                        <div className="login-card">
-                            <div className="navbar-logo">
-                                <img src="/logo.png" style={{ height: '42px', width: 'auto' }} alt="Gelar" />
+        <div className="app-container">
+            {/* LOGIN OVERLAY */}
+            {showLogin && (
+                <div className="login-overlay">
+                    <div className="login-card">
+                        <div className="navbar-logo">
+                            <img src="/logo.png" style={{ height: '42px', width: 'auto' }} alt="Gelar" />
+                        </div>
+
+                        <div className="login-header-text">
+                            <h2>Bem-vindo</h2>
+                            <p>ÁREA RESTRITA</p>
+                        </div>
+
+                        <form onSubmit={handleLogin}>
+                            <div className="input-group">
+                                <input
+                                    type="password"
+                                    placeholder="Senha de Acesso"
+                                    value={passwordInput}
+                                    onChange={(e) => setPasswordInput(e.target.value)}
+                                    autoFocus
+                                />
+                                <Lock className="input-icon" size={18} />
                             </div>
 
-                            <div className="login-header-text">
-                                <h2>Bem-vindo</h2>
-                                <p>ÁREA RESTRITA</p>
+                            {loginError && (
+                                <div className="error-msg">
+                                    <Info size={14} /> Senha incorreta
+                                </div>
+                            )}
+
+                            <div className="login-actions">
+                                <button type="submit" className="btn-login-submit">
+                                    ENTRAR
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn-login-cancel"
+                                    onClick={() => setShowLogin(false)}
+                                >
+                                    Cancelar
+                                </button>
                             </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
-                            <form onSubmit={handleLogin}>
-                                <div className="input-group">
-                                    <input
-                                        type="password"
-                                        placeholder="Senha de Acesso"
-                                        value={passwordInput}
-                                        onChange={(e) => setPasswordInput(e.target.value)}
-                                        autoFocus
-                                    />
-                                    <Lock className="input-icon" size={18} />
-                                </div>
+            <Navbar
+                activeCategory={activeCategory}
+                onCategoryChange={handleCategoryClick}
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                onAddProduct={handleAddProduct}
+                trashCount={trash.length}
+                onOpenTrash={() => setShowTrash(!showTrash)}
+                isAuthenticated={isAuthenticated}
+                onLoginClick={() => setShowLogin(true)}
+            />
 
-                                {loginError && (
-                                    <div className="error-msg">
-                                        <Info size={14} /> Senha incorreta
-                                    </div>
-                                )}
+            <main className="container main-content">
 
-                                <div className="login-actions">
-                                    <button type="submit" className="btn-login-submit">
-                                        ENTRAR
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn-login-cancel"
-                                        onClick={() => setShowLogin(false)}
-                                    >
-                                        Cancelar
-                                    </button>
-                                </div>
-                            </form>
+                {loading && <div className="loading">Carregando estoque...</div>}
+
+                {!loading && products.length === 0 && !showTrash && (
+                    <div className="empty-db-state">
+                        <Database size={48} color="#fbbf24" />
+                        <h2>Banco de Dados Vazio</h2>
+                        <p>Comece do zero ou carregue a lista padrão.</p>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <button className="btn btn-primary" onClick={handleAddProduct}>Criar Primeiro Produto</button>
+                            <button className="btn btn-secondary" onClick={handleSeedDatabase}>Carregar Lista Padrão</button>
                         </div>
                     </div>
                 )}
 
-                <Navbar
-                    activeCategory={activeCategory}
-                    onCategoryChange={handleCategoryClick}
-                    searchTerm={searchTerm}
-                    onSearchChange={setSearchTerm}
-                    onAddProduct={handleAddProduct}
-                    trashCount={trash.length}
-                    onOpenTrash={() => setShowTrash(!showTrash)}
-                    isAuthenticated={isAuthenticated}
-                    onLoginClick={() => setShowLogin(true)}
-                />
-
-                <main className="container main-content">
-
-                    {loading && <div className="loading">Carregando estoque...</div>}
-
-                    {!loading && products.length === 0 && !showTrash && (
-                        <div className="empty-db-state">
-                            <Database size={48} color="#fbbf24" />
-                            <h2>Banco de Dados Vazio</h2>
-                            <p>Comece do zero ou carregue a lista padrão.</p>
-                            <div style={{ display: 'flex', gap: '1rem' }}>
-                                <button className="btn btn-primary" onClick={handleAddProduct}>Criar Primeiro Produto</button>
-                                <button className="btn btn-secondary" onClick={handleSeedDatabase}>Carregar Lista Padrão</button>
-                            </div>
+                {/* TRASH VIEW OVERLAY */}
+                {showTrash ? (
+                    <div className="trash-view">
+                        <div className="trash-header">
+                            <h2>Lixeira (Não salvos no banco)</h2>
+                            <button className="btn btn-secondary" onClick={() => setShowTrash(false)}>
+                                <X size={20} /> Fechar
+                            </button>
                         </div>
-                    )}
+                        <p style={{ marginBottom: '1rem', color: '#ef4444' }}>Itens aqui ainda existem no banco, mas estão ocultos. Exclua definitivamente para limpar.</p>
 
-                    {/* TRASH VIEW OVERLAY */}
-                    {showTrash ? (
-                        <div className="trash-view">
-                            <div className="trash-header">
-                                <h2>Lixeira (Não salvos no banco)</h2>
-                                <button className="btn btn-secondary" onClick={() => setShowTrash(false)}>
-                                    <X size={20} /> Fechar
-                                </button>
-                            </div>
-                            <p style={{ marginBottom: '1rem', color: '#ef4444' }}>Itens aqui ainda existem no banco, mas estão ocultos. Exclua definitivamente para limpar.</p>
-
-                            {trash.map(item => (
-                                <div key={item.id} className="trash-item">
-                                    <span>{item.name}</span>
-                                    <div className="trash-actions">
-                                        <button className="btn-restore" onClick={() => handleRestoreProduct(item.id)}><RotateCcw size={18} /></button>
-                                        <button className="btn-permanent-delete" onClick={() => handlePermanentDelete(item.id)}><X size={18} /></button>
-                                    </div>
+                        {trash.map(item => (
+                            <div key={item.id} className="trash-item">
+                                <span>{item.name}</span>
+                                <div className="trash-actions">
+                                    <button className="btn-restore" onClick={() => handleRestoreProduct(item.id)}><RotateCcw size={18} /></button>
+                                    <button className="btn-permanent-delete" onClick={() => handlePermanentDelete(item.id)}><X size={18} /></button>
                                 </div>
-                            ))}
-                        </div>
-                    ) : (
-                        /* PRODUCT DISPLAY */
-                        <div className="content-wrapper">
-                            {searchTerm ? (
-                                <div className="products-grid">
-                                    {filteredProducts.map(product => (
-                                        <ProductCard
-                                            key={product.id}
-                                            product={product}
-                                            onUpdate={handleUpdateProduct}
-                                            onDelete={handleDeleteProduct}
-                                            readOnly={!isAuthenticated}
-                                        />
-                                    ))}
-                                </div>
-                            ) : (
-                                categories.map(cat => {
-                                    const productsInCategory = products.filter(p => p.category === cat);
-                                    if (productsInCategory.length === 0) return null;
-                                    return (
-                                        <section
-                                            key={cat}
-                                            id={cat}
-                                            className="category-section"
-                                            ref={el => categoryRefs.current[cat] = el}
-                                        >
-                                            <div className="products-grid">
-                                                {productsInCategory.map(product => (
-                                                    <ProductCard
-                                                        key={product.id}
-                                                        product={product}
-                                                        onUpdate={handleUpdateProduct}
-                                                        onDelete={handleDeleteProduct}
-                                                        readOnly={!isAuthenticated}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </section>
-                                    );
-                                })
-                            )}
-                        </div>
-                    )}
-                </main>
-
-                <CartComponent />
-
-                <footer className="footer">
-                    <div className="container">
-                        <p>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por <a href="https://wa.me/5521965226788" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none' }}>@cviolla</a></p>
-
-                        {isAuthenticated && (
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
-                                <button onClick={handleLogout} className="btn-logout-footer" style={{ marginTop: 0 }}>Sair do Sistema</button>
-                                <span style={{ color: '#334155' }}>|</span>
-                                <button onClick={() => setShowOrderHistory(true)} className="btn-logout-footer" style={{ color: '#38bdf8', marginTop: 0 }}>📄 Histórico de Pedidos</button>
-
                             </div>
+                        ))}
+                    </div>
+                ) : (
+                    /* PRODUCT DISPLAY */
+                    <div className="content-wrapper">
+                        {searchTerm ? (
+                            <div className="products-grid">
+                                {filteredProducts.map(product => (
+                                    <ProductCard
+                                        key={product.id}
+                                        product={product}
+                                        onUpdate={handleUpdateProduct}
+                                        onDelete={handleDeleteProduct}
+                                        onExpand={setExpandedProduct} // Novo prop
+                                        readOnly={!isAuthenticated}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            categories.map(cat => {
+                                const productsInCategory = products.filter(p => p.category === cat);
+                                if (productsInCategory.length === 0) return null;
+                                return (
+                                    <section
+                                        key={cat}
+                                        id={cat}
+                                        className="category-section"
+                                        ref={el => categoryRefs.current[cat] = el}
+                                    >
+                                        <div className="products-grid">
+                                            {productsInCategory.map(product => (
+                                                <ProductCard
+                                                    key={product.id}
+                                                    product={product}
+                                                    onUpdate={handleUpdateProduct}
+                                                    onDelete={handleDeleteProduct}
+                                                    onExpand={setExpandedProduct} // Novo prop
+                                                    readOnly={!isAuthenticated}
+                                                />
+                                            ))}
+                                        </div>
+                                    </section>
+                                );
+                            })
                         )}
                     </div>
-                </footer>
+                )}
+            </main>
 
-                {/* ORDER HISTORY OVERLAY */}
-                {showOrderHistory && <OrderHistory onClose={() => setShowOrderHistory(false)} />}
+            {/* PRODUCT EXPANDED MODAL */}
+            {expandedProduct && (
+                <div
+                    className="product-modal-overlay"
+                    onClick={() => setExpandedProduct(null)}
+                >
+                    <div className="expanded-card" onClick={(e) => e.stopPropagation()}>
+                        <button className="btn-close-expanded" onClick={() => setExpandedProduct(null)}>
+                            <X size={24} />
+                        </button>
 
-            </div >
-        </CartProvider >
+                        <div className="expanded-image-area">
+                            <img
+                                src={expandedProduct.image_url || expandedProduct.image}
+                                alt={expandedProduct.name}
+                                className="expanded-img"
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = 'https://placehold.co/800x600?text=Sem+Imagem';
+                                }}
+                            />
+                        </div>
+
+                        <div className="expanded-content">
+                            <div className="expanded-header">
+                                <span className="expanded-category">{expandedProduct.category}</span>
+                                <h2 className="expanded-title">{expandedProduct.name}</h2>
+                                <span style={{ color: '#64748b' }}>{expandedProduct.volume}</span>
+                            </div>
+
+                            <div className="expanded-prices">
+                                {expandedProduct.prices?.map((price, idx) => (
+                                    <div key={idx} className="expanded-price-row">
+                                        <div>
+                                            <div className="expanded-price-label">{price.label}</div>
+                                            <div className="expanded-price-value">
+                                                {/[a-zA-Z]/.test(String(price.value).replace(/^R\$\s*/, ''))
+                                                    ? price.value
+                                                    : `R$ ${String(price.value).replace(/^R\$\s*/, '')}`
+                                                }
+                                            </div>
+                                        </div>
+                                        <button
+                                            className="btn-add-expanded"
+                                            onClick={() => addToCart(expandedProduct, price)}
+                                        >
+                                            <Plus size={24} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+
+            <CartComponent />
+
+            <footer className="footer">
+                <div className="container">
+                    <p>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por <a href="https://wa.me/5521965226788" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none' }}>@cviolla</a></p>
+
+                    {isAuthenticated && (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+                            <button onClick={handleLogout} className="btn-logout-footer" style={{ marginTop: 0 }}>Sair do Sistema</button>
+                            <span style={{ color: '#334155' }}>|</span>
+                            <button onClick={() => setShowOrderHistory(true)} className="btn-logout-footer" style={{ color: '#38bdf8', marginTop: 0 }}>📄 Histórico de Pedidos</button>
+
+                        </div>
+                    )}
+                </div>
+            </footer>
+
+            {/* ORDER HISTORY OVERLAY */}
+            {showOrderHistory && <OrderHistory onClose={() => setShowOrderHistory(false)} />}
+        </div>
     );
 }
 

@@ -5,12 +5,15 @@ import { useCart } from '../context/CartContext';
 import { autoCategorize } from '../utils/helpers';
 import { categories } from '../data/products';
 
-export default function ProductCard({ product, onUpdate, onDelete, readOnly }) {
+export default function ProductCard({ product, onUpdate, onDelete, onExpand, readOnly }) {
   const { addToCart } = useCart();
   const [isEditing, setIsEditing] = useState(false);
   const [editedProduct, setEditedProduct] = useState({ ...product });
   const [uploading, setUploading] = useState(false); // Estado de load
   const fileInputRef = useRef(null);
+
+  // Stop propagation for buttons and inputs
+  const stopProp = (e) => e.stopPropagation();
 
 
   // Handle text changes with Auto-Categorization
@@ -102,7 +105,11 @@ export default function ProductCard({ product, onUpdate, onDelete, readOnly }) {
   };
 
   return (
-    <div className={`product-card ${isEditing ? 'editing' : ''}`}>
+    <div
+      className={`product-card ${isEditing ? 'editing' : ''}`}
+      onClick={() => !isEditing && onExpand && onExpand(product)}
+      style={{ cursor: !isEditing ? 'pointer' : 'default' }}
+    >
       {/* Image Area */}
       <div className="card-image-area">
         {editedProduct.image_url || editedProduct.image ? (
@@ -123,7 +130,7 @@ export default function ProductCard({ product, onUpdate, onDelete, readOnly }) {
 
         {isEditing && (
           <div className="image-overlay">
-            <button className="btn-upload" onClick={() => fileInputRef.current.click()}>
+            <button className="btn-upload" onClick={(e) => { stopProp(e); fileInputRef.current.click(); }}>
               <Upload size={20} /> Alterar Foto
             </button>
             <input
@@ -131,7 +138,7 @@ export default function ProductCard({ product, onUpdate, onDelete, readOnly }) {
               ref={fileInputRef}
               hidden
               accept="image/*"
-              onChange={handleImageUpload}
+              onChange={(e) => { stopProp(e); handleImageUpload(e); }}
             />
           </div>
         )}
@@ -141,6 +148,7 @@ export default function ProductCard({ product, onUpdate, onDelete, readOnly }) {
             <input
               className="input-mini"
               value={editedProduct.volume}
+              onClick={stopProp}
               onChange={(e) => handleChange('volume', e.target.value)}
             />
           ) : (
@@ -157,6 +165,7 @@ export default function ProductCard({ product, onUpdate, onDelete, readOnly }) {
             <select
               className="input-select"
               value={editedProduct.category}
+              onClick={stopProp}
               onChange={(e) => handleChange('category', e.target.value)}
             >
               {categories.filter(c => c !== 'Todos').map(cat => (
@@ -181,6 +190,7 @@ export default function ProductCard({ product, onUpdate, onDelete, readOnly }) {
             <input
               className="input-title"
               value={editedProduct.name}
+              onClick={stopProp}
               onChange={(e) => handleChange('name', e.target.value)}
             />
           ) : (
@@ -250,7 +260,7 @@ export default function ProductCard({ product, onUpdate, onDelete, readOnly }) {
                     </span>
                     <button
                       className="btn-add-cart"
-                      onClick={() => addToCart(product, price)}
+                      onClick={(e) => { stopProp(e); addToCart(product, price); }}
                     >
                       +
                     </button>
