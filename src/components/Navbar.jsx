@@ -95,8 +95,9 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
         }
 
         .logo-img {
-          height: 25px; /* Reduzido em 50% */
+          height: 45px;
           width: auto;
+          max-width: 100%;
           object-fit: contain;
         }
 
