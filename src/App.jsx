@@ -7,6 +7,7 @@ import { Info, RotateCcw, Trash2, X, Database, Lock } from 'lucide-react';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showLogin, setShowLogin] = useState(false); // Modal de Login
   const [passwordInput, setPasswordInput] = useState("");
   const [loginError, setLoginError] = useState(false);
 
@@ -26,6 +27,7 @@ function App() {
 
     if (passwordInput === SECRET_PASS) {
       setIsAuthenticated(true);
+      setShowLogin(false);
       localStorage.setItem("gelar_auth", "true"); // Lembrar login
     } else {
       setLoginError(true);
@@ -33,10 +35,19 @@ function App() {
     }
   };
 
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("gelar_auth");
+    setPasswordInput("");
+  };
+
   useEffect(() => {
     // Verificar se já logou antes
     const savedAuth = localStorage.getItem("gelar_auth");
     if (savedAuth === "true") setIsAuthenticated(true);
+
+    // FETCH PRODUCTS ON START (ALWAYS)
+    fetchProducts();
   }, []);
 
   // --- DATABASE SYNC ---
@@ -56,10 +67,6 @@ function App() {
     }
     setLoading(false);
   };
-
-  useEffect(() => {
-    fetchProducts();
-  }, []); // Carrega sempre ao iniciar (Público)
 
   // 2. Create Product
   const handleAddProduct = async () => {
@@ -148,12 +155,6 @@ function App() {
     }
     setLoading(false);
   };
-
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem("gelar_auth");
-  }
-
 
   // --- COMPONENT LOGIC ---
 
@@ -358,7 +359,10 @@ function App() {
         /* Trash Styles */
         .trash-view { background: #18181b; padding: 2rem; border-radius: 12px; border: 1px solid #334155; }
         .trash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        /* ... outros styles trash ... */
+        .trash-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #27272a; margin-bottom: 0.5rem; border-radius: 8px; }
+        .trash-actions { display: flex; gap: 0.5rem; }
+        .btn-restore { background: #0ea5e9; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; }
+        .btn-permanent-delete { background: #ef4444; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; }
 
         /* LOGIN OVERLAY STYLES */
         .login-overlay {
@@ -385,6 +389,7 @@ function App() {
         }
         .login-card input:focus { border-color: #38bdf8; }
         .btn-text { background: none; border: none; font-size: 0.85rem; cursor: pointer; }
+        .error-msg { color: #ef4444; font-size: 0.75rem; margin-bottom: 0.5rem; }
       `}</style>
     </div>
   );

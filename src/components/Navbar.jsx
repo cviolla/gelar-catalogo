@@ -1,4 +1,5 @@
-import { Search, ShoppingBag, Plus, Trash2, Lock, User } from 'lucide-react';
+import React from 'react';
+import { Search, Plus, Trash2, Lock } from 'lucide-react';
 import { categories } from '../data/products';
 
 export default function Navbar({ activeCategory, onCategoryChange, searchTerm, onSearchChange, onAddProduct, trashCount, onOpenTrash, isAuthenticated, onLoginClick }) {
@@ -8,7 +9,6 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
         {/* Top Bar with Logo & Search */}
         <div className="top-bar">
           <div className="logo">
-            {/* ...logo mantido pelo contexto... */}
             <div className="navbar-logo">
               <a href="/" title="Início">
                 <img src="/logo.png" alt="Gelar Logo" className="logo-img" onError={(e) => e.target.style.display = 'none'} />
@@ -20,7 +20,6 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
           </div>
 
           <div className="search-bar">
-            {/* ...search mantido... */}
             <Search className="search-icon" size={24} strokeWidth={3} />
             <input
               type="text"
@@ -31,7 +30,7 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
           </div>
 
           <div className="actions-area">
-            {/* Status mantido */}
+            {/* Status Indicator */}
             <div className="online-badge">
               <div className="status-dot"></div>
               <span className="status-text">{isAuthenticated ? 'ADMIN' : 'ONLINE'}</span>
@@ -75,7 +74,7 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
 
       <style>{`
         .navbar-container {
-          background-color: #050b14 !important; /* Match card dark bg */
+          background-color: #050b14 !important;
           color: white;
           padding: 1rem 0 0 0;
           border-bottom: 1px solid #1e293b;
@@ -99,10 +98,6 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
           gap: 0.75rem;
         }
 
-        .logo .icon {
-          color: var(--color-accent);
-        }
-
         .logo-img {
           height: 45px;
           width: auto;
@@ -110,11 +105,7 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
           object-fit: contain;
         }
 
-        .logo-wrapper {
-          position: relative;
-          display: flex;
-          align-items: center;
-        }
+        .navbar-logo a { display: block; }
 
         .online-badge {
           display: flex;
@@ -144,15 +135,6 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
           50% { opacity: 0.5; }
         }
 
-        .logo h1 {
-          color: white;
-          margin: 0;
-          font-size: 1.5rem;
-          line-height: 1;
-          text-transform: uppercase; /* GELAR */
-          letter-spacing: 2px; /* Espaçamento premium */
-        }
-
         .logo span {
           font-size: 0.75rem;
           opacity: 0.8;
@@ -168,7 +150,7 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
 
         .search-bar input {
           width: 100%;
-          padding: 0.75rem 1rem 0.75rem 3rem; /* More space for icon */
+          padding: 0.75rem 1rem 0.75rem 3rem;
           border-radius: 50px;
           border: 1px solid #1e293b;
           background: rgba(15, 23, 42, 0.6);
@@ -190,8 +172,8 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
           left: 1rem;
           top: 50%;
           transform: translateY(-50%);
-          color: #ffffff; /* Pure White */
-          filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); /* Glow */
+          color: #ffffff;
+          filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
           pointer-events: none;
           z-index: 10;
         }
@@ -203,7 +185,6 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
           align-items: center;
         }
 
-        /* Categories Scroll */
         .categories-nav {
           border-top: 1px solid rgba(255, 255, 255, 0.1);
           background: rgba(0, 0, 0, 0.2);
@@ -213,21 +194,21 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
           display: flex;
           list-style: none;
           overflow-x: auto;
-          padding: 0 1rem; /* 0.5rem top/bottom, 1rem sides */
+          padding: 0 1rem;
           margin: 0;
           gap: 0.5rem;
-          scrollbar-width: none; /* Firefox */
+          scrollbar-width: none;
         }
 
         .categories-list::-webkit-scrollbar {
-          display: none; /* Chrome/Safari */
+          display: none;
         }
 
         .cat-btn {
           background: none;
           border: none;
           color: rgba(255, 255, 255, 0.7);
-          padding: 1rem 0.5rem; /* Taller touch target */
+          padding: 1rem 0.5rem;
           font-size: 0.9rem;
           font-weight: 500;
           cursor: pointer;
@@ -236,9 +217,7 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
           transition: color 0.2s;
         }
 
-        .cat-btn:hover {
-          color: white;
-        }
+        .cat-btn:hover { color: white; }
 
         .cat-btn.active {
           color: var(--color-accent);
@@ -248,10 +227,7 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
         .cat-btn.active::after {
           content: '';
           position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 3px;
+          bottom: 0; left: 0; width: 100%; height: 3px;
           background: var(--color-accent);
           border-radius: 3px 3px 0 0;
         }
@@ -264,29 +240,18 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
           border-radius: 8px;
           border: none;
           cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 5px;
+          display: flex; align-items: center; gap: 5px;
         }
         
-        .btn-trash:hover {
-          background: #475569;
-          color: white;
-        }
+        .btn-trash:hover { background: #475569; color: white; }
 
         .badge {
-          background: #ef4444;
-          color: white;
-          font-size: 0.75rem;
-          padding: 2px 6px;
-          border-radius: 10px;
-          font-weight: bold;
+          background: #ef4444; color: white; font-size: 0.75rem;
+          padding: 2px 6px; border-radius: 10px; font-weight: bold;
         }
 
         @media (max-width: 480px) {
-          .btn-text {
-            display: none;
-          }
+          .btn-text { display: none; }
         }
       `}</style>
     </header>
