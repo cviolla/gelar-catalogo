@@ -8,7 +8,7 @@
   "description": "Catálogo de preços e produtos Gelar Bebidas.",
   "icons": [
     {
-      "src": "logo.png",
+      "src": "icon.png",
       "sizes": "192x192 512x512",
       "type": "image/png",
       "purpose": "any maskable"
