@@ -1,0 +1,17 @@
+{
+  "name": "Gelar Depósito de Bebidas",
+  "short_name": "Gelar",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "description": "Catálogo de preços e produtos Gelar Bebidas.",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
