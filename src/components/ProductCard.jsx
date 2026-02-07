@@ -387,10 +387,24 @@ export default function ProductCard({ product, onUpdate, onDelete }) {
         .price-row {
           display: flex;
           justify-content: space-between;
-          align-items: center;
-          font-size: 0.85rem;
-          padding-bottom: 0.25rem;
+          align-items: flex-start; /* Alinha no topo se quebrar linha */
+          font-size: 0.82rem; /* Levemente menor que o padrão */
+          padding-bottom: 0.35rem;
           border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+          line-height: 1.3;
+        }
+
+        .price-label {
+          color: #94a3b8;
+          margin-right: 0.5rem;
+          word-break: break-word; /* Quebra palavras longas se precisar */
+        }
+        
+        .price-value {
+           white-space: nowrap; /* Valor nunca quebra */
+           font-weight: 700;
+           color: #38bdf8;
+           text-align: right;
         }
 
         .price-row:last-child {
