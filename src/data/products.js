@@ -4,7 +4,7 @@ export const products = [
     id: 'brahma-litrao',
     name: 'Brahma',
     volume: 'Litrão',
-    category: 'Cervejas',
+    category: 'Cerveja',
     image: null,
     prices: [
       { label: 'Caixa', value: '95,00' },
@@ -15,7 +15,7 @@ export const products = [
     id: 'antarctica-litrao',
     name: 'Antarctica',
     volume: 'Litrão',
-    category: 'Cervejas',
+    category: 'Cerveja',
     image: null,
     prices: [
       { label: 'Caixa', value: '95,00' },
@@ -26,10 +26,10 @@ export const products = [
     id: 'itaipava-litrao',
     name: 'Itaipava',
     volume: 'Litrão',
-    category: 'Cervejas',
+    category: 'Cerveja',
     image: null,
     prices: [
-      { label: 'Caixa', value: '73,50' },
+      { label: 'Caixa', value: '81,00' },
       { label: 'Gelado', value: '8,00' }
     ]
   },
@@ -39,7 +39,7 @@ export const products = [
     id: 'brahma-600',
     name: 'Brahma',
     volume: '600 ml',
-    category: 'Cervejas',
+    category: 'Cerveja',
     image: null,
     prices: [
       { label: 'Caixa', value: '151,00' },
@@ -50,7 +50,7 @@ export const products = [
     id: 'antarctica-600',
     name: 'Antarctica',
     volume: '600 ml',
-    category: 'Cervejas',
+    category: 'Cerveja',
     image: null,
     prices: [
       { label: 'Caixa', value: '144,00' },
@@ -61,7 +61,7 @@ export const products = [
     id: 'imperio-600',
     name: 'Império Lager',
     volume: '600 ml',
-    category: 'Cervejas',
+    category: 'Cerveja',
     image: null,
     prices: [
       { label: 'Gelada', value: '9,00' }
@@ -71,35 +71,11 @@ export const products = [
     id: 'a-outra-600',
     name: 'A Outra',
     volume: '600 ml',
-    category: 'Cervejas',
+    category: 'Cerveja',
     image: null,
     prices: [
       { label: 'Caixa', value: '85,00' },
       { label: 'Gelada', value: '5,00' }
-    ]
-  },
-
-  // 🍻 Cracudinhas
-  {
-    id: 'brahma-cracudinha',
-    name: 'Brahma Cracudinha',
-    volume: '300 ml',
-    category: 'Cervejas',
-    image: null,
-    prices: [
-      { label: 'Caixa', value: '58,00' },
-      { label: 'Gelada', value: '3,50' },
-      { label: 'Promoção', value: '3 por 10,00' }
-    ]
-  },
-  {
-    id: 'antarctica-cracudinha',
-    name: 'Antarctica Cracudinha',
-    volume: '300 ml',
-    category: 'Cervejas',
-    image: null,
-    prices: [
-      { label: 'Caixa', value: '58,00' }
     ]
   },
 
@@ -108,7 +84,7 @@ export const products = [
     id: 'coca-retornavel',
     name: 'Coca-Cola Retornável',
     volume: '2L (Retornável)',
-    category: 'Refrigerantes',
+    category: 'Refrigerante',
     image: null,
     prices: [
       { label: 'Caixa', value: '75,00' },
@@ -119,7 +95,7 @@ export const products = [
     id: 'coca-2l',
     name: 'Coca-Cola',
     volume: '2L',
-    category: 'Refrigerantes',
+    category: 'Refrigerante',
     image: null,
     prices: [
       { label: 'Fardo (6un)', value: '55,00' },
@@ -130,7 +106,7 @@ export const products = [
     id: 'guarana-2l',
     name: 'Guaraná Antarctica',
     volume: '2L',
-    category: 'Refrigerantes',
+    category: 'Refrigerante',
     image: null,
     prices: [
       { label: 'Fardo', value: '47,50' }
@@ -140,7 +116,7 @@ export const products = [
     id: 'fanta-laranja-2l',
     name: 'Fanta Laranja',
     volume: '2L',
-    category: 'Refrigerantes',
+    category: 'Refrigerante',
     image: null,
     prices: [
       { label: 'Fardo', value: '47,00' }
@@ -150,7 +126,7 @@ export const products = [
     id: 'fanta-uva-2l',
     name: 'Fanta Uva',
     volume: '2L',
-    category: 'Refrigerantes',
+    category: 'Refrigerante',
     image: null,
     prices: [
       { label: 'Fardo', value: '47,00' }
@@ -160,7 +136,7 @@ export const products = [
     id: 'sprite-2l',
     name: 'Sprite',
     volume: '2L',
-    category: 'Refrigerantes',
+    category: 'Refrigerante',
     image: null,
     prices: [
       { label: 'Fardo', value: '47,00' }
@@ -170,7 +146,7 @@ export const products = [
     id: 'mineirinho-2l',
     name: 'Mineirinho',
     volume: '2L',
-    category: 'Refrigerantes',
+    category: 'Refrigerante',
     image: null,
     prices: [
       { label: 'Fardo', value: '48,00' }
@@ -180,7 +156,7 @@ export const products = [
     id: 'pakera',
     name: 'Pakera (Guaraná e Sabores)',
     volume: '2L',
-    category: 'Refrigerantes',
+    category: 'Refrigerante',
     image: null,
     prices: [
       { label: 'Fardo (6un)', value: '24,50' },
@@ -191,7 +167,7 @@ export const products = [
     id: 'guaravita',
     name: 'Guaravita',
     volume: '290ml',
-    category: 'Refrigerantes',
+    category: 'Refrigerante',
     image: null,
     prices: [
       { label: 'Caixa (24un)', value: '24,00' }
@@ -203,7 +179,7 @@ export const products = [
     id: 'agua-sem-gas',
     name: 'Água sem gás',
     volume: '510 ml',
-    category: 'Águas',
+    category: 'Água',
     image: null,
     prices: [
       { label: 'Fardo (12un)', value: '13,00' }
@@ -213,7 +189,7 @@ export const products = [
     id: 'agua-com-gas',
     name: 'Água com gás',
     volume: '510 ml',
-    category: 'Águas',
+    category: 'Água',
     image: null,
     prices: [
       { label: 'Fardo (12un)', value: '22,50' }
@@ -223,7 +199,7 @@ export const products = [
     id: 'agua-galao',
     name: 'Água Galão (Líquido)',
     volume: '20L',
-    category: 'Águas',
+    category: 'Água',
     image: null,
     prices: [
       { label: 'Unidade', value: '10,00' }
@@ -238,7 +214,7 @@ export const products = [
     category: 'Gelo',
     image: null,
     prices: [
-      { label: 'Unidade', value: '15,00' }
+      { label: 'Unidade', value: '20,00' }
     ]
   },
   {
@@ -248,14 +224,36 @@ export const products = [
     category: 'Gelo',
     image: null,
     prices: [
-      { label: 'Unidade', value: '18,00' }
+      { label: 'Unidade', value: '20,00' }
     ]
   },
 
-  // 🍺 Long Neck / Latão
+  // 🍻 Long Neck
+  {
+    id: 'brahma-cracudinha',
+    name: 'Brahma',
+    volume: '300 ml',
+    category: 'Long Neck',
+    image: null,
+    prices: [
+      { label: 'Caixa', value: '58,00' },
+      { label: 'Gelada', value: '3,50' },
+      { label: 'Promoção', value: '3 por 10,00' }
+    ]
+  },
+  {
+    id: 'antarctica-cracudinha',
+    name: 'Antarctica',
+    volume: '300 ml',
+    category: 'Long Neck',
+    image: null,
+    prices: [
+      { label: 'Caixa', value: '58,00' }
+    ]
+  },
   {
     id: 'heineken-long',
-    name: 'Heineken Long Neck',
+    name: 'Heineken',
     volume: '330 ml',
     category: 'Long Neck',
     image: null,
@@ -265,19 +263,8 @@ export const products = [
     ]
   },
   {
-    id: 'heineken-latao',
-    name: 'Heineken Latão',
-    volume: '473 ml',
-    category: 'Latas',
-    image: null,
-    prices: [
-      { label: 'Pack (12un)', value: '70,00' },
-      { label: 'Gelado', value: '7,50' }
-    ]
-  },
-  {
     id: 'stella-long',
-    name: 'Stella Artois Long Neck',
+    name: 'Stella Artois',
     volume: '330 ml',
     category: 'Long Neck',
     image: null,
@@ -288,7 +275,7 @@ export const products = [
   },
   {
     id: 'budweiser-long',
-    name: 'Budweiser Long Neck',
+    name: 'Budweiser',
     volume: '330 ml',
     category: 'Long Neck',
     image: null,
@@ -299,18 +286,18 @@ export const products = [
   },
   {
     id: 'corona-long',
-    name: 'Corona Long Neck',
+    name: 'Corona',
     volume: '330 ml',
     category: 'Long Neck',
     image: null,
     prices: [
       { label: 'Pack (24un)', value: '148,00' },
-      { label: 'Gelada', value: '7,00' }
+      { label: 'Gelada', value: '7,50' }
     ]
   },
   {
     id: 'imperio-gold-long',
-    name: 'Império Gold Long Neck',
+    name: 'Império Gold',
     volume: '210 ml',
     category: 'Long Neck',
     image: null,
@@ -320,12 +307,23 @@ export const products = [
     ]
   },
 
-  // 🍺 Latão 473 ml
+  // 🍺 Latas
+  {
+    id: 'heineken-latao',
+    name: 'Heineken Latão',
+    volume: '473 ml',
+    category: 'Lata',
+    image: null,
+    prices: [
+      { label: 'Pack (12un)', value: '70,00' },
+      { label: 'Gelado', value: '7,50' }
+    ]
+  },
   {
     id: 'brahma-latao',
     name: 'Brahma Latão',
     volume: '473 ml',
-    category: 'Latas',
+    category: 'Lata',
     image: null,
     prices: [
       { label: 'Pack (12un)', value: '48,00' },
@@ -337,7 +335,7 @@ export const products = [
     id: 'antarctica-latao',
     name: 'Antarctica Latão',
     volume: '473 ml',
-    category: 'Latas',
+    category: 'Lata',
     image: null,
     prices: [
       { label: 'Pack (12un)', value: '48,00' },
@@ -349,7 +347,7 @@ export const products = [
     id: 'amstel-latao',
     name: 'Amstel Latão',
     volume: '473 ml',
-    category: 'Latas',
+    category: 'Lata',
     image: null,
     prices: [
       { label: 'Pack (12un)', value: '55,00' },
@@ -361,7 +359,7 @@ export const products = [
     id: 'imperio-latao',
     name: 'Império Latão',
     volume: '473 ml',
-    category: 'Latas',
+    category: 'Lata',
     image: null,
     prices: [
       { label: 'Pack (12un)', value: '46,00' },
@@ -373,10 +371,10 @@ export const products = [
     id: 'itaipava-latao',
     name: 'Itaipava Latão',
     volume: '473 ml',
-    category: 'Latas',
+    category: 'Lata',
     image: null,
     prices: [
-      { label: 'Pack (12un)', value: '40,00' },
+      { label: 'Pack (12un)', value: '41,50' },
       { label: 'Pack Gelado', value: '48,00' },
       { label: 'Gelada', value: '3,99' }
     ]
@@ -385,34 +383,22 @@ export const products = [
   // 🔥 Carvão
   {
     id: 'carvao-3kg',
-    name: 'Carvão 3kg',
-    volume: 'Saco 3kg',
+    name: 'Carvão Dois Irmãos',
+    volume: '3kg',
     category: 'Carvão',
     image: null,
     prices: [
-      { label: 'Unidade', value: '18,00' },
-      { label: '2 Unidades', value: '35,00' }
-    ]
-  },
-  {
-    id: 'carvao-5kg',
-    name: 'Carvão 5kg',
-    volume: 'Saco 5kg',
-    category: 'Carvão',
-    image: null,
-    prices: [
-      { label: 'Unidade', value: '25,00' }
+      { label: 'Unidade', value: '15,00' }
     ]
   }
 ];
 
 export const categories = [
-  "Todos",
-  "Cervejas",
-  "Refrigerantes",
-  "Águas",
+  "Cerveja",
+  "Refrigerante",
+  "Água",
   "Gelo",
   "Long Neck",
-  "Latas",
+  "Lata",
   "Carvão"
 ];

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Plus, Trash2, Lock, ShoppingCart } from 'lucide-react';
+import { Search, Plus, Trash2, Lock, ShoppingCart, X } from 'lucide-react';
 import { categories } from '../data/products';
 import { useCart } from '../context/CartContext';
 
@@ -7,6 +7,8 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
   const { setIsCartOpen, cart, lastAddedTime } = useCart();
   const cartItemCount = cart.reduce((a, b) => a + b.quantity, 0);
   const [isAnimating, setIsAnimating] = React.useState(false);
+  const scrollRef = React.useRef(null);
+  const itemsRef = React.useRef({});
 
   React.useEffect(() => {
     if (lastAddedTime > 0) {
@@ -15,6 +17,17 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
       return () => clearTimeout(timer);
     }
   }, [lastAddedTime]);
+
+  React.useEffect(() => {
+    const activeBtn = itemsRef.current[activeCategory];
+    if (activeBtn && scrollRef.current) {
+      activeBtn.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
+      });
+    }
+  }, [activeCategory]);
   return (
     <header className="navbar-container">
       <div className="container">
@@ -32,13 +45,22 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
           </div>
 
           <div className="search-bar">
-            <Search className="search-icon" size={24} strokeWidth={3} />
+            <Search className="search-icon" size={18} strokeWidth={3} />
             <input
               type="text"
-              placeholder="Buscar..."
+              placeholder="Buscar no catálogo..."
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
             />
+            {searchTerm && (
+              <button
+                className="clear-search"
+                onClick={() => onSearchChange('')}
+                aria-label="Limpar busca"
+              >
+                <X size={16} />
+              </button>
+            )}
           </div>
 
           <div className="actions-area">
@@ -78,10 +100,11 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
 
         {/* Categories Scroll */}
         <nav className="categories-nav">
-          <ul className="categories-list">
+          <ul className="categories-list" ref={scrollRef}>
             {categories.map((cat) => (
               <li key={cat}>
                 <button
+                  ref={el => itemsRef.current[cat] = el}
                   className={`cat-btn ${activeCategory === cat ? 'active' : ''}`}
                   onClick={() => onCategoryChange(cat)}
                 >
@@ -93,233 +116,6 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
         </nav>
       </div>
 
-      <style>{`
-        .navbar-container {
-          background-color: #050b14 !important;
-          color: white;
-          padding: 1rem 0 0 0;
-          border-bottom: 1px solid #1e293b;
-          position: sticky;
-          top: 0;
-          z-index: 100;
-        }
-
-        .top-bar {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          flex-wrap: wrap;
-          gap: 1rem;
-          margin-bottom: 1rem;
-        }
-
-        .logo {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
-
-        .logo-img {
-          height: 45px;
-          width: auto;
-          max-width: 100%;
-          object-fit: contain;
-        }
-
-        .navbar-logo a { display: block; }
-
-        .online-badge {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          margin-right: 0.5rem;
-          animation: fade-pulse 2s infinite ease-in-out;
-        }
-
-        .status-dot {
-          width: 8px;
-          height: 8px;
-          background-color: #22c55e;
-          border-radius: 50%;
-          box-shadow: 0 0 8px #22c55e;
-        }
-
-        .status-text {
-          color: #22c55e;
-          font-size: 0.75rem;
-          font-weight: 700;
-          letter-spacing: 0.05em;
-        }
-
-        @keyframes fade-pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-
-        .logo span {
-          font-size: 0.75rem;
-          opacity: 0.8;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-        }
-
-        .search-bar {
-          position: relative;
-          flex: 1;
-          max-width: 400px;
-        }
-
-        .search-bar input {
-          width: 100%;
-          padding: 0.75rem 1rem 0.75rem 3rem;
-          border-radius: 50px;
-          border: 1px solid #1e293b;
-          background: rgba(15, 23, 42, 0.6);
-          color: white;
-          font-family: inherit;
-          backdrop-filter: blur(5px);
-          transition: all 0.3s ease;
-        }
-
-        .search-bar input:focus {
-          background: rgba(15, 23, 42, 0.9);
-          border-color: var(--color-secondary);
-          box-shadow: 0 0 15px rgba(12, 170, 220, 0.15);
-          outline: none;
-        }
-
-        .search-icon {
-          position: absolute;
-          left: 1rem;
-          top: 50%;
-          transform: translateY(-50%);
-          color: #ffffff;
-          filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
-          pointer-events: none;
-          z-index: 10;
-        }
-
-        .actions-area {
-          display: flex;
-          gap: 0.75rem;
-          margin-left: auto;
-          align-items: center;
-        }
-
-        .categories-nav {
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-          background: rgba(0, 0, 0, 0.2);
-        }
-
-        .categories-list {
-          display: flex;
-          list-style: none;
-          overflow-x: auto;
-          padding: 0 1rem;
-          margin: 0;
-          gap: 0.5rem;
-          scrollbar-width: none;
-        }
-
-        .categories-list::-webkit-scrollbar {
-          display: none;
-        }
-
-        .cat-btn {
-          background: none;
-          border: none;
-          color: rgba(255, 255, 255, 0.7);
-          padding: 1rem 0.5rem;
-          font-size: 0.9rem;
-          font-weight: 500;
-          cursor: pointer;
-          white-space: nowrap;
-          position: relative;
-          transition: color 0.2s;
-        }
-
-        .cat-btn:hover { color: white; }
-
-        .cat-btn.active {
-          color: var(--color-accent);
-          font-weight: 700;
-        }
-
-        .cat-btn.active::after {
-          content: '';
-          position: absolute;
-          bottom: 0; left: 0; width: 100%; height: 3px;
-          background: var(--color-accent);
-          border-radius: 3px 3px 0 0;
-        }
-
-        .btn-trash {
-          background: #334155;
-          color: #94a3b8;
-          position: relative;
-          padding: 0.5rem 1rem;
-          border-radius: 8px;
-          border: none;
-          cursor: pointer;
-          display: flex; align-items: center; gap: 5px;
-        }
-        
-        .btn-trash:hover { background: #475569; color: white; }
-
-        .badge {
-          background: #ef4444; color: white; font-size: 0.75rem;
-          padding: 2px 6px; border-radius: 10px; font-weight: bold;
-        }
-
-        .btn-cart-nav {
-          background: transparent;
-          color: white;
-          border: none;
-          cursor: pointer;
-          position: relative;
-          padding: 8px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: background 0.2s;
-        }
-        .btn-cart-nav:hover {
-          background: rgba(255,255,255,0.1);
-          color: var(--color-primary);
-        }
-        
-        .nav-cart-badge {
-          position: absolute;
-          top: 0;
-          right: 0;
-          background: #ef4444;
-          color: white;
-          font-size: 0.65rem;
-          font-weight: 800;
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: 2px solid #050b14;
-        }
-
-        .bump {
-          animation: bump 0.3s ease-out;
-        }
-
-        @keyframes bump {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.4); }
-          100% { transform: scale(1); }
-        }
-
-        @media (max-width: 480px) {
-          .btn-text { display: none; }
-        }
-      `}</style>
     </header>
   );
 }
