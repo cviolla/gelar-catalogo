@@ -473,6 +473,11 @@ function App() {
                                     </div>
                                 ))}
                             </div>
+
+                            <div className="expanded-footer">
+                                <img src="/logo.png" alt="Gelar" className="expanded-logo" />
+                                <span className="expanded-footer-text">Catálogo Premium Versão 2026</span>
+                            </div>
                         </div>
                     </div>
                 </div>
