@@ -485,13 +485,13 @@ function App() {
 
             <footer className="footer">
                 <div className="container">
-                    <p>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por <a href="https://wa.me/5521965226788" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none' }}>@cviolla</a></p>
+                    <p className="footer-copyright">© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por <a href="https://wa.me/5521965226788" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none' }}>@cviolla</a></p>
 
                     {isAuthenticated && (
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', marginTop: '1rem' }}>
                             <button onClick={handleLogout} className="btn-logout-footer" style={{ marginTop: 0 }}>Sair do Sistema</button>
                             <span style={{ color: '#334155' }}>|</span>
-                            <button onClick={() => setShowOrderHistory(true)} className="btn-logout-footer" style={{ color: '#38bdf8', marginTop: 0 }}>📄 Histórico de Pedidos</button>
+                            <button onClick={() => setShowOrderHistory(true)} className="btn-logout-footer" style={{ color: '#38bdf8', marginTop: 0 }}>Histórico de Pedidos</button>
 
                         </div>
                     )}

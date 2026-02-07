@@ -263,6 +263,12 @@ label {
   margin-top: auto;
 }
 
+.footer-copyright {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  margin-bottom: 0.5rem;
+}
+
 .btn-logout-footer {
   background: none;
   border: none;
