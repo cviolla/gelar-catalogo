@@ -296,7 +296,7 @@ export default function ProductCard({ product, onUpdate, onDelete }) {
         }
 
         .card-image-area {
-          height: 140px; /* Reduced form 200px for compactness */
+          height: 120px; /* Mais compacto */
           background: #020617; /* Darkest layer */
           position: relative;
           display: flex;
@@ -313,7 +313,7 @@ export default function ProductCard({ product, onUpdate, onDelete }) {
           /* Truque para suavizar bordas brancas de JPGs */
           mask-image: radial-gradient(circle at center, black 60%, transparent 95%);
           -webkit-mask-image: radial-gradient(circle at center, black 60%, transparent 95%);
-          padding: 1rem;
+          padding: 0.5rem;
         }
 
         .placeholder-img {
@@ -356,7 +356,7 @@ export default function ProductCard({ product, onUpdate, onDelete }) {
         }
 
         .card-content {
-          padding: 0.75rem; /* Tighter padding */
+          padding: 0.75rem;
           flex: 1;
           display: flex;
           flex-direction: column;
@@ -371,26 +371,26 @@ export default function ProductCard({ product, onUpdate, onDelete }) {
         }
 
         .card-header h3 {
-          font-size: 1rem; /* Slightly smaller for density */
-          color: var(--color-primary);
-          margin: 0;
+          font-size: 1rem;
+          font-weight: 700;
+          color: var(--text-primary);
+          margin-bottom: 0.25rem;
           line-height: 1.2;
-          font-weight: 600;
         }
 
         .prices-list {
           display: flex;
           flex-direction: column;
-          gap: 0.25rem; /* Tighter gaps */
+          gap: 0.4rem;
         }
 
         .price-row {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          font-size: 0.9rem; /* Compact font */
-          border-bottom: 1px dashed #27272a; /* Darker dash */
-          padding-bottom: 2px;
+          font-size: 0.85rem;
+          padding-bottom: 0.25rem;
+          border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
         }
 
         .price-row:last-child {
