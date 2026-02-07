@@ -187,7 +187,7 @@ export default function ProductCard({ product, onUpdate, onDelete, readOnly }) {
             <h3>{editedProduct.name}</h3>
           )}
 
-          {!readOnly && (
+          {!readOnly && !isEditing && (
             <div className="card-actions-top">
               <button
                 className="btn-icon btn-delete"

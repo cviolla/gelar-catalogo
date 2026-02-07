@@ -823,12 +823,15 @@ label {
   display: flex;
   gap: 0.4rem;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .card-actions-edit .btn {
-  padding: 0.5rem 0.25rem;
-  font-size: 0.8rem;
-  gap: 0.25rem;
+  padding: 0.4rem 0.2rem;
+  font-size: 0.75rem;
+  gap: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .flex-1 {
@@ -839,21 +842,23 @@ label {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--color-primary);
   color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 6px 8px;
+  border-radius: 6px;
   width: 100%;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
+  margin-bottom: 2px;
 }
 
 .input-mini {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--color-primary);
   color: white;
-  width: 60px;
+  width: 70px;
   text-align: center;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   border-radius: 4px;
+  padding: 2px;
 }
 
 .input-select {
@@ -867,12 +872,12 @@ label {
 
 .input-label,
 .input-value {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: white;
-  padding: 4px 8px;
+  padding: 6px 6px;
   border-radius: 4px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   flex: 1;
   min-width: 0;
 }
@@ -884,29 +889,32 @@ label {
 }
 
 .btn-add-price {
-  background: rgba(56, 189, 248, 0.1);
+  background: rgba(56, 189, 248, 0.05);
   color: var(--color-primary);
   border: 1px dashed var(--color-primary);
-  padding: 8px;
-  border-radius: 8px;
+  padding: 6px;
+  border-radius: 6px;
   width: 100%;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
 }
 
 .btn-remove {
-  background: rgba(239, 68, 68, 0.1);
+  background: rgba(239, 68, 68, 0.15);
   color: #ef4444;
   border: none;
-  padding: 6px;
+  padding: 4px;
   border-radius: 4px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-header {
