@@ -58,8 +58,8 @@ function App() {
   };
 
   useEffect(() => {
-    if (isAuthenticated) fetchProducts();
-  }, [isAuthenticated]); // Só carrega se estiver logado
+    fetchProducts();
+  }, []); // Carrega sempre ao iniciar (Público)
 
   // 2. Create Product
   const handleAddProduct = async () => {
