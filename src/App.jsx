@@ -188,6 +188,47 @@ function App() {
     }
   });
 
+  // --- MIGRATION TOOL (Temporary) ---
+  const handleMigrateCategories = async () => {
+    if (!confirm("Isso vai atualizar TODOS os produtos no banco para as novas categorias (Long Neck / Latas). Continuar?")) return;
+
+    try {
+      setLoading(true);
+      const { data: allProds } = await supabase.from('products').select('*');
+      let updatedCount = 0;
+
+      for (const p of allProds) {
+        let newCat = p.category;
+
+        // Regra 1: Latão 473ml -> Latas
+        if (p.category === 'Latão 473ml') newCat = 'Latas';
+
+        // Regra 2: Long Neck / Latão -> Separar
+        if (p.category === 'Long Neck / Latão') {
+          const name = (p.name || '').toLowerCase();
+          const vol = (p.volume || '').toLowerCase();
+
+          if (name.includes('latão') || vol.includes('473') || vol.includes('473ml') || vol.includes('lata')) {
+            newCat = 'Latas';
+          } else {
+            newCat = 'Long Neck';
+          }
+        }
+
+        if (newCat !== p.category) {
+          await supabase.from('products').update({ category: newCat }).eq('id', p.id);
+          updatedCount++;
+        }
+      }
+      alert(`Sucesso! ${updatedCount} produtos foram migrados.`);
+      fetchProducts();
+    } catch (err) {
+      alert("Erro: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // --- RENDER: LOGIN SCREEN ---
   if (!isAuthenticated) {
     return (
@@ -352,7 +393,11 @@ function App() {
       <footer className="footer">
         <div className="container">
           <p>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por @cviolla</p>
-          <button onClick={handleLogout} className="btn-logout-footer">Sair do Sistema</button>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', alignItems: 'center', marginTop: '1rem' }}>
+            <button onClick={handleLogout} className="btn-logout-footer">Sair do Sistema</button>
+            <span style={{ color: '#334155' }}>|</span>
+            <button onClick={handleMigrateCategories} className="btn-logout-footer" style={{ color: '#f59e0b' }}>🛠️ Migrar Categorias</button>
+          </div>
         </div>
       </footer>
 
