@@ -1154,6 +1154,53 @@ label {
   display: inline-block;
 }
 
+/* Quantity Control in Expanded Modal */
+.quantity-control-expanded {
+  display: flex;
+  align-items: center;
+  background: rgba(37, 99, 235, 0.1);
+  border: 1px solid rgba(37, 99, 235, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+  height: 32px;
+}
+
+.quantity-control-expanded button {
+  background: var(--color-primary);
+  color: #000;
+  border: none;
+  width: 28px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 1.1rem;
+  transition: all 0.2s;
+}
+
+.quantity-control-expanded button:hover {
+  background: white;
+}
+
+.quantity-control-expanded .qty-value {
+  padding: 0 0.75rem;
+  color: white;
+  font-weight: 800;
+  font-size: 0.9rem;
+  min-width: 35px;
+  text-align: center;
+}
+
+.btn-qty-minus {
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.btn-qty-plus {
+  border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
 /* Edit Mode Styling */
 .input-mini,
 .input-title,

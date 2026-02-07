@@ -10,7 +10,7 @@ import { Info, RotateCcw, Trash2, X, Database, Lock, Plus } from 'lucide-react';
 import { normalizeText, NAVBAR_HEIGHT_DESKTOP, NAVBAR_HEIGHT_MOBILE } from './utils/helpers';
 
 function App() {
-    const { addToCart } = useCart();
+    const { cart, addToCart, updateQuantity } = useCart();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [showLogin, setShowLogin] = useState(false); // Modal de Login
     const [passwordInput, setPasswordInput] = useState("");
@@ -466,12 +466,39 @@ function App() {
                                                     : `R$ ${String(price.value).replace(/^R\$\s*/, '')}`
                                                 }
                                             </span>
-                                            <button
-                                                className="btn-add-cart"
-                                                onClick={() => addToCart(expandedProduct, price)}
-                                            >
-                                                +
-                                            </button>
+                                            {(() => {
+                                                const cartItemId = `${expandedProduct.id}-${price.label}`;
+                                                const itemInCart = cart.find(item => item.cartItemId === cartItemId);
+
+                                                if (itemInCart) {
+                                                    return (
+                                                        <div className="quantity-control-expanded">
+                                                            <button
+                                                                className="btn-qty-minus"
+                                                                onClick={() => updateQuantity(cartItemId, itemInCart.quantity - 1)}
+                                                            >
+                                                                -
+                                                            </button>
+                                                            <span className="qty-value">{itemInCart.quantity}</span>
+                                                            <button
+                                                                className="btn-qty-plus"
+                                                                onClick={() => addToCart(expandedProduct, price)}
+                                                            >
+                                                                +
+                                                            </button>
+                                                        </div>
+                                                    );
+                                                }
+
+                                                return (
+                                                    <button
+                                                        className="btn-add-cart"
+                                                        onClick={() => addToCart(expandedProduct, price)}
+                                                    >
+                                                        +
+                                                    </button>
+                                                );
+                                            })()}
                                         </div>
                                     </div>
                                 ))}
