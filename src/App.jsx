@@ -428,61 +428,57 @@ function App() {
                     className="product-modal-overlay"
                     onClick={() => setExpandedProduct(null)}
                 >
-                    <div className="expanded-card" onClick={(e) => e.stopPropagation()}>
-                        <button className="btn-close-expanded" onClick={() => setExpandedProduct(null)}>
-                            <X size={24} />
-                        </button>
-
-                        <div className="expanded-image-area">
+                    <div className="product-card expanded-card" onClick={(e) => e.stopPropagation()}>
+                        <div className="card-image-area">
                             <img
                                 src={expandedProduct.image_url || expandedProduct.image}
                                 alt={expandedProduct.name}
-                                className="expanded-img"
                                 onError={(e) => {
                                     e.target.onerror = null;
-                                    e.target.src = 'https://placehold.co/800x600?text=Sem+Imagem';
+                                    e.target.src = 'https://placehold.co/400x300?text=Sem+Imagem';
                                 }}
                             />
+                            <div className="volume-badge">{expandedProduct.volume}</div>
+                            <button className="btn-close-modal" onClick={() => setExpandedProduct(null)}>
+                                <X size={20} />
+                            </button>
                         </div>
 
-                        <div className="expanded-content">
-                            <div className="expanded-header">
-                                <span className="expanded-category">{expandedProduct.category}</span>
-                                <h2 className="expanded-title">{expandedProduct.name}</h2>
-                                <span style={{ color: '#64748b' }}>{expandedProduct.volume}</span>
+                        <div className="card-content">
+                            <div className="card-header">
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <span className="category-badge" style={{ alignSelf: 'flex-start', marginBottom: '4px' }}>
+                                        {expandedProduct.category}
+                                    </span>
+                                    <h3>{expandedProduct.name}</h3>
+                                </div>
                             </div>
 
-                            <div className="expanded-prices">
+                            <div className="prices-list">
                                 {expandedProduct.prices?.map((price, idx) => (
-                                    <div key={idx} className="expanded-price-row">
-                                        <div>
-                                            <div className="expanded-price-label">{price.label}</div>
-                                            <div className="expanded-price-value">
+                                    <div key={idx} className="price-row">
+                                        <span className="price-label">{price.label}</span>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                                            <span className="price-value">
                                                 {/[a-zA-Z]/.test(String(price.value).replace(/^R\$\s*/, ''))
                                                     ? price.value
                                                     : `R$ ${String(price.value).replace(/^R\$\s*/, '')}`
                                                 }
-                                            </div>
+                                            </span>
+                                            <button
+                                                className="btn-add-cart"
+                                                onClick={() => addToCart(expandedProduct, price)}
+                                            >
+                                                +
+                                            </button>
                                         </div>
-                                        <button
-                                            className="btn-add-expanded"
-                                            onClick={() => addToCart(expandedProduct, price)}
-                                        >
-                                            <Plus size={24} />
-                                        </button>
                                     </div>
                                 ))}
-                            </div>
-
-                            <div className="expanded-footer">
-                                <img src="/logo.png" alt="Gelar" className="expanded-logo" />
-                                <span className="expanded-footer-text">Catálogo Premium Versão 2026</span>
                             </div>
                         </div>
                     </div>
                 </div>
             )}
-
 
             <CartComponent />
 
