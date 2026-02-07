@@ -1,14 +1,14 @@
-import React from 'react';
-import { Search, ShoppingBag, Plus, Trash2 } from 'lucide-react';
+import { Search, ShoppingBag, Plus, Trash2, Lock, User } from 'lucide-react';
 import { categories } from '../data/products';
 
-export default function Navbar({ activeCategory, onCategoryChange, searchTerm, onSearchChange, onAddProduct, trashCount, onOpenTrash }) {
+export default function Navbar({ activeCategory, onCategoryChange, searchTerm, onSearchChange, onAddProduct, trashCount, onOpenTrash, isAuthenticated, onLoginClick }) {
   return (
     <header className="navbar-container">
       <div className="container">
         {/* Top Bar with Logo & Search */}
         <div className="top-bar">
           <div className="logo">
+            {/* ...logo mantido pelo contexto... */}
             <div className="navbar-logo">
               <a href="/" title="Início">
                 <img src="/logo.png" alt="Gelar Logo" className="logo-img" onError={(e) => e.target.style.display = 'none'} />
@@ -20,6 +20,7 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
           </div>
 
           <div className="search-bar">
+            {/* ...search mantido... */}
             <Search className="search-icon" size={24} strokeWidth={3} />
             <input
               type="text"
@@ -30,20 +31,28 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
           </div>
 
           <div className="actions-area">
-            {/* Online Indicator */}
+            {/* Status mantido */}
             <div className="online-badge">
               <div className="status-dot"></div>
-              <span className="status-text">ONLINE</span>
+              <span className="status-text">{isAuthenticated ? 'ADMIN' : 'ONLINE'}</span>
             </div>
 
-            {trashCount > 0 && (
-              <button className="btn btn-secondary btn-trash" onClick={onOpenTrash} title="Lixeira">
-                <Trash2 size={20} /> <span className="badge">{trashCount}</span>
+            {isAuthenticated ? (
+              <>
+                {trashCount > 0 && (
+                  <button className="btn btn-secondary btn-trash" onClick={onOpenTrash} title="Lixeira">
+                    <Trash2 size={20} /> <span className="badge">{trashCount}</span>
+                  </button>
+                )}
+                <button className="btn btn-primary" onClick={onAddProduct}>
+                  <Plus size={20} /> <span className="btn-text">Novo</span>
+                </button>
+              </>
+            ) : (
+              <button className="btn btn-secondary" onClick={onLoginClick} title="Área Restrita" style={{ background: 'rgba(255,255,255,0.05)', color: '#64748b' }}>
+                <Lock size={18} />
               </button>
             )}
-            <button className="btn btn-primary" onClick={onAddProduct}>
-              <Plus size={20} /> <span className="btn-text">Novo</span>
-            </button>
           </div>
         </div>
 

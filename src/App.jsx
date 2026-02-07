@@ -229,105 +229,38 @@ function App() {
     }
   };
 
-  // --- RENDER: LOGIN SCREEN ---
-  if (!isAuthenticated) {
-    return (
-      <div className="login-screen">
-        <div className="login-card">
-          <div className="login-logo" style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem' }}>
-            <img src="/logo.png" alt="Gelar" style={{ height: 38 }} onError={(e) => e.target.style.display = 'none'} />
-          </div>
-          <p>Acesso Restrito</p>
-          <form onSubmit={handleLogin}>
-            <div className="input-group">
-              <Lock size={18} className="input-icon" />
-              <input
-                type="password"
-                placeholder="Digite a senha..."
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                className={loginError ? 'error' : ''}
-                autoFocus
-              />
-            </div>
-            {loginError && <span className="error-msg">Senha incorreta</span>}
-            <button type="submit" className="btn btn-primary full-width">ENTRAR</button>
-          </form>
-        </div>
-        <style>{`
-          .login-screen {
-            height: 100vh;
-            width: 100vw;
-            background: #020617;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            background-image: radial-gradient(circle at 50% 10%, #1e293b 0%, #020617 100%);
-          }
-          .login-card {
-            background: rgba(15, 23, 42, 0.6); 
-            backdrop-filter: blur(12px);
-            padding: 1.25rem; /* Ultra Compact */
-            border-radius: 12px;
-            width: 100%;
-            max-width: 280px; /* Slimmer */
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-          }
-          .login-logo { margin-bottom: 0.75rem !important; }
-          
-          .login-card p { 
-            color: #64748b; 
-            margin-bottom: 1rem; 
-            font-size: 0.7rem; 
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            font-weight: 600;
-          }
-          
-          .input-group { position: relative; margin-bottom: 0.5rem; }
-          .input-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #475569; width: 14px; height: 14px; }
-          
-          .login-card input {
-            width: 100%;
-            padding: 8px 8px 8px 32px; /* Super compact */
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid #334155;
-            border-radius: 6px;
-            color: white;
-            font-size: 0.85rem;
-            outline: none;
-            transition: all 0.2s;
-          }
-          .login-card input:focus { 
-            border-color: #38bdf8; 
-            background: rgba(30, 41, 59, 0.9);
-            box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.3); 
-          }
-          
-          .full-width { 
-            width: 100%; 
-            padding: 8px; 
-            margin-top: 0.25rem; 
-            font-size: 0.8rem;
-            letter-spacing: 0.05em;
-            border-radius: 6px;
-          }
-          .error-msg { color: #ef4444; font-size: 0.7rem; margin-bottom: 0.25rem; }          @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-          }
-        `}</style>
-      </div>
-    );
-  }
-
   // --- RENDER: APP ---
   return (
     <div className="app-container">
+      {/* LOGIN OVERLAY */}
+      {showLogin && (
+        <div className="login-overlay">
+          <div className="login-card">
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+              <div className="navbar-logo">
+                <img src="/logo.png" style={{ height: '38px', width: 'auto' }} alt="Gelar" />
+              </div>
+            </div>
+            <p>ÁREA RESTRITA</p>
+            <form onSubmit={handleLogin}>
+              <div className="input-group">
+                <Lock className="input-icon" size={16} />
+                <input
+                  type="password"
+                  placeholder="Senha de Acesso"
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  autoFocus
+                />
+              </div>
+              {loginError && <div className="error-msg">Senha incorreta</div>}
+              <button type="submit" className="btn-primary full-width">ENTRAR</button>
+              <button type="button" className="btn-text full-width" onClick={() => setShowLogin(false)} style={{ marginTop: '0.5rem', color: '#94a3b8' }}>Cancelar</button>
+            </form>
+          </div>
+        </div>
+      )}
+
       <Navbar
         activeCategory={activeCategory}
         onCategoryChange={(cat) => { setActiveCategory(cat); setShowTrash(false); }}
@@ -336,6 +269,8 @@ function App() {
         onAddProduct={handleAddProduct}
         trashCount={trash.length}
         onOpenTrash={() => setShowTrash(!showTrash)}
+        isAuthenticated={isAuthenticated}
+        onLoginClick={() => setShowLogin(true)}
       />
 
       <main className="container main-content">
@@ -384,6 +319,7 @@ function App() {
                 product={product}
                 onUpdate={handleUpdateProduct}
                 onDelete={handleDeleteProduct}
+                readOnly={!isAuthenticated}
               />
             ))}
           </div>
@@ -393,11 +329,14 @@ function App() {
       <footer className="footer">
         <div className="container">
           <p>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por <a href="https://wa.me/5521965226788" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none' }}>@cviolla</a></p>
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', alignItems: 'center', marginTop: '1rem' }}>
-            <button onClick={handleLogout} className="btn-logout-footer">Sair do Sistema</button>
-            <span style={{ color: '#334155' }}>|</span>
-            <button onClick={handleMigrateCategories} className="btn-logout-footer" style={{ color: '#f59e0b' }}>🛠️ Migrar Categorias</button>
-          </div>
+
+          {isAuthenticated && (
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', alignItems: 'center', marginTop: '1rem' }}>
+              <button onClick={handleLogout} className="btn-logout-footer">Sair do Sistema</button>
+              <span style={{ color: '#334155' }}>|</span>
+              <button onClick={handleMigrateCategories} className="btn-logout-footer" style={{ color: '#f59e0b' }}>🛠️ Migrar Categorias</button>
+            </div>
+          )}
         </div>
       </footer>
 
@@ -419,10 +358,33 @@ function App() {
         /* Trash Styles */
         .trash-view { background: #18181b; padding: 2rem; border-radius: 12px; border: 1px solid #334155; }
         .trash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .trash-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #27272a; margin-bottom: 0.5rem; border-radius: 8px; }
-        .trash-actions { display: flex; gap: 0.5rem; }
-        .btn-restore { background: #0ea5e9; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; }
-        .btn-permanent-delete { background: #ef4444; color: white; border: none; padding: 6px; border-radius: 4px; cursor: pointer; }
+        /* ... outros styles trash ... */
+
+        /* LOGIN OVERLAY STYLES */
+        .login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .login-card {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 1.5rem; border-radius: 12px;
+            width: 90%; max-width: 320px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        .login-card p { color: #94a3b8; font-size: 0.8rem; margin-bottom: 1rem; letter-spacing: 1px; font-weight: 600; }
+        .input-group { position: relative; margin-bottom: 0.75rem; }
+        .input-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #64748b; }
+        .login-card input {
+            width: 100%; padding: 10px 10px 10px 36px;
+            background: #0f172a; border: 1px solid #334155; border-radius: 6px;
+            color: white; outline: none;
+        }
+        .login-card input:focus { border-color: #38bdf8; }
+        .btn-text { background: none; border: none; font-size: 0.85rem; cursor: pointer; }
       `}</style>
     </div>
   );

@@ -200,24 +200,26 @@ export default function ProductCard({ product, onUpdate, onDelete }) {
             <h3>{editedProduct.name}</h3>
           )}
 
-          <div className="card-actions-top">
-            <button
-              className="btn-icon btn-delete"
-              onClick={() => {
-                if (window.confirm('Mover para lixeira?')) onDelete(product.id);
-              }}
-              title="Excluir"
-            >
-              <Trash2 size={18} />
-            </button>
-            <button
-              className="btn-icon"
-              onClick={isEditing ? handleCancel : () => setIsEditing(true)}
-              title={isEditing ? "Cancelar" : "Editar"}
-            >
-              {isEditing ? <X size={20} /> : <Edit2 size={18} />}
-            </button>
-          </div>
+          {!readOnly && (
+            <div className="card-actions-top">
+              <button
+                className="btn-icon btn-delete"
+                onClick={() => {
+                  if (window.confirm('Mover para lixeira?')) onDelete(product.id);
+                }}
+                title="Excluir"
+              >
+                <Trash2 size={18} />
+              </button>
+              <button
+                className="btn-icon"
+                onClick={isEditing ? handleCancel : () => setIsEditing(true)}
+                title={isEditing ? "Cancelar" : "Editar"}
+              >
+                {isEditing ? <X size={20} /> : <Edit2 size={18} />}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Prices List - Sorted Low to High on View */}
