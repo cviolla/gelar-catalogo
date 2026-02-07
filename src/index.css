@@ -266,7 +266,7 @@ label {
 .footer-copyright {
   font-size: 0.75rem;
   opacity: 0.6;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
 }
 
 .btn-logout-footer {
