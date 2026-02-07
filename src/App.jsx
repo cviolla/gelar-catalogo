@@ -392,7 +392,7 @@ function App() {
 
       <footer className="footer">
         <div className="container">
-          <p>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por @cviolla</p>
+          <p>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por <a href="https://wa.me/5521965226788" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none' }}>@cviolla</a></p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', alignItems: 'center', marginTop: '1rem' }}>
             <button onClick={handleLogout} className="btn-logout-footer">Sair do Sistema</button>
             <span style={{ color: '#334155' }}>|</span>

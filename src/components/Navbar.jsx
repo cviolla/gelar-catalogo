@@ -9,8 +9,10 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
         {/* Top Bar with Logo & Search */}
         <div className="top-bar">
           <div className="logo">
-            <div className="logo-wrapper">
-              <img src="/logo.png" alt="Gelar Logo" className="logo-img" onError={(e) => e.target.style.display = 'none'} />
+            <div className="navbar-logo">
+              <a href="/" title="Início">
+                <img src="/logo.png" alt="Gelar Logo" className="logo-img" onError={(e) => e.target.style.display = 'none'} />
+              </a>
             </div>
             <div>
               <span>Depósito de Bebidas</span>
