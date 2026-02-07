@@ -1205,9 +1205,20 @@ label {
 
 .expanded-card {
   width: 100%;
-  max-width: 320px;
+  max-width: 340px;
   animation: zoomFocus 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.expanded-card .card-image-area {
+  height: 220px;
+}
+
+.expanded-card .product-img {
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+  padding: 1rem;
 }
 
 @keyframes zoomFocus {

@@ -433,6 +433,7 @@ function App() {
                             <img
                                 src={expandedProduct.image_url || expandedProduct.image}
                                 alt={expandedProduct.name}
+                                className="product-img"
                                 onError={(e) => {
                                     e.target.onerror = null;
                                     e.target.src = 'https://placehold.co/400x300?text=Sem+Imagem';
