@@ -3,7 +3,7 @@ import { Edit2, Save, X, Upload, Image as ImageIcon, Plus, Trash2, RotateCcw, Lo
 import { categories } from '../data/products';
 import { supabase } from '../lib/supabase'; // Import Supabase Client
 
-export default function ProductCard({ product, onUpdate, onDelete }) {
+export default function ProductCard({ product, onUpdate, onDelete, readOnly }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedProduct, setEditedProduct] = useState({ ...product });
   const [uploading, setUploading] = useState(false); // Estado de load
