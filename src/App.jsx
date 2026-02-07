@@ -281,15 +281,17 @@ function App() {
                 {showLogin && (
                     <div className="login-overlay">
                         <div className="login-card">
-                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
-                                <div className="navbar-logo">
-                                    <img src="/logo.png" style={{ height: '38px', width: 'auto' }} alt="Gelar" />
-                                </div>
+                            <div className="navbar-logo">
+                                <img src="/logo.png" style={{ height: '42px', width: 'auto' }} alt="Gelar" />
                             </div>
-                            <p>ÁREA RESTRITA</p>
+
+                            <div className="login-header-text">
+                                <h2>Bem-vindo</h2>
+                                <p>ÁREA RESTRITA</p>
+                            </div>
+
                             <form onSubmit={handleLogin}>
                                 <div className="input-group">
-                                    <Lock className="input-icon" size={16} />
                                     <input
                                         type="password"
                                         placeholder="Senha de Acesso"
@@ -297,10 +299,27 @@ function App() {
                                         onChange={(e) => setPasswordInput(e.target.value)}
                                         autoFocus
                                     />
+                                    <Lock className="input-icon" size={18} />
                                 </div>
-                                {loginError && <div className="error-msg">Senha incorreta</div>}
-                                <button type="submit" className="btn-primary full-width">ENTRAR</button>
-                                <button type="button" className="btn-text full-width" onClick={() => setShowLogin(false)} style={{ marginTop: '0.5rem', color: '#94a3b8' }}>Cancelar</button>
+
+                                {loginError && (
+                                    <div className="error-msg">
+                                        <Info size={14} /> Senha incorreta
+                                    </div>
+                                )}
+
+                                <div className="login-actions">
+                                    <button type="submit" className="btn-login-submit">
+                                        ENTRAR
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn-login-cancel"
+                                        onClick={() => setShowLogin(false)}
+                                    >
+                                        Cancelar
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>
