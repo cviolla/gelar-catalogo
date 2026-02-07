@@ -224,23 +224,23 @@ export default function ProductCard({ product, onUpdate, onDelete }) {
 
         {/* Prices List - Sorted Low to High on View */}
         <div className="prices-list">
-          {(isEditing ? editedProduct.prices : [...editedProduct.prices].sort((a, b) => {
+          {(isEditing ? (editedProduct.prices || []) : [...(editedProduct.prices || [])].sort((a, b) => {
             // Helper to parse "95,00" -> 95.00
-            const parseVal = (v) => parseFloat(v?.replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
-            return parseVal(a.value) - parseVal(b.value);
+            const parseVal = (v) => parseFloat(String(v?.value || '0').replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
+            return parseVal(a) - parseVal(b);
           })).map((price, index) => (
             <div key={index} className="price-row">
               {isEditing ? (
                 <>
                   <input
                     className="input-label"
-                    value={price.label}
+                    value={price.label || ''}
                     onChange={(e) => handlePriceChange(index, 'label', e.target.value)}
                     placeholder="Tipo (ex: Caixa)"
                   />
                   <input
                     className="input-value"
-                    value={price.value}
+                    value={price.value || ''}
                     onChange={(e) => handlePriceChange(index, 'value', e.target.value)}
                     placeholder="Valor"
                   />
@@ -251,7 +251,7 @@ export default function ProductCard({ product, onUpdate, onDelete }) {
               ) : (
                 <>
                   <span className="price-label">{price.label}:</span>
-                  <span className="price-value">R$ {price.value.replace('R$ ', '')}</span>
+                  <span className="price-value">R$ {String(price.value || '0').replace('R$ ', '')}</span>
                 </>
               )}
             </div>
