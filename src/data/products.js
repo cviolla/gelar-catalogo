@@ -233,7 +233,7 @@ export const products = [
     id: 'brahma-cracudinha',
     name: 'Brahma',
     volume: '300 ml',
-    category: 'Long Neck',
+    category: 'Cracudinha',
     image: null,
     prices: [
       { label: 'Caixa', value: '58,00' },
@@ -245,7 +245,7 @@ export const products = [
     id: 'antarctica-cracudinha',
     name: 'Antarctica',
     volume: '300 ml',
-    category: 'Long Neck',
+    category: 'Cracudinha',
     image: null,
     prices: [
       { label: 'Caixa', value: '58,00' }
@@ -395,6 +395,7 @@ export const products = [
 
 export const categories = [
   "Cerveja",
+  "Cracudinha",
   "Refrigerante",
   "Água",
   "Gelo",
