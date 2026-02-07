@@ -404,7 +404,7 @@ function App() {
       <style>{`
         .app-container { min-height: 100vh; display: flex; flex-direction: column; }
         .main-content { flex: 1; padding-top: 2rem; padding-bottom: 4rem; }
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; }
         
         .loading { color: white; text-align: center; padding: 2rem; }
         .empty-db-state {

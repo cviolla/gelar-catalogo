@@ -220,9 +220,13 @@ export default function ProductCard({ product, onUpdate, onDelete }) {
           </div>
         </div>
 
-        {/* Prices List */}
+        {/* Prices List - Sorted Low to High on View */}
         <div className="prices-list">
-          {editedProduct.prices.map((price, index) => (
+          {(isEditing ? editedProduct.prices : [...editedProduct.prices].sort((a, b) => {
+            // Helper to parse "95,00" -> 95.00
+            const parseVal = (v) => parseFloat(v?.replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
+            return parseVal(a.value) - parseVal(b.value);
+          })).map((price, index) => (
             <div key={index} className="price-row">
               {isEditing ? (
                 <>
