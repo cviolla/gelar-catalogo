@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
-import { X, Trash2, Home, User, Phone, MapPin, CreditCard, ShoppingCart, ArrowLeft } from 'lucide-react';
+import { X, Trash2, Home, User, Phone, MapPin, CreditCard, ShoppingCart, ArrowLeft, Send, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 export default function CartComponent() {
@@ -52,10 +52,26 @@ export default function CartComponent() {
         const encodedMessage = encodeURIComponent(message);
         const phoneNumber = "5521965226788"; // Replace with actual number if needed, currently using developer's number? Or should stick to "depósito" number. The footer mentions @cviolla but deposit might be different. I will use a placeholder or ask. Wait user said "whatsapp do depósito". I'll use a placeholder for now or the one in the footer.
 
-        // Using the number from the footer for now as it seems to be the main contact.
-        // Footer says: 5521965226788
+        // SAVE ORDER TO SUPABASE
+        try {
+            const { error } = await supabase.from('orders').insert([{
+                customer_name: customer.name,
+                customer_phone: formattedPhone,
+                customer_address: customer.address,
+                customer_neighborhood: customer.neighborhood,
+                customer_reference: customer.reference,
+                payment_method: customer.payment,
+                items: cart, // Supabase stores JSON automatically
+                total_value: cartTotal
+            }]);
 
-        // Optional: Save Order to Supabase (if we had an 'orders' table, but instructions didn't explicitly ask for DB persistence of orders, just WhatsApp. I'll stick to WhatsApp for now to keep it simple as requested).
+            if (error) {
+                console.error("Error saving order:", error);
+                // We don't block the user, just log it. The main flow is WhatsApp.
+            }
+        } catch (err) {
+            console.error("Unexpected error saving order:", err);
+        }
 
         const waLink = `https://wa.me/5521965226788?text=${encodedMessage}`;
         window.open(waLink, '_blank');
@@ -209,7 +225,15 @@ export default function CartComponent() {
                                 </div>
 
                                 <button type="submit" className="btn-whatsapp" disabled={isSubmitting}>
-                                    {isSubmitting ? 'Enviando...' : 'Enviar Pedido no WhatsApp'}
+                                    {isSubmitting ? (
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                            <Loader2 className="animate-spin" size={24} />
+                                        </div>
+                                    ) : (
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                            <Send size={24} />
+                                        </div>
+                                    )}
                                 </button>
                             </form>
                         </>
@@ -234,11 +258,13 @@ export default function CartComponent() {
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(56, 189, 248, 0.1);
           cursor: pointer;
           display: flex;
-          align-items: center;
-          justify-content: center;
+          align-items: center !important;
+          justify-content: center !important;
           gap: 0.75rem;
           z-index: 1000;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          flex-direction: row !important; /* Force row definitely */
+          white-space: nowrap !important; /* Prevent wrapping */
         }
         .floating-cart-btn:hover {
           transform: translateY(-4px);
@@ -259,15 +285,13 @@ export default function CartComponent() {
         }
 
         .cart-label {
-          font-weight: 600;
-          font-size: 0.95rem;
+          font-weight: 700;
+          font-size: 0.9rem;
           letter-spacing: 0.02em;
-          display: none;
-        }
-        
-        .floating-cart-btn:hover .cart-label {
-          display: block;
-          animation: fadeIn 0.3s ease;
+          display: block !important;
+          color: #fbbf24; /* Amber/Orange color as requested/implied for visibility */
+          text-transform: uppercase;
+          margin-top: 0 !important; /* Ensure no top margin pushing it down */
         }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; transform: translateX(0); } }
@@ -488,7 +512,7 @@ export default function CartComponent() {
         .btn-whatsapp {
             width: 100%;
             padding: 1rem;
-            background: #22c55e;
+            background: #f97316; /* Laranja */
             color: white;
             border: none;
             border-radius: 8px;
@@ -499,8 +523,10 @@ export default function CartComponent() {
             margin-top: 1rem;
             transition: background 0.2s;
         }
-        .btn-whatsapp:hover { background: #16a34a; }
+        .btn-whatsapp:hover { background: #ea580c; }
         .btn-whatsapp:disabled { opacity: 0.7; cursor: not-allowed; }
+        .animate-spin { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
       `}</style>
         </div>
