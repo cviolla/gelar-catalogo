@@ -201,7 +201,8 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
             <div className="card-actions-top">
               <button
                 className="btn-icon btn-delete"
-                onClick={() => {
+                onClick={(e) => {
+                  stopProp(e);
                   if (window.confirm('Mover para lixeira?')) onDelete(product.id);
                 }}
                 title="Excluir"
@@ -210,7 +211,10 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
               </button>
               <button
                 className="btn-icon btn-edit"
-                onClick={() => setIsEditing(true)}
+                onClick={(e) => {
+                  stopProp(e);
+                  setIsEditing(true);
+                }}
                 title="Editar"
               >
                 <Edit2 size={18} />
@@ -271,7 +275,7 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
           ))}
 
           {isEditing && (
-            <button className="btn-add-price" onClick={addPriceRow}>
+            <button className="btn-add-price" onClick={(e) => { stopProp(e); addPriceRow(); }}>
               <Plus size={16} /> Adicionar Preço
             </button>
           )}
