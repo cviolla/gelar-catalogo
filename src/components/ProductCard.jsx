@@ -270,11 +270,11 @@ export default function ProductCard({ product, onUpdate, onDelete, readOnly }) {
 
       {isEditing && (
         <div className="card-actions-edit">
-          <button className="btn btn-secondary flex-1" onClick={handleCancel}>
-            <X size={18} /> Cancelar
-          </button>
           <button className="btn btn-primary flex-1" onClick={handleSave}>
-            <Save size={18} /> Salvar
+            SALVAR
+          </button>
+          <button className="btn btn-secondary flex-1" onClick={handleCancel}>
+            VOLTAR
           </button>
         </div>
       )}
