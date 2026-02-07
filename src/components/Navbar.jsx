@@ -1,8 +1,20 @@
 import React from 'react';
-import { Search, Plus, Trash2, Lock } from 'lucide-react';
+import { Search, Plus, Trash2, Lock, ShoppingCart } from 'lucide-react';
 import { categories } from '../data/products';
+import { useCart } from '../context/CartContext';
 
 export default function Navbar({ activeCategory, onCategoryChange, searchTerm, onSearchChange, onAddProduct, trashCount, onOpenTrash, isAuthenticated, onLoginClick }) {
+  const { setIsCartOpen, cart, lastAddedTime } = useCart();
+  const cartItemCount = cart.reduce((a, b) => a + b.quantity, 0);
+  const [isAnimating, setIsAnimating] = React.useState(false);
+
+  React.useEffect(() => {
+    if (lastAddedTime > 0) {
+      setIsAnimating(true);
+      const timer = setTimeout(() => setIsAnimating(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [lastAddedTime]);
   return (
     <header className="navbar-container">
       <div className="container">
@@ -52,6 +64,15 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
                 <Lock size={18} />
               </button>
             )}
+
+            <button
+              className={`btn-cart-nav ${isAnimating ? 'bump' : ''}`}
+              onClick={() => setIsCartOpen(true)}
+              title="Ir para Carrinho"
+            >
+              <ShoppingCart size={20} color={isAnimating ? '#fbbf24' : 'white'} />
+              {cartItemCount > 0 && <span className="nav-cart-badge">{cartItemCount}</span>}
+            </button>
           </div>
         </div>
 
@@ -248,6 +269,51 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
         .badge {
           background: #ef4444; color: white; font-size: 0.75rem;
           padding: 2px 6px; border-radius: 10px; font-weight: bold;
+        }
+
+        .btn-cart-nav {
+          background: transparent;
+          color: white;
+          border: none;
+          cursor: pointer;
+          position: relative;
+          padding: 8px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.2s;
+        }
+        .btn-cart-nav:hover {
+          background: rgba(255,255,255,0.1);
+          color: var(--color-primary);
+        }
+        
+        .nav-cart-badge {
+          position: absolute;
+          top: 0;
+          right: 0;
+          background: #ef4444;
+          color: white;
+          font-size: 0.65rem;
+          font-weight: 800;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid #050b14;
+        }
+
+        .bump {
+          animation: bump 0.3s ease-out;
+        }
+
+        @keyframes bump {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.4); }
+          100% { transform: scale(1); }
         }
 
         @media (max-width: 480px) {

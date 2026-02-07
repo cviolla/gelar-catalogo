@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import ProductCard from './components/ProductCard';
+import CartComponent from './components/Cart';
 import { supabase } from './lib/supabase'; // Real DB
 import { products as initialSeedData } from './data/products';
+import { CartProvider } from './context/CartContext';
 import { Info, RotateCcw, Trash2, X, Database, Lock } from 'lucide-react';
 
 function App() {
@@ -232,116 +234,119 @@ function App() {
 
   // --- RENDER: APP ---
   return (
-    <div className="app-container">
-      {/* LOGIN OVERLAY */}
-      {showLogin && (
-        <div className="login-overlay">
-          <div className="login-card">
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
-              <div className="navbar-logo">
-                <img src="/logo.png" style={{ height: '38px', width: 'auto' }} alt="Gelar" />
-              </div>
-            </div>
-            <p>ÁREA RESTRITA</p>
-            <form onSubmit={handleLogin}>
-              <div className="input-group">
-                <Lock className="input-icon" size={16} />
-                <input
-                  type="password"
-                  placeholder="Senha de Acesso"
-                  value={passwordInput}
-                  onChange={(e) => setPasswordInput(e.target.value)}
-                  autoFocus
-                />
-              </div>
-              {loginError && <div className="error-msg">Senha incorreta</div>}
-              <button type="submit" className="btn-primary full-width">ENTRAR</button>
-              <button type="button" className="btn-text full-width" onClick={() => setShowLogin(false)} style={{ marginTop: '0.5rem', color: '#94a3b8' }}>Cancelar</button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      <Navbar
-        activeCategory={activeCategory}
-        onCategoryChange={(cat) => { setActiveCategory(cat); setShowTrash(false); }}
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        onAddProduct={handleAddProduct}
-        trashCount={trash.length}
-        onOpenTrash={() => setShowTrash(!showTrash)}
-        isAuthenticated={isAuthenticated}
-        onLoginClick={() => setShowLogin(true)}
-      />
-
-      <main className="container main-content">
-
-        {loading && <div className="loading">Carregando estoque...</div>}
-
-        {!loading && products.length === 0 && !showTrash && (
-          <div className="empty-db-state">
-            <Database size={48} color="#fbbf24" />
-            <h2>Banco de Dados Vazio</h2>
-            <p>Comece do zero ou carregue a lista padrão.</p>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <button className="btn btn-primary" onClick={handleAddProduct}>Criar Primeiro Produto</button>
-              <button className="btn btn-secondary" onClick={handleSeedDatabase}>Carregar Lista Padrão</button>
-            </div>
-          </div>
-        )}
-
-        {/* TRASH VIEW OVERLAY */}
-        {showTrash ? (
-          <div className="trash-view">
-            <div className="trash-header">
-              <h2>Lixeira (Não salvos no banco)</h2>
-              <button className="btn btn-secondary" onClick={() => setShowTrash(false)}>
-                <X size={20} /> Fechar
-              </button>
-            </div>
-            <p style={{ marginBottom: '1rem', color: '#ef4444' }}>Itens aqui ainda existem no banco, mas estão ocultos. Exclua definitivamente para limpar.</p>
-
-            {trash.map(item => (
-              <div key={item.id} className="trash-item">
-                <span>{item.name}</span>
-                <div className="trash-actions">
-                  <button className="btn-restore" onClick={() => handleRestoreProduct(item.id)}><RotateCcw size={18} /></button>
-                  <button className="btn-permanent-delete" onClick={() => handlePermanentDelete(item.id)}><X size={18} /></button>
+    <CartProvider>
+      <div className="app-container">
+        {/* LOGIN OVERLAY */}
+        {showLogin && (
+          <div className="login-overlay">
+            <div className="login-card">
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+                <div className="navbar-logo">
+                  <img src="/logo.png" style={{ height: '38px', width: 'auto' }} alt="Gelar" />
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          /* PRODUCT GRID */
-          <div className="products-grid">
-            {filteredProducts.map(product => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onUpdate={handleUpdateProduct}
-                onDelete={handleDeleteProduct}
-                readOnly={!isAuthenticated}
-              />
-            ))}
+              <p>ÁREA RESTRITA</p>
+              <form onSubmit={handleLogin}>
+                <div className="input-group">
+                  <Lock className="input-icon" size={16} />
+                  <input
+                    type="password"
+                    placeholder="Senha de Acesso"
+                    value={passwordInput}
+                    onChange={(e) => setPasswordInput(e.target.value)}
+                    autoFocus
+                  />
+                </div>
+                {loginError && <div className="error-msg">Senha incorreta</div>}
+                <button type="submit" className="btn-primary full-width">ENTRAR</button>
+                <button type="button" className="btn-text full-width" onClick={() => setShowLogin(false)} style={{ marginTop: '0.5rem', color: '#94a3b8' }}>Cancelar</button>
+              </form>
+            </div>
           </div>
         )}
-      </main>
 
-      <footer className="footer">
-        <div className="container">
-          <p>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por <a href="https://wa.me/5521965226788" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none' }}>@cviolla</a></p>
+        <Navbar
+          activeCategory={activeCategory}
+          onCategoryChange={(cat) => { setActiveCategory(cat); setShowTrash(false); }}
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          onAddProduct={handleAddProduct}
+          trashCount={trash.length}
+          onOpenTrash={() => setShowTrash(!showTrash)}
+          isAuthenticated={isAuthenticated}
+          onLoginClick={() => setShowLogin(true)}
+        />
 
-          {isAuthenticated && (
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', alignItems: 'center', marginTop: '1rem' }}>
-              <button onClick={handleLogout} className="btn-logout-footer">Sair do Sistema</button>
-              <span style={{ color: '#334155' }}>|</span>
-              <button onClick={handleMigrateCategories} className="btn-logout-footer" style={{ color: '#f59e0b' }}>🛠️ Migrar Categorias</button>
+        <main className="container main-content">
+
+          {loading && <div className="loading">Carregando estoque...</div>}
+
+          {!loading && products.length === 0 && !showTrash && (
+            <div className="empty-db-state">
+              <Database size={48} color="#fbbf24" />
+              <h2>Banco de Dados Vazio</h2>
+              <p>Comece do zero ou carregue a lista padrão.</p>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button className="btn btn-primary" onClick={handleAddProduct}>Criar Primeiro Produto</button>
+                <button className="btn btn-secondary" onClick={handleSeedDatabase}>Carregar Lista Padrão</button>
+              </div>
             </div>
           )}
-        </div>
-      </footer>
 
-      <style>{`
+          {/* TRASH VIEW OVERLAY */}
+          {showTrash ? (
+            <div className="trash-view">
+              <div className="trash-header">
+                <h2>Lixeira (Não salvos no banco)</h2>
+                <button className="btn btn-secondary" onClick={() => setShowTrash(false)}>
+                  <X size={20} /> Fechar
+                </button>
+              </div>
+              <p style={{ marginBottom: '1rem', color: '#ef4444' }}>Itens aqui ainda existem no banco, mas estão ocultos. Exclua definitivamente para limpar.</p>
+
+              {trash.map(item => (
+                <div key={item.id} className="trash-item">
+                  <span>{item.name}</span>
+                  <div className="trash-actions">
+                    <button className="btn-restore" onClick={() => handleRestoreProduct(item.id)}><RotateCcw size={18} /></button>
+                    <button className="btn-permanent-delete" onClick={() => handlePermanentDelete(item.id)}><X size={18} /></button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            /* PRODUCT GRID */
+            <div className="products-grid">
+              {filteredProducts.map(product => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onUpdate={handleUpdateProduct}
+                  onDelete={handleDeleteProduct}
+                  readOnly={!isAuthenticated}
+                />
+              ))}
+            </div>
+          )}
+        </main>
+
+        <CartComponent />
+
+        <footer className="footer">
+          <div className="container">
+            <p>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por <a href="https://wa.me/5521965226788" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none' }}>@cviolla</a></p>
+
+            {isAuthenticated && (
+              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', alignItems: 'center', marginTop: '1rem' }}>
+                <button onClick={handleLogout} className="btn-logout-footer">Sair do Sistema</button>
+                <span style={{ color: '#334155' }}>|</span>
+                <button onClick={handleMigrateCategories} className="btn-logout-footer" style={{ color: '#f59e0b' }}>🛠️ Migrar Categorias</button>
+              </div>
+            )}
+          </div>
+        </footer>
+
+        <style>{`
         .app-container { min-height: 100vh; display: flex; flex-direction: column; }
         .main-content { flex: 1; padding-top: 2rem; padding-bottom: 4rem; }
         .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
@@ -391,7 +396,8 @@ function App() {
         .btn-text { background: none; border: none; font-size: 0.85rem; cursor: pointer; }
         .error-msg { color: #ef4444; font-size: 0.75rem; margin-bottom: 0.5rem; }
       `}</style>
-    </div>
+      </div>
+    </CartProvider>
   );
 }
 

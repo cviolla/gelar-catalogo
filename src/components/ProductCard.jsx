@@ -2,8 +2,10 @@ import React, { useState, useRef } from 'react';
 import { Edit2, Save, X, Upload, Image as ImageIcon, Plus, Trash2, RotateCcw, Loader2 } from 'lucide-react';
 import { categories } from '../data/products';
 import { supabase } from '../lib/supabase'; // Import Supabase Client
+import { useCart } from '../context/CartContext';
 
 export default function ProductCard({ product, onUpdate, onDelete, readOnly }) {
+  const { addToCart } = useCart();
   const [isEditing, setIsEditing] = useState(false);
   const [editedProduct, setEditedProduct] = useState({ ...product });
   const [uploading, setUploading] = useState(false); // Estado de load
@@ -251,7 +253,15 @@ export default function ProductCard({ product, onUpdate, onDelete, readOnly }) {
               ) : (
                 <>
                   <span className="price-label">{price.label}:</span>
-                  <span className="price-value">R$ {String(price.value || '0').replace('R$ ', '')}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span className="price-value">R$ {String(price.value || '0').replace('R$ ', '')}</span>
+                    <button
+                      className="btn-add-cart"
+                      onClick={() => addToCart(product, price)}
+                    >
+                      +
+                    </button>
+                  </div>
                 </>
               )}
             </div>
@@ -551,6 +561,25 @@ export default function ProductCard({ product, onUpdate, onDelete, readOnly }) {
 
         .full-width {
           width: 100%;
+        }
+
+        .btn-add-cart {
+          background: #2563EB;
+          color: white;
+          border: none;
+          width: 24px; 
+          height: 24px;
+          border-radius: 4px;
+          font-weight: bold;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.2s;
+        }
+        .btn-add-cart:hover {
+          background: #3b82f6;
+          transform: scale(1.1);
         }
       `}</style>
     </div>
