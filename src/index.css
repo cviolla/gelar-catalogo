@@ -1122,15 +1122,21 @@ label {
   justify-content: space-between;
   align-items: center;
   font-size: 0.78rem;
-  padding-bottom: 0.2rem;
+  padding: 0.35rem 0;
   border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
   line-height: 1.2;
+  min-height: 40px;
+  /* Garante altura para o contador sem quebrar layout */
+  gap: 0.5rem;
 }
 
 .price-label {
   color: #94a3b8;
-  margin-right: 0.5rem;
-  word-break: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 0 1 auto;
+  max-width: 45%;
 }
 
 .price-value {
@@ -1199,6 +1205,46 @@ label {
 
 .btn-qty-plus {
   border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Mini Quantity Control for List Cards */
+.quantity-control-mini {
+  display: flex;
+  align-items: center;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.quantity-control-mini button {
+  background: #2563EB;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.quantity-control-mini button:hover {
+  background: #3b82f6;
+}
+
+.quantity-control-mini .qty-value {
+  padding: 0 0.5rem;
+  color: white;
+  font-weight: 800;
+  font-size: 0.75rem;
+  min-width: 28px;
+  text-align: center;
 }
 
 /* Edit Mode Styling */

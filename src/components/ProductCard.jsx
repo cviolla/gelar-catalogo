@@ -276,20 +276,18 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
 
                       if (itemInCart) {
                         return (
-                          <div className="quantity-control-expanded" style={{ height: '24px' }}>
+                          <div className="quantity-control-mini">
                             <button
                               className="btn-qty-minus"
-                              style={{ width: '22px', fontSize: '0.9rem' }}
                               onClick={(e) => { stopProp(e); updateQuantity(cartItemId, itemInCart.quantity - 1); }}
                             >
                               -
                             </button>
-                            <span className="qty-value" style={{ minWidth: '25px', padding: '0 0.4rem', fontSize: '0.75rem' }}>
+                            <span className="qty-value">
                               {itemInCart.quantity}
                             </span>
                             <button
                               className="btn-qty-plus"
-                              style={{ width: '22px', fontSize: '0.9rem' }}
                               onClick={(e) => { stopProp(e); addToCart(product, price); }}
                             >
                               +
