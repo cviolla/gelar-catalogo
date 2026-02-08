@@ -229,38 +229,38 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
             // Helper to parse "95,00" -> 95.00
             const parseVal = (v) => parseFloat(String(v?.value || '0').replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
             return parseVal(a) - parseVal(b);
-          })).map((price, index) => (
-            <div key={index} className="price-row">
-              {isEditing ? (
-                <>
-                  <input
-                    className="input-label"
-                    value={price.label || ''}
-                    onChange={(e) => handlePriceChange(index, 'label', e.target.value)}
-                    placeholder="Tipo (ex: Caixa)"
-                  />
-                  <input
-                    className="input-value"
-                    value={price.value || ''}
-                    onChange={(e) => handlePriceChange(index, 'value', e.target.value)}
-                    placeholder="Valor"
-                  />
-                  <button className="btn-remove" onClick={() => removePriceRow(index)}>
-                    <Trash2 size={16} />
-                  </button>
-                </>
-              ) : (
-                <>
-                  <span className={`price-label ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
-                    {price.label === 'Promoção' ? 'PROMO' : price.label}{price.label === 'Promoção' ? '' : ':'}
-                  </span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end', flex: 1 }}>
+          })).map((price, index) => {
+            const cartItemId = `${product.id}-${price.label}`;
+            const itemInCart = cart.find(item => item.cartItemId === cartItemId);
+            const quantity = itemInCart ? itemInCart.quantity : 1;
+
+            return (
+              <div key={index} className={`price-row ${itemInCart ? 'in-cart' : ''}`}>
+                {isEditing ? (
+                  <>
+                    <input
+                      className="input-label"
+                      value={price.label || ''}
+                      onChange={(e) => handlePriceChange(index, 'label', e.target.value)}
+                      placeholder="Tipo (ex: Caixa)"
+                    />
+                    <input
+                      className="input-value"
+                      value={price.value || ''}
+                      onChange={(e) => handlePriceChange(index, 'value', e.target.value)}
+                      placeholder="Valor"
+                    />
+                    <button className="btn-remove" onClick={() => removePriceRow(index)}>
+                      <Trash2 size={16} />
+                    </button>
+                  </>
+                ) : (
+                  <div className="price-details">
+                    <span className={`price-label ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
+                      {price.label === 'Promoção' ? 'PROMO' : price.label}{price.label === 'Promoção' ? '' : ':'}
+                    </span>
                     <span className={`price-value ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
                       {(() => {
-                        const cartItemId = `${product.id}-${price.label}`;
-                        const itemInCart = cart.find(item => item.cartItemId === cartItemId);
-                        const quantity = itemInCart ? itemInCart.quantity : 1;
-
                         const isTextPrice = /[a-zA-Z]/.test(String(price.value).replace(/^R\$\s*/, ''));
                         if (isTextPrice) return price.value;
 
@@ -270,46 +270,42 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
                         return `R$ ${totalValue.toFixed(2).replace('.', ',')}`;
                       })()}
                     </span>
-                    {(() => {
-                      const cartItemId = `${product.id}-${price.label}`;
-                      const itemInCart = cart.find(item => item.cartItemId === cartItemId);
+                  </div>
+                )}
 
-                      if (itemInCart) {
-                        return (
-                          <div className="quantity-control-mini">
-                            <button
-                              className="btn-qty-minus"
-                              onClick={(e) => { stopProp(e); updateQuantity(cartItemId, itemInCart.quantity - 1); }}
-                            >
-                              -
-                            </button>
-                            <span className="qty-value">
-                              {itemInCart.quantity}
-                            </span>
-                            <button
-                              className="btn-qty-plus"
-                              onClick={(e) => { stopProp(e); addToCart(product, price); }}
-                            >
-                              +
-                            </button>
-                          </div>
-                        );
-                      }
-
-                      return (
+                {!isEditing && (
+                  <div className="price-action">
+                    {itemInCart ? (
+                      <div className="quantity-control-mini">
                         <button
-                          className="btn-add-cart"
+                          className="btn-qty-minus"
+                          onClick={(e) => { stopProp(e); updateQuantity(cartItemId, itemInCart.quantity - 1); }}
+                        >
+                          -
+                        </button>
+                        <span className="qty-value">
+                          {itemInCart.quantity}
+                        </span>
+                        <button
+                          className="btn-qty-plus"
                           onClick={(e) => { stopProp(e); addToCart(product, price); }}
                         >
                           +
                         </button>
-                      );
-                    })()}
+                      </div>
+                    ) : (
+                      <button
+                        className="btn-add-cart"
+                        onClick={(e) => { stopProp(e); addToCart(product, price); }}
+                      >
+                        +
+                      </button>
+                    )}
                   </div>
-                </>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            );
+          })}
 
           {isEditing && (
             <button className="btn-add-price" onClick={(e) => { stopProp(e); addPriceRow(); }}>

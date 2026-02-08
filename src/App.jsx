@@ -456,61 +456,59 @@ function App() {
                             </div>
 
                             <div className="prices-list">
-                                {expandedProduct.prices?.map((price, idx) => (
-                                    <div key={idx} className="price-row">
-                                        <span className="price-label">{price.label}</span>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                                            <span className={`price-value ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
-                                                {(() => {
-                                                    const cartItemId = `${expandedProduct.id}-${price.label}`;
-                                                    const itemInCart = cart.find(item => item.cartItemId === cartItemId);
-                                                    const quantity = itemInCart ? itemInCart.quantity : 1;
+                                {expandedProduct.prices?.map((price, idx) => {
+                                    const cartItemId = `${expandedProduct.id}-${price.label}`;
+                                    const itemInCart = cart.find(item => item.cartItemId === cartItemId);
+                                    const quantity = itemInCart ? itemInCart.quantity : 1;
 
-                                                    const isTextPrice = /[a-zA-Z]/.test(String(price.value).replace(/^R\$\s*/, ''));
-                                                    if (isTextPrice) return price.value;
+                                    return (
+                                        <div key={idx} className={`price-row ${itemInCart ? 'in-cart' : ''}`}>
+                                            <div className="price-details">
+                                                <span className={`price-label ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
+                                                    {price.label === 'Promoção' ? 'PROMO' : price.label}{price.label === 'Promoção' ? '' : ':'}
+                                                </span>
+                                                <span className={`price-value ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
+                                                    {(() => {
+                                                        const isTextPrice = /[a-zA-Z]/.test(String(price.value).replace(/^R\$\s*/, ''));
+                                                        if (isTextPrice) return price.value;
 
-                                                    const unitValue = parseFloat(String(price.value).replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
-                                                    const totalValue = unitValue * quantity;
+                                                        const unitValue = parseFloat(String(price.value).replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
+                                                        const totalValue = unitValue * quantity;
 
-                                                    return `R$ ${totalValue.toFixed(2).replace('.', ',')}`;
-                                                })()}
-                                            </span>
-                                            {(() => {
-                                                const cartItemId = `${expandedProduct.id}-${price.label}`;
-                                                const itemInCart = cart.find(item => item.cartItemId === cartItemId);
+                                                        return `R$ ${totalValue.toFixed(2).replace('.', ',')}`;
+                                                    })()}
+                                                </span>
+                                            </div>
 
-                                                if (itemInCart) {
-                                                    return (
-                                                        <div className="quantity-control-expanded">
-                                                            <button
-                                                                className="btn-qty-minus"
-                                                                onClick={() => updateQuantity(cartItemId, itemInCart.quantity - 1)}
-                                                            >
-                                                                -
-                                                            </button>
-                                                            <span className="qty-value">{itemInCart.quantity}</span>
-                                                            <button
-                                                                className="btn-qty-plus"
-                                                                onClick={() => addToCart(expandedProduct, price)}
-                                                            >
-                                                                +
-                                                            </button>
-                                                        </div>
-                                                    );
-                                                }
-
-                                                return (
+                                            <div className="price-action">
+                                                {itemInCart ? (
+                                                    <div className="quantity-control-expanded">
+                                                        <button
+                                                            className="btn-qty-minus"
+                                                            onClick={() => updateQuantity(cartItemId, itemInCart.quantity - 1)}
+                                                        >
+                                                            -
+                                                        </button>
+                                                        <span className="qty-value">{itemInCart.quantity}</span>
+                                                        <button
+                                                            className="btn-qty-plus"
+                                                            onClick={() => addToCart(expandedProduct, price)}
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                ) : (
                                                     <button
                                                         className="btn-add-cart"
                                                         onClick={() => addToCart(expandedProduct, price)}
                                                     >
                                                         +
                                                     </button>
-                                                );
-                                            })()}
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>

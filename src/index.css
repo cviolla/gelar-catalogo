@@ -1122,12 +1122,27 @@ label {
   justify-content: space-between;
   align-items: center;
   font-size: 0.78rem;
-  padding: 0.35rem 0;
+  padding: 0.4rem 0;
   border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
   line-height: 1.2;
-  min-height: 40px;
-  /* Garante altura para o contador sem quebrar layout */
-  gap: 0.5rem;
+  min-height: 44px;
+  gap: 0.4rem;
+}
+
+.price-details {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 1;
+  min-width: 0;
+  transition: all 0.2s ease;
+}
+
+.price-row.in-cart .price-details {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
 }
 
 .price-label {
@@ -1135,15 +1150,33 @@ label {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex: 0 1 auto;
-  max-width: 45%;
+  flex: 0 0 auto;
+}
+
+.price-row.in-cart .price-label {
+  font-size: 0.6rem;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: -2px;
 }
 
 .price-value {
   white-space: nowrap;
   font-weight: 700;
   color: #38bdf8;
-  text-align: right;
+  text-align: left;
+}
+
+.price-row.in-cart .price-value {
+  font-size: 0.85rem;
+}
+
+.price-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .price-row:last-child {
