@@ -460,11 +460,20 @@ function App() {
                                     <div key={idx} className="price-row">
                                         <span className="price-label">{price.label}</span>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                                            <span className="price-value">
-                                                {/[a-zA-Z]/.test(String(price.value).replace(/^R\$\s*/, ''))
-                                                    ? price.value
-                                                    : `R$ ${String(price.value).replace(/^R\$\s*/, '')}`
-                                                }
+                                            <span className={`price-value ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
+                                                {(() => {
+                                                    const cartItemId = `${expandedProduct.id}-${price.label}`;
+                                                    const itemInCart = cart.find(item => item.cartItemId === cartItemId);
+                                                    const quantity = itemInCart ? itemInCart.quantity : 1;
+
+                                                    const isTextPrice = /[a-zA-Z]/.test(String(price.value).replace(/^R\$\s*/, ''));
+                                                    if (isTextPrice) return price.value;
+
+                                                    const unitValue = parseFloat(String(price.value).replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
+                                                    const totalValue = unitValue * quantity;
+
+                                                    return `R$ ${totalValue.toFixed(2).replace('.', ',')}`;
+                                                })()}
                                             </span>
                                             {(() => {
                                                 const cartItemId = `${expandedProduct.id}-${price.label}`;

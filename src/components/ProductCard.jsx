@@ -6,7 +6,7 @@ import { autoCategorize } from '../utils/helpers';
 import { categories } from '../data/products';
 
 export default function ProductCard({ product, onUpdate, onDelete, onExpand, readOnly }) {
-  const { addToCart } = useCart();
+  const { cart, addToCart, updateQuantity } = useCart();
   const [isEditing, setIsEditing] = useState(false);
   const [editedProduct, setEditedProduct] = useState({ ...product });
   const [uploading, setUploading] = useState(false); // Estado de load
@@ -256,18 +256,57 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
                   </span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'flex-end', flex: 1 }}>
                     <span className={`price-value ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
-                      {/* Show as text if it contains letters (e.g. "3 por 10") or is "Promoção", otherwise format as R$ */}
-                      {/[a-zA-Z]/.test(String(price.value).replace(/^R\$\s*/, ''))
-                        ? price.value
-                        : `R$ ${String(price.value).replace(/^R\$\s*/, '')}`
-                      }
+                      {(() => {
+                        const cartItemId = `${product.id}-${price.label}`;
+                        const itemInCart = cart.find(item => item.cartItemId === cartItemId);
+                        const quantity = itemInCart ? itemInCart.quantity : 1;
+
+                        const isTextPrice = /[a-zA-Z]/.test(String(price.value).replace(/^R\$\s*/, ''));
+                        if (isTextPrice) return price.value;
+
+                        const unitValue = parseFloat(String(price.value).replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
+                        const totalValue = unitValue * quantity;
+
+                        return `R$ ${totalValue.toFixed(2).replace('.', ',')}`;
+                      })()}
                     </span>
-                    <button
-                      className="btn-add-cart"
-                      onClick={(e) => { stopProp(e); addToCart(product, price); }}
-                    >
-                      +
-                    </button>
+                    {(() => {
+                      const cartItemId = `${product.id}-${price.label}`;
+                      const itemInCart = cart.find(item => item.cartItemId === cartItemId);
+
+                      if (itemInCart) {
+                        return (
+                          <div className="quantity-control-expanded" style={{ height: '24px' }}>
+                            <button
+                              className="btn-qty-minus"
+                              style={{ width: '22px', fontSize: '0.9rem' }}
+                              onClick={(e) => { stopProp(e); updateQuantity(cartItemId, itemInCart.quantity - 1); }}
+                            >
+                              -
+                            </button>
+                            <span className="qty-value" style={{ minWidth: '25px', padding: '0 0.4rem', fontSize: '0.75rem' }}>
+                              {itemInCart.quantity}
+                            </span>
+                            <button
+                              className="btn-qty-plus"
+                              style={{ width: '22px', fontSize: '0.9rem' }}
+                              onClick={(e) => { stopProp(e); addToCart(product, price); }}
+                            >
+                              +
+                            </button>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <button
+                          className="btn-add-cart"
+                          onClick={(e) => { stopProp(e); addToCart(product, price); }}
+                        >
+                          +
+                        </button>
+                      );
+                    })()}
                   </div>
                 </>
               )}
