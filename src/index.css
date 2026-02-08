@@ -1105,10 +1105,10 @@ label {
 }
 
 .card-header h3 {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--text-main);
-  line-height: 1.25;
+  line-height: 1.2;
   flex: 1;
   min-width: 0;
   word-break: break-word;
@@ -1131,12 +1131,12 @@ label {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.85rem;
-  padding: 0.5rem 0;
+  font-size: 0.78rem;
+  padding: 0.35rem 0;
   border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
   line-height: 1.2;
-  min-height: 48px;
-  gap: 0.5rem;
+  min-height: 42px;
+  gap: 0.4rem;
 }
 
 .price-details {
@@ -1165,7 +1165,7 @@ label {
 }
 
 .price-row.in-cart .price-label {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   opacity: 0.8;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -1181,7 +1181,7 @@ label {
 }
 
 .price-row.in-cart .price-value {
-  font-size: 1rem;
+  font-size: 0.9rem;
   text-align: left;
 }
 
@@ -1197,7 +1197,7 @@ label {
 }
 
 .category-badge {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   font-weight: 800;
