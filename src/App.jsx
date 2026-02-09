@@ -528,7 +528,7 @@ function App() {
                         </div>
                     )}
 
-                    <p className="footer-copyright" style={{ marginTop: 0 }}>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por <a href="https://wa.me/5521964788628" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none' }}>@cviolla</a></p>
+                    <p className="footer-copyright" style={{ marginTop: 0 }}>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por <a href="https://wa.me/5521965226788" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none' }}>@cviolla</a></p>
                 </div>
             </footer>
 
