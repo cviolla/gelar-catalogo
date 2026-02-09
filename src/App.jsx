@@ -1,3 +1,4 @@
+// Versão atualizada: 1.0.1 - Gatilho de Deploy Vercel
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import ProductCard from './components/ProductCard';
