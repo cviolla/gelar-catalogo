@@ -7,6 +7,27 @@ export default function CartComponent() {
     const { cart, removeFromCart, updateQuantity, clearCart, isCartOpen, setIsCartOpen, cartTotal } = useCart();
     const [customer, setCustomer] = useState({ name: '', phone: '', address: '', neighborhood: '', reference: '', payment: 'Pix' });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [whatsappNumber, setWhatsappNumber] = useState("5521964788628"); // Fallback
+
+    // Buscar configurações do banco (WhatsApp)
+    React.useEffect(() => {
+        async function fetchConfig() {
+            try {
+                const { data, error } = await supabase
+                    .from('store_config')
+                    .select('value')
+                    .eq('key', 'whatsapp_number')
+                    .single();
+
+                if (data && data.value) {
+                    setWhatsappNumber(data.value);
+                }
+            } catch (err) {
+                console.error("Erro ao carregar config:", err);
+            }
+        }
+        fetchConfig();
+    }, []);
 
     const handleCheckout = async (e) => {
         e.preventDefault();
@@ -51,7 +72,6 @@ export default function CartComponent() {
             `____________________________________________`;
 
         const encodedMessage = encodeURIComponent(message);
-        const phoneNumber = "5521965226788"; // Replace with actual number if needed, currently using developer's number? Or should stick to "depósito" number. The footer mentions @cviolla but deposit might be different. I will use a placeholder or ask. Wait user said "whatsapp do depósito". I'll use a placeholder for now or the one in the footer.
 
         // SAVE ORDER TO SUPABASE
         try {
@@ -68,17 +88,14 @@ export default function CartComponent() {
 
             if (error) {
                 console.error("Error saving order:", error);
-                // We don't block the user, just log it. The main flow is WhatsApp.
             }
         } catch (err) {
             console.error("Unexpected error saving order:", err);
         }
 
-        const waLink = `https://wa.me/5521965226788?text=${encodedMessage}`;
+        const waLink = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
         window.open(waLink, '_blank');
 
-        // Clear cart after successful checkout? Maybe wait for confirmation?
-        // For now, let's clear it to reset the state.
         clearCart();
         setIsCartOpen(false);
         setIsSubmitting(false);
