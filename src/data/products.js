@@ -5,7 +5,7 @@ export const products = [
     name: 'Brahma',
     volume: 'Litrão',
     category: 'Cerveja',
-    image: null,
+    image: '/brahma1.png',
     prices: [
       { label: 'Caixa', value: '95,00' },
       { label: 'Gelado', value: '10,00' }
@@ -16,7 +16,7 @@ export const products = [
     name: 'Antarctica',
     volume: 'Litrão',
     category: 'Cerveja',
-    image: null,
+    image: '/5192722_1.webp',
     prices: [
       { label: 'Caixa', value: '95,00' },
       { label: 'Gelado', value: '9,00' }
@@ -27,7 +27,7 @@ export const products = [
     name: 'Itaipava',
     volume: 'Litrão',
     category: 'Cerveja',
-    image: null,
+    image: '/5473969_1.webp',
     prices: [
       { label: 'Caixa', value: '81,00' },
       { label: 'Gelado', value: '8,00' }
@@ -40,7 +40,7 @@ export const products = [
     name: 'Brahma',
     volume: '600 ml',
     category: 'Cerveja',
-    image: null,
+    image: '/189021_0.png',
     prices: [
       { label: 'Caixa', value: '151,00' },
       { label: 'Gelada', value: '8,50' }
@@ -51,7 +51,7 @@ export const products = [
     name: 'Antarctica',
     volume: '600 ml',
     category: 'Cerveja',
-    image: null,
+    image: '/l-420b2999050d4c6c9091066f4703e322.jpeg',
     prices: [
       { label: 'Caixa', value: '144,00' },
       { label: 'Gelada', value: '7,50' }
@@ -62,7 +62,7 @@ export const products = [
     name: 'Império Lager',
     volume: '600 ml',
     category: 'Cerveja',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Imperio',
     prices: [
       { label: 'Gelada', value: '9,00' }
     ]
@@ -72,9 +72,66 @@ export const products = [
     name: 'A Outra',
     volume: '600 ml',
     category: 'Cerveja',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=A+Outra',
     prices: [
       { label: 'Caixa', value: '85,00' },
+      { label: 'Gelada', value: '5,00' }
+    ]
+  },
+
+  // 🍺 Long Neck
+  {
+    id: 'heineken-long',
+    name: 'Heineken',
+    volume: '330 ml',
+    category: 'Long Neck',
+    image: '/3OuPxke7VlzCdXBlmHR3dk2PdTFioHd5gYGBfhxy.png',
+    prices: [
+      { label: 'Pack (24un)', value: '140,00' },
+      { label: 'Gelada', value: '7,00' }
+    ]
+  },
+  {
+    id: 'stella-long',
+    name: 'Stella Artois',
+    volume: '330 ml',
+    category: 'Long Neck',
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Stella',
+    prices: [
+      { label: 'Pack (24un)', value: '133,00' },
+      { label: 'Gelada', value: '6,50' }
+    ]
+  },
+  {
+    id: 'budweiser-long',
+    name: 'Budweiser',
+    volume: '330 ml',
+    category: 'Long Neck',
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Budweiser',
+    prices: [
+      { label: 'Pack (24un)', value: '122,50' },
+      { label: 'Gelada', value: '5,50' }
+    ]
+  },
+  {
+    id: 'corona-long',
+    name: 'Corona',
+    volume: '330 ml',
+    category: 'Long Neck',
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Corona',
+    prices: [
+      { label: 'Pack (24un)', value: '148,00' },
+      { label: 'Gelada', value: '7,50' }
+    ]
+  },
+  {
+    id: 'imperio-gold-long',
+    name: 'Império Gold',
+    volume: '210 ml',
+    category: 'Long Neck',
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Imperio+Gold',
+    prices: [
+      { label: 'Caixa (18un)', value: '64,99' },
       { label: 'Gelada', value: '5,00' }
     ]
   },
@@ -85,7 +142,7 @@ export const products = [
     name: 'Coca-Cola Retornável',
     volume: '2L (Retornável)',
     category: 'Refrigerante',
-    image: null,
+    image: '/coca2l.png',
     prices: [
       { label: 'Caixa', value: '75,00' },
       { label: 'Gelada', value: '7,50' }
@@ -117,7 +174,7 @@ export const products = [
     name: 'Fanta Laranja',
     volume: '2L',
     category: 'Refrigerante',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Fanta+Laranja',
     prices: [
       { label: 'Fardo', value: '47,00' }
     ]
@@ -127,7 +184,7 @@ export const products = [
     name: 'Fanta Uva',
     volume: '2L',
     category: 'Refrigerante',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Fanta+Uva',
     prices: [
       { label: 'Fardo', value: '47,00' }
     ]
@@ -137,7 +194,7 @@ export const products = [
     name: 'Sprite',
     volume: '2L',
     category: 'Refrigerante',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Sprite',
     prices: [
       { label: 'Fardo', value: '47,00' }
     ]
@@ -147,7 +204,7 @@ export const products = [
     name: 'Mineirinho',
     volume: '2L',
     category: 'Refrigerante',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Mineirinho',
     prices: [
       { label: 'Fardo', value: '48,00' }
     ]
@@ -157,7 +214,7 @@ export const products = [
     name: 'Pakera (Guaraná e Sabores)',
     volume: '2L',
     category: 'Refrigerante',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Pakera',
     prices: [
       { label: 'Fardo (6un)', value: '24,50' },
       { label: 'Gelado', value: '5,50' }
@@ -168,7 +225,7 @@ export const products = [
     name: 'Guaravita',
     volume: '290ml',
     category: 'Refrigerante',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Guaravita',
     prices: [
       { label: 'Caixa (24un)', value: '24,00' }
     ]
@@ -180,7 +237,7 @@ export const products = [
     name: 'Água sem gás',
     volume: '510 ml',
     category: 'Água',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Agua+Sem+Gas',
     prices: [
       { label: 'Fardo (12un)', value: '13,00' }
     ]
@@ -190,7 +247,7 @@ export const products = [
     name: 'Água com gás',
     volume: '510 ml',
     category: 'Água',
-    image: null,
+    image: '/agua-mineral-com-gas-crystal-500ml-1.webp',
     prices: [
       { label: 'Fardo (12un)', value: '22,50' }
     ]
@@ -200,7 +257,7 @@ export const products = [
     name: 'Água Galão (Líquido)',
     volume: '20L',
     category: 'Água',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Galao+20L',
     prices: [
       { label: 'Unidade', value: '10,00' }
     ]
@@ -212,7 +269,7 @@ export const products = [
     name: 'Gelo Escama',
     volume: 'Saco',
     category: 'Gelo',
-    image: null,
+    image: 'https://placehold.co/400x400/e2e8f0/1e293b?text=Gelo+Escama',
     prices: [
       { label: 'Unidade', value: '20,00' }
     ]
@@ -222,98 +279,19 @@ export const products = [
     name: 'Gelo Filtrado',
     volume: 'Saco',
     category: 'Gelo',
-    image: null,
+    image: 'https://placehold.co/400x400/e2e8f0/1e293b?text=Gelo+Filtrado',
     prices: [
       { label: 'Unidade', value: '20,00' }
     ]
   },
 
-  // 🍻 Long Neck
-  {
-    id: 'brahma-cracudinha',
-    name: 'Brahma',
-    volume: '300 ml',
-    category: 'Cracudinha',
-    image: null,
-    prices: [
-      { label: 'Caixa', value: '58,00' },
-      { label: 'Gelada', value: '3,50' },
-      { label: 'Promoção', value: '3 por 10,00' }
-    ]
-  },
-  {
-    id: 'antarctica-cracudinha',
-    name: 'Antarctica',
-    volume: '300 ml',
-    category: 'Cracudinha',
-    image: null,
-    prices: [
-      { label: 'Caixa', value: '58,00' }
-    ]
-  },
-  {
-    id: 'heineken-long',
-    name: 'Heineken',
-    volume: '330 ml',
-    category: 'Long Neck',
-    image: null,
-    prices: [
-      { label: 'Pack (24un)', value: '140,00' },
-      { label: 'Gelada', value: '7,00' }
-    ]
-  },
-  {
-    id: 'stella-long',
-    name: 'Stella Artois',
-    volume: '330 ml',
-    category: 'Long Neck',
-    image: null,
-    prices: [
-      { label: 'Pack (24un)', value: '133,00' },
-      { label: 'Gelada', value: '6,50' }
-    ]
-  },
-  {
-    id: 'budweiser-long',
-    name: 'Budweiser',
-    volume: '330 ml',
-    category: 'Long Neck',
-    image: null,
-    prices: [
-      { label: 'Pack (24un)', value: '122,50' },
-      { label: 'Gelada', value: '5,50' }
-    ]
-  },
-  {
-    id: 'corona-long',
-    name: 'Corona',
-    volume: '330 ml',
-    category: 'Long Neck',
-    image: null,
-    prices: [
-      { label: 'Pack (24un)', value: '148,00' },
-      { label: 'Gelada', value: '7,50' }
-    ]
-  },
-  {
-    id: 'imperio-gold-long',
-    name: 'Império Gold',
-    volume: '210 ml',
-    category: 'Long Neck',
-    image: null,
-    prices: [
-      { label: 'Caixa (18un)', value: '64,99' },
-      { label: 'Gelada', value: '5,00' }
-    ]
-  },
-
-  // 🍺 Latas
+  // 🍺 Latas (New Category need images too)
   {
     id: 'heineken-latao',
     name: 'Heineken Latão',
     volume: '473 ml',
     category: 'Lata',
-    image: null,
+    image: '/Ak3aiOUvn4yU1hIi7Gmik5Ga2080ndJJoFMznEd9.jpg',
     prices: [
       { label: 'Pack (12un)', value: '70,00' },
       { label: 'Gelado', value: '7,50' }
@@ -324,7 +302,7 @@ export const products = [
     name: 'Brahma Latão',
     volume: '473 ml',
     category: 'Lata',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Brahma+Latao',
     prices: [
       { label: 'Pack (12un)', value: '48,00' },
       { label: 'Pack Gelado', value: '60,00' },
@@ -336,7 +314,7 @@ export const products = [
     name: 'Antarctica Latão',
     volume: '473 ml',
     category: 'Lata',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Antarctica+Latao',
     prices: [
       { label: 'Pack (12un)', value: '48,00' },
       { label: 'Pack Gelado', value: '60,00' },
@@ -348,7 +326,7 @@ export const products = [
     name: 'Amstel Latão',
     volume: '473 ml',
     category: 'Lata',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Amstel+Latao',
     prices: [
       { label: 'Pack (12un)', value: '55,00' },
       { label: 'Pack Gelado', value: '60,00' },
@@ -360,7 +338,7 @@ export const products = [
     name: 'Império Latão',
     volume: '473 ml',
     category: 'Lata',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Imperio+Latao',
     prices: [
       { label: 'Pack (12un)', value: '46,00' },
       { label: 'Pack Gelado', value: '55,00' },
@@ -372,7 +350,7 @@ export const products = [
     name: 'Itaipava Latão',
     volume: '473 ml',
     category: 'Lata',
-    image: null,
+    image: 'https://placehold.co/400x500/e2e8f0/1e293b?text=Itaipava+Latao',
     prices: [
       { label: 'Pack (12un)', value: '41,50' },
       { label: 'Pack Gelado', value: '48,00' },
@@ -386,7 +364,7 @@ export const products = [
     name: 'Carvão Dois Irmãos',
     volume: '3kg',
     category: 'Carvão',
-    image: null,
+    image: '/carv_o_vegetal_dois_irm_os_6_0kg_915feeb7-4f05-40b4-9745-74780e55f7ff.jpg',
     prices: [
       { label: 'Unidade', value: '15,00' }
     ]
