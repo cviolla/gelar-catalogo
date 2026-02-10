@@ -1,4 +1,4 @@
-# Gelar Catálogo – Resumo da Versão Atual (07/02/2026)
+# Gelar Catálogo – Resumo da Versão Atual (10/02/2026)
 
 Este documento resume o estado atual do projeto Gelar Catálogo após a rodada de otimizações de UI, performance e dados.
 
@@ -15,6 +15,7 @@ Este documento resume o estado atual do projeto Gelar Catálogo após a rodada d
 - **Cards de Produto:** Design ultra-compacto. Margens e paddings reduzidos para exibir mais itens na tela. Altura da imagem otimizada.
 - **Scroll Inteligente:** Navegação por categorias com `IntersectionObserver` sincronizado. Clique nas categorias rola suavemente para a seção correta considerando a altura da navbar.
 - **Espaçamento:** Reduzido o vácuo entre o último produto e o botão flutuante de carrinho.
+- **Rodapé:** Implementação do endereço físico do depósito com estilo harmonizado ao tema dark.
 
 ### 2. Organização do Código
 - **Extração de CSS:** Todo o CSS inline foi movido para `src/index.css`, deixando os componentes mais limpos.
