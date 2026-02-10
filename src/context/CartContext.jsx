@@ -15,7 +15,13 @@ export const CartProvider = ({ children }) => {
         if (savedCart) {
             try {
                 const parsed = JSON.parse(savedCart);
-                setCart(Array.isArray(parsed) ? parsed : []);
+                if (Array.isArray(parsed)) {
+                    // Critical sanitization: remove nulls or malformed objects
+                    const cleanCart = parsed.filter(item => item && typeof item === 'object' && item.quantity);
+                    setCart(cleanCart);
+                } else {
+                    setCart([]);
+                }
             } catch (e) {
                 console.error("Failed to parse cart", e);
                 setCart([]);
@@ -78,9 +84,10 @@ export const CartProvider = ({ children }) => {
     };
 
     const cartTotal = cart.reduce((total, item) => {
-        // Parse "R$ 10,00" to 10.00
+        if (!item || !item.priceValue) return total;
+        // Parse "R$ 10,00" to 10.00 safety
         const val = parseFloat(String(item.priceValue).replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
-        return total + (val * item.quantity);
+        return total + (val * (item.quantity || 1));
     }, 0);
 
     return (
