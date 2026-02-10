@@ -11,24 +11,7 @@
 </head>
 
 <body>
-  <div id="root">
-    <div
-      style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #0f172a; color: white; font-family: sans-serif;">
-      <h1>Carregando Sistema...</h1>
-    </div>
-  </div>
-  <script>
-    window.onerror = function (msg, url, line, col, error) {
-      document.body.innerHTML = `
-        <div style="background: #0f172a; color: #ef4444; padding: 20px; font-family: sans-serif; height: 100vh;">
-          <h1>Erro Crítico</h1>
-          <p>${msg}</p>
-          <pre>${error ? error.stack : 'No stack'}</pre>
-          <button onclick="localStorage.clear(); window.location.reload()">RESETAR TUDO</button>
-        </div>
-      `;
-    };
-  </script>
+  <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 

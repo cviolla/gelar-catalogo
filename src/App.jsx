@@ -17,9 +17,9 @@ function App() {
     const [passwordInput, setPasswordInput] = useState("");
     const [loginError, setLoginError] = useState(false);
 
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState(initialSeedData || []); // Init with data immediately
     const [trash, setTrash] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false); // No loading state needed for local init
 
     const [activeCategory, setActiveCategory] = useState(categories[0]);
     const [searchTerm, setSearchTerm] = useState("");
