@@ -1,18 +1,15 @@
-import { StrictMode, Suspense, lazy } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import { CartProvider } from './context/CartContext'
-import ErrorBoundary from './components/ErrorBoundary'
-
-const App = lazy(() => import('./App.jsx'));
+import App from './App.jsx'
+import { CartProvider } from './context/CartContext.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ErrorBoundary>
       <CartProvider>
-        <Suspense fallback={<div style={{ color: 'white' }}>Carregando App...</div>}>
-          <App />
-        </Suspense>
+        <App />
       </CartProvider>
     </ErrorBoundary>
   </StrictMode>,
