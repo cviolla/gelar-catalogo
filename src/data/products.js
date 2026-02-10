@@ -96,7 +96,7 @@ export const products = [
     name: 'Coca-Cola',
     volume: '2L',
     category: 'Refrigerante',
-    image: null,
+    image: '/refrigerante-coca-cola-garrafa-2-l-1.webp',
     prices: [
       { label: 'Fardo (6un)', value: '55,00' },
       { label: 'Gelada', value: '12,00' }
@@ -107,7 +107,7 @@ export const products = [
     name: 'Guaraná Antarctica',
     volume: '2L',
     category: 'Refrigerante',
-    image: null,
+    image: '/refrigerante-guarana-antarctica-garrafa-2l-2.webp',
     prices: [
       { label: 'Fardo', value: '47,50' }
     ]

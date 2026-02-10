@@ -132,14 +132,25 @@ function App() {
 
 
 
-    // 1. Fetch Products
+    // 1. Fetch Products (or Load from Local)
     const fetchProducts = async () => {
         setLoading(true);
         console.log("Checking database connection...");
 
+        // --- LOCAL MODE ---
         if (!supabase) {
-            console.warn('Supabase not configured. Using local data.');
-            setProducts(initialSeedData || []);
+            console.warn('Supabase not configured. Using LOCAL STORAGE data.');
+            const localData = localStorage.getItem('gelar_products');
+            if (localData) {
+                try {
+                    setProducts(JSON.parse(localData));
+                } catch (e) {
+                    setProducts(initialSeedData || []);
+                }
+            } else {
+                setProducts(initialSeedData || []);
+                localStorage.setItem('gelar_products', JSON.stringify(initialSeedData)); // Init local
+            }
             setLoading(false);
             return;
         }
@@ -152,7 +163,9 @@ function App() {
 
             if (error) {
                 console.error('Erro ao buscar produtos:', error);
-                setProducts(initialSeedData || []);
+                // Fallback to local on error
+                const localData = localStorage.getItem('gelar_products');
+                setProducts(localData ? JSON.parse(localData) : (initialSeedData || []));
             } else {
                 if (data && data.length > 0) {
                     setProducts(data);
@@ -163,24 +176,29 @@ function App() {
             }
         } catch (err) {
             console.error('Critical error fetching products:', err);
-            setProducts(initialSeedData || []);
+            const localData = localStorage.getItem('gelar_products');
+            setProducts(localData ? JSON.parse(localData) : (initialSeedData || []));
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        // Verificar se já logou antes
         const savedAuth = localStorage.getItem("gelar_auth");
         if (savedAuth === "true") setIsAuthenticated(true);
-
-        // FETCH PRODUCTS ON START (ALWAYS)
         fetchProducts();
     }, []);
+
+    // Helper to save local
+    const saveToLocal = (newProducts) => {
+        localStorage.setItem('gelar_products', JSON.stringify(newProducts));
+        setProducts(newProducts);
+    };
 
     // 2. Create Product
     const handleAddProduct = async () => {
         const newProduct = {
+            id: Date.now(), // Local ID
             name: 'Novo Produto',
             volume: 'Volume',
             category: 'Outros',
@@ -188,14 +206,23 @@ function App() {
             prices: [{ label: 'Unidade', value: '0,00' }]
         };
 
+        if (!supabase) {
+            const updated = [newProduct, ...products];
+            saveToLocal(updated);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setActiveCategory("Todos");
+            return;
+        }
+
         const { data, error } = await supabase
             .from('products')
-            .insert([newProduct])
+            .insert([{ ...newProduct, id: undefined }]) // Let supabase gen ID
             .select();
 
         if (error) {
-            alert('Erro ao criar produto');
-            console.error(error);
+            alert('Erro ao criar produto no banco. (Fallback local ativado)');
+            const updated = [newProduct, ...products];
+            saveToLocal(updated);
         } else {
             setProducts([data[0], ...products]);
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -205,6 +232,12 @@ function App() {
 
     // 3. Update Product
     const handleUpdateProduct = async (updatedProduct) => {
+        if (!supabase) {
+            const updated = products.map(p => p.id === updatedProduct.id ? updatedProduct : p);
+            saveToLocal(updated);
+            return;
+        }
+
         setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
 
         const { error } = await supabase
@@ -221,17 +254,27 @@ function App() {
         if (error) console.error('Erro ao atualizar:', error);
     };
 
-    // 4. Delete (Move to Trash / Soft Delete)
+    // 4. Delete
     const handleDeleteProduct = (id) => {
         const productToDelete = products.find(p => p.id === id);
         if (productToDelete) {
+            const updated = products.filter(p => p.id !== id);
+            if (!supabase) {
+                saveToLocal(updated);
+            } else {
+                setProducts(updated);
+            }
             setTrash([productToDelete, ...trash]);
-            setProducts(products.filter(p => p.id !== id));
         }
     };
 
     const handlePermanentDelete = async (id) => {
+        // Local trash logic simplified
         if (window.confirm("Isso excluirá do banco de dados para sempre. Confirmar?")) {
+            if (!supabase) {
+                setTrash(trash.filter(p => p.id !== id));
+                return;
+            }
             const { error } = await supabase.from('products').delete().eq('id', id);
             if (!error) {
                 setTrash(trash.filter(p => p.id !== id));
@@ -239,11 +282,20 @@ function App() {
         }
     };
 
-    const handleRestoreProduct = (id) => {
+    const handleRestoreProduct = async (id) => {
         const productToRestore = trash.find(p => p.id === id);
         if (productToRestore) {
+            if (!supabase) {
+                saveToLocal([productToRestore, ...products]);
+                setTrash(trash.filter(p => p.id !== id));
+                return;
+            }
+
             setProducts([productToRestore, ...products]);
             setTrash(trash.filter(p => p.id !== id));
+            // In real app, you might need to re-insert to DB if it was hard deleted, 
+            // but here 'delete' was soft (moved to trash state only) unless permanent.
+            // If it was just moved to state trash, it's fine.
         }
     };
 
@@ -252,9 +304,18 @@ function App() {
         if (!window.confirm("Isso vai inserir todos os produtos iniciais no banco. Pode duplicar se já existirem. Continuar?")) return;
 
         setLoading(true);
+
+        if (!supabase) {
+            localStorage.setItem('gelar_products', JSON.stringify(initialSeedData));
+            setProducts(initialSeedData);
+            alert("Banco LOCAL resetado com sucesso!");
+            setLoading(false);
+            return;
+        }
+
         const seed = initialSeedData.map(({ id, image, ...rest }) => ({
             ...rest,
-            image_url: null
+            image_url: image // Use the local image path if available
         }));
 
         const { error } = await supabase.from('products').insert(seed);
