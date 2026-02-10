@@ -7,7 +7,7 @@ import OrderHistory from './components/OrderHistory';
 import { supabase } from './lib/supabase'; // Real DB
 import { products as initialSeedData, categories } from './data/products';
 import { useCart } from './context/CartContext';
-import { Info, RotateCcw, Trash2, X, Database, Lock, Plus } from 'lucide-react';
+import { Info, RotateCcw, Trash2, X, Database, Lock, Plus, MapPin } from 'lucide-react';
 import { normalizeText, NAVBAR_HEIGHT_DESKTOP, NAVBAR_HEIGHT_MOBILE } from './utils/helpers';
 
 function App() {
@@ -520,6 +520,10 @@ function App() {
 
             <footer className="footer">
                 <div className="container">
+                    <div className="footer-address">
+                        <span>Rod. Washington Luiz, km 101 - nº 27 - Santo Antônio, Duque de Caxias - RJ</span>
+                    </div>
+
                     {isAuthenticated && (
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
                             <button onClick={handleLogout} className="btn-logout-footer" style={{ marginTop: 0 }}>Sair do Sistema</button>
