@@ -3,12 +3,15 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { CartProvider } from './context/CartContext'
+import ErrorBoundary from './components/ErrorBoundary' // Import
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <CartProvider>
-      <App />
-    </CartProvider>
+    <ErrorBoundary>
+      <CartProvider>
+        <App />
+      </CartProvider>
+    </ErrorBoundary>
   </StrictMode>,
 )
 

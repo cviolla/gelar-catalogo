@@ -14,9 +14,11 @@ export const CartProvider = ({ children }) => {
         const savedCart = localStorage.getItem('gelar_cart');
         if (savedCart) {
             try {
-                setCart(JSON.parse(savedCart));
+                const parsed = JSON.parse(savedCart);
+                setCart(Array.isArray(parsed) ? parsed : []);
             } catch (e) {
                 console.error("Failed to parse cart", e);
+                setCart([]);
             }
         }
     }, []);
