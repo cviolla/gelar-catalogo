@@ -7,7 +7,7 @@ import OrderHistory from './components/OrderHistory';
 import { supabase } from './lib/supabase'; // Real DB
 import { products as initialSeedData, categories } from './data/products';
 import { useCart } from './context/CartContext';
-import { Info, RotateCcw, Trash2, X, Database, Lock, Plus, MapPin } from 'lucide-react';
+import { Info, RotateCcw, Trash2, X, Database, Lock, Plus } from 'lucide-react';
 import { normalizeText, NAVBAR_HEIGHT_DESKTOP, NAVBAR_HEIGHT_MOBILE } from './utils/helpers';
 
 function App() {
@@ -135,17 +135,38 @@ function App() {
     // 1. Fetch Products
     const fetchProducts = async () => {
         setLoading(true);
-        const { data, error } = await supabase
-            .from('products')
-            .select('*')
-            .order('created_at', { ascending: false });
+        console.log("Checking database connection...");
 
-        if (error) {
-            console.error('Erro ao buscar produtos:', error);
-        } else {
-            setProducts(data || []);
+        if (!supabase) {
+            console.warn('Supabase not configured. Using local data.');
+            setProducts(initialSeedData || []);
+            setLoading(false);
+            return;
         }
-        setLoading(false);
+
+        try {
+            const { data, error } = await supabase
+                .from('products')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Erro ao buscar produtos:', error);
+                setProducts(initialSeedData || []);
+            } else {
+                if (data && data.length > 0) {
+                    setProducts(data);
+                } else {
+                    console.log("Database empty, using local data.");
+                    setProducts(initialSeedData || []);
+                }
+            }
+        } catch (err) {
+            console.error('Critical error fetching products:', err);
+            setProducts(initialSeedData || []);
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -520,10 +541,6 @@ function App() {
 
             <footer className="footer">
                 <div className="container">
-                    <div className="footer-address">
-                        <span>Rod. Washington Luiz, km 101 - nº 27 - Santo Antônio, Duque de Caxias - RJ</span>
-                    </div>
-
                     {isAuthenticated && (
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
                             <button onClick={handleLogout} className="btn-logout-footer" style={{ marginTop: 0 }}>Sair do Sistema</button>
@@ -533,6 +550,7 @@ function App() {
                     )}
 
                     <p className="footer-copyright" style={{ marginTop: 0 }}>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por <a href="https://wa.me/5521965226788" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none' }}>@cviolla</a></p>
+                    <p style={{ marginTop: '0.5rem', color: '#94a3b8', fontSize: '0.85rem' }}>Rod. Washington Luiz, km 101 - nº 27 - Santo Antônio, Duque de Caxias - RJ</p>
                 </div>
             </footer>
 
