@@ -17,9 +17,9 @@ function App() {
     const [passwordInput, setPasswordInput] = useState("");
     const [loginError, setLoginError] = useState(false);
 
-    const [products, setProducts] = useState(initialSeedData || []); // Init with data immediately
+    const [products, setProducts] = useState([]);
     const [trash, setTrash] = useState([]);
-    const [loading, setLoading] = useState(false); // No loading state needed for local init
+    const [loading, setLoading] = useState(true);
 
     const [activeCategory, setActiveCategory] = useState(categories[0]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -132,73 +132,34 @@ function App() {
 
 
 
-    // 1. Fetch Products (or Load from Local)
+    // 1. Fetch Products
     const fetchProducts = async () => {
         setLoading(true);
-        console.log("Checking database connection...");
+        const { data, error } = await supabase
+            .from('products')
+            .select('*')
+            .order('created_at', { ascending: false });
 
-        // --- LOCAL MODE ---
-        if (!supabase) {
-            console.warn('Supabase not configured. Using LOCAL STORAGE data.');
-            const localData = localStorage.getItem('gelar_products');
-            if (localData) {
-                try {
-                    setProducts(JSON.parse(localData));
-                } catch (e) {
-                    setProducts(initialSeedData || []);
-                }
-            } else {
-                setProducts(initialSeedData || []);
-                localStorage.setItem('gelar_products', JSON.stringify(initialSeedData)); // Init local
-            }
-            setLoading(false);
-            return;
+        if (error) {
+            console.error('Erro ao buscar produtos:', error);
+        } else {
+            setProducts(data || []);
         }
-
-        try {
-            const { data, error } = await supabase
-                .from('products')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) {
-                console.error('Erro ao buscar produtos:', error);
-                // Fallback to local on error
-                const localData = localStorage.getItem('gelar_products');
-                setProducts(localData ? JSON.parse(localData) : (initialSeedData || []));
-            } else {
-                if (data && data.length > 0) {
-                    setProducts(data);
-                } else {
-                    console.log("Database empty, using local data.");
-                    setProducts(initialSeedData || []);
-                }
-            }
-        } catch (err) {
-            console.error('Critical error fetching products:', err);
-            const localData = localStorage.getItem('gelar_products');
-            setProducts(localData ? JSON.parse(localData) : (initialSeedData || []));
-        } finally {
-            setLoading(false);
-        }
+        setLoading(false);
     };
 
     useEffect(() => {
+        // Verificar se já logou antes
         const savedAuth = localStorage.getItem("gelar_auth");
         if (savedAuth === "true") setIsAuthenticated(true);
+
+        // FETCH PRODUCTS ON START (ALWAYS)
         fetchProducts();
     }, []);
-
-    // Helper to save local
-    const saveToLocal = (newProducts) => {
-        localStorage.setItem('gelar_products', JSON.stringify(newProducts));
-        setProducts(newProducts);
-    };
 
     // 2. Create Product
     const handleAddProduct = async () => {
         const newProduct = {
-            id: Date.now(), // Local ID
             name: 'Novo Produto',
             volume: 'Volume',
             category: 'Outros',
@@ -206,23 +167,14 @@ function App() {
             prices: [{ label: 'Unidade', value: '0,00' }]
         };
 
-        if (!supabase) {
-            const updated = [newProduct, ...products];
-            saveToLocal(updated);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            setActiveCategory("Todos");
-            return;
-        }
-
         const { data, error } = await supabase
             .from('products')
-            .insert([{ ...newProduct, id: undefined }]) // Let supabase gen ID
+            .insert([newProduct])
             .select();
 
         if (error) {
-            alert('Erro ao criar produto no banco. (Fallback local ativado)');
-            const updated = [newProduct, ...products];
-            saveToLocal(updated);
+            alert('Erro ao criar produto');
+            console.error(error);
         } else {
             setProducts([data[0], ...products]);
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -232,12 +184,6 @@ function App() {
 
     // 3. Update Product
     const handleUpdateProduct = async (updatedProduct) => {
-        if (!supabase) {
-            const updated = products.map(p => p.id === updatedProduct.id ? updatedProduct : p);
-            saveToLocal(updated);
-            return;
-        }
-
         setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
 
         const { error } = await supabase
@@ -254,27 +200,17 @@ function App() {
         if (error) console.error('Erro ao atualizar:', error);
     };
 
-    // 4. Delete
+    // 4. Delete (Move to Trash / Soft Delete)
     const handleDeleteProduct = (id) => {
         const productToDelete = products.find(p => p.id === id);
         if (productToDelete) {
-            const updated = products.filter(p => p.id !== id);
-            if (!supabase) {
-                saveToLocal(updated);
-            } else {
-                setProducts(updated);
-            }
             setTrash([productToDelete, ...trash]);
+            setProducts(products.filter(p => p.id !== id));
         }
     };
 
     const handlePermanentDelete = async (id) => {
-        // Local trash logic simplified
         if (window.confirm("Isso excluirá do banco de dados para sempre. Confirmar?")) {
-            if (!supabase) {
-                setTrash(trash.filter(p => p.id !== id));
-                return;
-            }
             const { error } = await supabase.from('products').delete().eq('id', id);
             if (!error) {
                 setTrash(trash.filter(p => p.id !== id));
@@ -282,20 +218,11 @@ function App() {
         }
     };
 
-    const handleRestoreProduct = async (id) => {
+    const handleRestoreProduct = (id) => {
         const productToRestore = trash.find(p => p.id === id);
         if (productToRestore) {
-            if (!supabase) {
-                saveToLocal([productToRestore, ...products]);
-                setTrash(trash.filter(p => p.id !== id));
-                return;
-            }
-
             setProducts([productToRestore, ...products]);
             setTrash(trash.filter(p => p.id !== id));
-            // In real app, you might need to re-insert to DB if it was hard deleted, 
-            // but here 'delete' was soft (moved to trash state only) unless permanent.
-            // If it was just moved to state trash, it's fine.
         }
     };
 
@@ -304,18 +231,9 @@ function App() {
         if (!window.confirm("Isso vai inserir todos os produtos iniciais no banco. Pode duplicar se já existirem. Continuar?")) return;
 
         setLoading(true);
-
-        if (!supabase) {
-            localStorage.setItem('gelar_products', JSON.stringify(initialSeedData));
-            setProducts(initialSeedData);
-            alert("Banco LOCAL resetado com sucesso!");
-            setLoading(false);
-            return;
-        }
-
         const seed = initialSeedData.map(({ id, image, ...rest }) => ({
             ...rest,
-            image_url: image // Use the local image path if available
+            image_url: null
         }));
 
         const { error } = await supabase.from('products').insert(seed);
@@ -358,10 +276,10 @@ function App() {
     // --- MIGRATION TOOL (Temporary) ---
 
 
-    // --- RENDER: APP (PARTIAL RESTORE) ---
+    // --- RENDER: APP ---
     return (
         <div className="app-container">
-            {/* LOGIN OVERLAY - COMMENTED OUT 
+            {/* LOGIN OVERLAY */}
             {showLogin && (
                 <div className="login-overlay">
                     <div className="login-card">
@@ -408,7 +326,6 @@ function App() {
                     </div>
                 </div>
             )}
-            */}
 
             <Navbar
                 activeCategory={activeCategory}
@@ -417,8 +334,7 @@ function App() {
                 onSearchChange={setSearchTerm}
                 onAddProduct={handleAddProduct}
                 trashCount={trash.length}
-                // onOpenTrash={() => setShowTrash(!showTrash)}
-                onOpenTrash={() => alert('Lixeira desativada temporariamente')}
+                onOpenTrash={() => setShowTrash(!showTrash)}
                 isAuthenticated={isAuthenticated}
                 onLoginClick={() => setShowLogin(true)}
             />
@@ -439,8 +355,7 @@ function App() {
                     </div>
                 )}
 
-                {/* TRASH VIEW OVERLAY - COMMENTED OUT */}
-                {/* 
+                {/* TRASH VIEW OVERLAY */}
                 {showTrash ? (
                     <div className="trash-view">
                         <div className="trash-header">
@@ -461,55 +376,54 @@ function App() {
                             </div>
                         ))}
                     </div>
-                ) : ( ... )
-                */}
-
-                {/* DIRECT PRODUCT DISPLAY - BYPASSING TRASH VIEW LOGIC */}
-                <div className="content-wrapper">
-                    {searchTerm ? (
-                        <div className="products-grid">
-                            {filteredProducts.map(product => (
-                                <ProductCard
-                                    key={product.id}
-                                    product={product}
-                                    onUpdate={handleUpdateProduct}
-                                    onDelete={handleDeleteProduct}
-                                    onExpand={setExpandedProduct} // Novo prop
-                                    readOnly={!isAuthenticated}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        categories.map(cat => {
-                            const productsInCategory = products.filter(p => p.category === cat);
-                            if (productsInCategory.length === 0) return null;
-                            return (
-                                <section
-                                    key={cat}
-                                    id={cat}
-                                    className="category-section"
-                                    ref={el => categoryRefs.current[cat] = el}
-                                >
-                                    <div className="products-grid">
-                                        {productsInCategory.map(product => (
-                                            <ProductCard
-                                                key={product.id}
-                                                product={product}
-                                                onUpdate={handleUpdateProduct}
-                                                onDelete={handleDeleteProduct}
-                                                onExpand={setExpandedProduct} // Novo prop
-                                                readOnly={!isAuthenticated}
-                                            />
-                                        ))}
-                                    </div>
-                                </section>
-                            );
-                        })
-                    )}
-                </div>
+                ) : (
+                    /* PRODUCT DISPLAY */
+                    <div className="content-wrapper">
+                        {searchTerm ? (
+                            <div className="products-grid">
+                                {filteredProducts.map(product => (
+                                    <ProductCard
+                                        key={product.id}
+                                        product={product}
+                                        onUpdate={handleUpdateProduct}
+                                        onDelete={handleDeleteProduct}
+                                        onExpand={setExpandedProduct} // Novo prop
+                                        readOnly={!isAuthenticated}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            categories.map(cat => {
+                                const productsInCategory = products.filter(p => p.category === cat);
+                                if (productsInCategory.length === 0) return null;
+                                return (
+                                    <section
+                                        key={cat}
+                                        id={cat}
+                                        className="category-section"
+                                        ref={el => categoryRefs.current[cat] = el}
+                                    >
+                                        <div className="products-grid">
+                                            {productsInCategory.map(product => (
+                                                <ProductCard
+                                                    key={product.id}
+                                                    product={product}
+                                                    onUpdate={handleUpdateProduct}
+                                                    onDelete={handleDeleteProduct}
+                                                    onExpand={setExpandedProduct} // Novo prop
+                                                    readOnly={!isAuthenticated}
+                                                />
+                                            ))}
+                                        </div>
+                                    </section>
+                                );
+                            })
+                        )}
+                    </div>
+                )}
             </main>
 
-            {/* PRODUCT EXPANDED MODAL - COMMENTED OUT
+            {/* PRODUCT EXPANDED MODAL */}
             {expandedProduct && (
                 <div
                     className="product-modal-overlay"
@@ -557,75 +471,70 @@ function App() {
                                                 <span className={`price-value ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
                                                     {(() => {
                                                         const isTextPrice = /[a-zA-Z]/.test(String(price.value).replace(/^R\$\s*/, ''));
-            if (isTextPrice) return price.value;
+                                                        if (isTextPrice) return price.value;
 
-            const unitValue = parseFloat(String(price.value).replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
-            const totalValue = unitValue * quantity;
+                                                        const unitValue = parseFloat(String(price.value).replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
+                                                        const totalValue = unitValue * quantity;
 
-            return `R$ ${totalValue.toFixed(2).replace('.', ',')}`;
+                                                        return `R$ ${totalValue.toFixed(2).replace('.', ',')}`;
                                                     })()}
-        </span>
-                                            </div >
+                                                </span>
+                                            </div>
 
-        <div className="price-action">
-            {itemInCart ? (
-                <div className="quantity-control-expanded">
-                    <button
-                        className="btn-qty-minus"
-                        onClick={() => updateQuantity(cartItemId, itemInCart.quantity - 1)}
-                    >
-                        -
-                    </button>
-                    <span className="qty-value">{itemInCart.quantity}</span>
-                    <button
-                        className="btn-qty-plus"
-                        onClick={() => addToCart(expandedProduct, price)}
-                    >
-                        +
-                    </button>
-                </div>
-            ) : (
-                <button
-                    className="btn-add-cart"
-                    onClick={() => addToCart(expandedProduct, price)}
-                >
-                    +
-                </button>
-            )}
-        </div>
-                                        </div >
+                                            <div className="price-action">
+                                                {itemInCart ? (
+                                                    <div className="quantity-control-expanded">
+                                                        <button
+                                                            className="btn-qty-minus"
+                                                            onClick={() => updateQuantity(cartItemId, itemInCart.quantity - 1)}
+                                                        >
+                                                            -
+                                                        </button>
+                                                        <span className="qty-value">{itemInCart.quantity}</span>
+                                                        <button
+                                                            className="btn-qty-plus"
+                                                            onClick={() => addToCart(expandedProduct, price)}
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <button
+                                                        className="btn-add-cart"
+                                                        onClick={() => addToCart(expandedProduct, price)}
+                                                    >
+                                                        +
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
                                     );
-})}
-                            </div >
-                        </div >
-                    </div >
-                </div >
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             )}
-            */}
 
-{/* CART COMPONENT - COMMENTED OUT */ }
-{/* <CartComponent /> */ }
+            <CartComponent />
 
-<footer className="footer">
-    <div className="container">
-        {isAuthenticated && (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
-                <button onClick={handleLogout} className="btn-logout-footer" style={{ marginTop: 0 }}>Sair do Sistema</button>
-                <span style={{ color: '#334155' }}>|</span>
-                {/* <button onClick={() => setShowOrderHistory(true)} className="btn-logout-footer" style={{ color: '#38bdf8', marginTop: 0 }}>Histórico de Pedidos</button> */}
-                <p style={{ color: 'gray' }}>Histórico desativado</p>
-            </div>
-        )}
+            <footer className="footer">
+                <div className="container">
+                    {isAuthenticated && (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                            <button onClick={handleLogout} className="btn-logout-footer" style={{ marginTop: 0 }}>Sair do Sistema</button>
+                            <span style={{ color: '#334155' }}>|</span>
+                            <button onClick={() => setShowOrderHistory(true)} className="btn-logout-footer" style={{ color: '#38bdf8', marginTop: 0 }}>Histórico de Pedidos</button>
+                        </div>
+                    )}
 
-        <p className="footer-copyright" style={{ marginTop: 0 }}>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por <a href="https://wa.me/5521965226788" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none' }}>@cviolla</a></p>
-        <p style={{ marginTop: '0.5rem', color: '#94a3b8', fontSize: '0.85rem' }}>Rod. Washington Luiz, km 101 - nº 27 - Santo Antônio, Duque de Caxias - RJ</p>
-    </div>
-</footer>
+                    <p className="footer-copyright" style={{ marginTop: 0 }}>© {new Date().getFullYear()} Gelar Depósito de Bebidas | Desenvolvido por <a href="https://wa.me/5521965226788" target="_blank" rel="noopener noreferrer" style={{ color: '#38bdf8', textDecoration: 'none' }}>@cviolla</a></p>
+                </div>
+            </footer>
 
-{/* ORDER HISTORY OVERLAY - COMMENTED OUT
+            {/* ORDER HISTORY OVERLAY */}
             {showOrderHistory && <OrderHistory onClose={() => setShowOrderHistory(false)} />}
-            */}
-        </div >
+        </div>
     );
 }
 

@@ -14,17 +14,9 @@ export const CartProvider = ({ children }) => {
         const savedCart = localStorage.getItem('gelar_cart');
         if (savedCart) {
             try {
-                const parsed = JSON.parse(savedCart);
-                if (Array.isArray(parsed)) {
-                    // Critical sanitization: remove nulls or malformed objects
-                    const cleanCart = parsed.filter(item => item && typeof item === 'object' && item.quantity);
-                    setCart(cleanCart);
-                } else {
-                    setCart([]);
-                }
+                setCart(JSON.parse(savedCart));
             } catch (e) {
                 console.error("Failed to parse cart", e);
-                setCart([]);
             }
         }
     }, []);
@@ -84,10 +76,9 @@ export const CartProvider = ({ children }) => {
     };
 
     const cartTotal = cart.reduce((total, item) => {
-        if (!item || !item.priceValue) return total;
-        // Parse "R$ 10,00" to 10.00 safety
+        // Parse "R$ 10,00" to 10.00
         const val = parseFloat(String(item.priceValue).replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
-        return total + (val * (item.quantity || 1));
+        return total + (val * item.quantity);
     }, 0);
 
     return (

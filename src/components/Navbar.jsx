@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 
 export default function Navbar({ activeCategory, onCategoryChange, searchTerm, onSearchChange, onAddProduct, trashCount, onOpenTrash, isAuthenticated, onLoginClick }) {
   const { setIsCartOpen, cart, lastAddedTime } = useCart();
-  const cartItemCount = cart.reduce((a, b) => a + (b?.quantity || 0), 0);
+  const cartItemCount = cart.reduce((a, b) => a + b.quantity, 0);
   const [isAnimating, setIsAnimating] = React.useState(false);
   const scrollRef = React.useRef(null);
   const itemsRef = React.useRef({});

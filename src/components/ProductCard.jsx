@@ -66,10 +66,6 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
       const filePath = `${fileName}`;
 
       // Upload to 'products' bucket
-      if (!supabase) {
-        throw new Error('Conexão com banco de dados não configurada.');
-      }
-
       const { error: uploadError } = await supabase.storage
         .from('products')
         .upload(filePath, file);
