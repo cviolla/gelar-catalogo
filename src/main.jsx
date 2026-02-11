@@ -9,7 +9,11 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ErrorBoundary>
       <CartProvider>
-        <App />
+        {/* <App /> */}
+        <div style={{ color: 'white', padding: 50, textAlign: 'center' }}>
+          <h1>DEBUG MODE: VERCEL IS WORKING</h1>
+          <p>Se você vê isso, o problema está no App.jsx</p>
+        </div>
       </CartProvider>
     </ErrorBoundary>
   </StrictMode>,
