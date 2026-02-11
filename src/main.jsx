@@ -9,22 +9,8 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ErrorBoundary>
       <CartProvider>
-        {/* <App /> */}
-        <div style={{ color: 'white', padding: 50, textAlign: 'center' }}>
-          <h1>DEBUG MODE: VERCEL IS WORKING</h1>
-          <p>Se você vê isso, o problema está no App.jsx</p>
-        </div>
+        <App />
       </CartProvider>
     </ErrorBoundary>
   </StrictMode>,
 )
-
-// Forçar remoção de Service Worker antigo (cache killer)
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function (registrations) {
-    for (let registration of registrations) {
-      registration.unregister();
-      console.log('Service Worker desativado para limpeza de cache.');
-    }
-  });
-}
