@@ -7,7 +7,7 @@ import OrderHistory from './components/OrderHistory';
 import { supabase } from './lib/supabase'; // Real DB
 import { products as initialSeedData, categories } from './data/products';
 import { useCart } from './context/CartContext';
-import { Info, RotateCcw, Trash2, X, Database, Lock, Plus } from 'lucide-react';
+import { Info, RotateCcw, Trash2, X, Database, Lock, Plus, RefreshCcw } from 'lucide-react';
 import { normalizeText, NAVBAR_HEIGHT_DESKTOP, NAVBAR_HEIGHT_MOBILE, parsePrice, formatPrice } from './utils/helpers';
 
 function App() {
@@ -30,6 +30,70 @@ function App() {
     const [expandedProduct, setExpandedProduct] = useState(null);
 
     const categoryRefs = React.useRef({});
+
+    // --- VERSION CHECK & UPDATE ---
+    const handleManualRefresh = async () => {
+        setLoading(true);
+        try {
+            // Limpa caches do navegador
+            if ('serviceWorker' in navigator) {
+                const registrations = await navigator.serviceWorker.getRegistrations();
+                for (const registration of registrations) {
+                    await registration.unregister();
+                }
+            }
+
+            // Tenta limpar caches nomeados
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                for (const name of cacheNames) {
+                    await caches.delete(name);
+                }
+            }
+
+            // Recarrega do servidor
+            window.location.reload(true);
+        } catch (err) {
+            console.error("Erro ao resetar caches:", err);
+            window.location.reload();
+        }
+    };
+
+    useEffect(() => {
+        const checkForUpdates = async () => {
+            try {
+                // Fetch com cache: 'no-store' para garantir que vem do servidor
+                const response = await fetch(`/version.json?t=${Date.now()}`, { cache: 'no-store' });
+                if (!response.ok) return;
+
+                const data = await response.json();
+                const localVersion = localStorage.getItem('app_version');
+
+                if (localVersion && data.version !== localVersion) {
+                    console.log('Nova versão detectada:', data.version);
+                    localStorage.setItem('app_version', data.version);
+
+                    // Se houver SW, tenta atualizar
+                    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                        const registration = await navigator.serviceWorker.ready;
+                        if (registration) await registration.update();
+                    }
+
+                    // Pequeno delay para garantir que o console apareça antes do reload
+                    setTimeout(() => window.location.reload(true), 500);
+                } else if (!localVersion) {
+                    localStorage.setItem('app_version', data.version);
+                }
+            } catch (err) {
+                console.log('Update check skip (offline or error)');
+            }
+        };
+
+        checkForUpdates();
+        // Verifica quando o app volta a ter foco (ex: usuário abre o PWA depois de horas)
+        window.addEventListener('focus', checkForUpdates);
+        return () => window.removeEventListener('focus', checkForUpdates);
+    }, []);
 
     // --- INTERSECTION OBSERVER ---
     useEffect(() => {
@@ -350,6 +414,7 @@ function App() {
                 onAddProduct={handleAddProduct}
                 trashCount={trash.length}
                 onOpenTrash={() => setShowTrash(!showTrash)}
+                onManualRefresh={handleManualRefresh}
                 isAuthenticated={isAuthenticated}
                 onLoginClick={() => setShowLogin(true)}
             />

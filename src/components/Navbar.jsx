@@ -1,9 +1,9 @@
 import React from 'react';
-import { Search, Plus, Trash2, Lock, ShoppingCart, X } from 'lucide-react';
+import { Search, Plus, Trash2, Lock, ShoppingCart, X, RefreshCcw } from 'lucide-react';
 import { categories } from '../data/products';
 import { useCart } from '../context/CartContext';
 
-export default function Navbar({ activeCategory, onCategoryChange, searchTerm, onSearchChange, onAddProduct, trashCount, onOpenTrash, isAuthenticated, onLoginClick }) {
+export default function Navbar({ activeCategory, onCategoryChange, searchTerm, onSearchChange, onAddProduct, trashCount, onOpenTrash, onManualRefresh, isAuthenticated, onLoginClick }) {
   const { setIsCartOpen, cart, lastAddedTime } = useCart();
   const cartItemCount = cart.reduce((a, b) => a + b.quantity, 0);
   const [isAnimating, setIsAnimating] = React.useState(false);
@@ -65,9 +65,10 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
 
           <div className="actions-area">
             {/* Status Indicator */}
-            <div className="online-badge">
+            <div className="online-badge" onClick={onManualRefresh} style={{ cursor: 'pointer' }} title="Sincronizar App">
               <div className="status-dot"></div>
               <span className="status-text">{isAuthenticated ? 'ADMIN' : 'ONLINE'}</span>
+              <RefreshCcw size={12} className="refresh-icon-mini" style={{ marginLeft: '4px', opacity: 0.5 }} />
             </div>
 
             {isAuthenticated ? (
