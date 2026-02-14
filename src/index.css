@@ -1461,7 +1461,7 @@ label {
   padding: 1.25rem;
   width: 100%;
   max-width: 500px;
-  margin: 3rem auto 1rem;
+  margin: 1.5rem auto 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
