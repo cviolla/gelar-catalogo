@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { Edit2, Save, X, Upload, Image as ImageIcon, Plus, Trash2, RotateCcw, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useCart } from '../context/CartContext';
@@ -11,6 +11,12 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
   const [editedProduct, setEditedProduct] = useState({ ...product });
   const [uploading, setUploading] = useState(false); // Estado de load
   const fileInputRef = useRef(null);
+
+  // Memoize sorted prices for performance (Medium Severity Fix)
+  const displayPrices = useMemo(() => {
+    if (isEditing) return editedProduct.prices || [];
+    return [...(editedProduct.prices || [])].sort((a, b) => parsePrice(a.value) - parsePrice(b.value));
+  }, [editedProduct.prices, isEditing]);
 
   // Stop propagation for buttons and inputs
   const stopProp = (e) => e.stopPropagation();
@@ -154,6 +160,7 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
               value={editedProduct.volume}
               onClick={stopProp}
               onChange={(e) => handleChange('volume', e.target.value)}
+              aria-label="Volume do produto"
             />
           ) : (
             editedProduct.volume
@@ -171,6 +178,7 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
               value={editedProduct.category}
               onClick={stopProp}
               onChange={(e) => handleChange('category', e.target.value)}
+              aria-label="Categoria do produto"
             >
               {categories.filter(c => c !== 'Todos').map(cat => (
                 <option key={cat} value={cat}>{cat}</option>
@@ -196,6 +204,7 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
               value={editedProduct.name}
               onClick={stopProp}
               onChange={(e) => handleChange('name', e.target.value)}
+              aria-label="Nome do produto"
             />
           ) : (
             <h3>{editedProduct.name}</h3>
@@ -227,11 +236,8 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
           )}
         </div>
 
-        {/* Prices List - Sorted Low to High on View */}
         <div className="prices-list">
-          {(isEditing ? (editedProduct.prices || []) : [...(editedProduct.prices || [])].sort((a, b) => {
-            return parsePrice(a) - parsePrice(b);
-          })).map((price, index) => {
+          {displayPrices.map((price, index) => {
             const cartItemId = `${product.id}-${price.label}`;
             const itemInCart = cart.find(item => item.cartItemId === cartItemId);
             const quantity = itemInCart ? itemInCart.quantity : 1;

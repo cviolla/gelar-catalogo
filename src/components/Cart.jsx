@@ -236,6 +236,7 @@ export default function CartComponent() {
                                         required
                                         value={customer.name}
                                         onChange={e => setCustomer({ ...customer, name: e.target.value })}
+                                        aria-label="Seu Nome Completo"
                                     />
                                 </div>
 
@@ -246,6 +247,7 @@ export default function CartComponent() {
                                         required
                                         value={customer.phone}
                                         onChange={e => setCustomer({ ...customer, phone: e.target.value })}
+                                        aria-label="Seu Telefone com DDD"
                                     />
                                 </div>
 
@@ -256,6 +258,7 @@ export default function CartComponent() {
                                         value={customer.address}
                                         onChange={e => setCustomer({ ...customer, address: e.target.value })}
                                         style={{ minHeight: '60px' }}
+                                        aria-label="Endereço Completo (Rua e Número)"
                                     />
                                 </div>
 
@@ -266,6 +269,7 @@ export default function CartComponent() {
                                         required
                                         value={customer.neighborhood}
                                         onChange={e => setCustomer({ ...customer, neighborhood: e.target.value })}
+                                        aria-label="Seu Bairro"
                                     />
                                 </div>
 
@@ -275,6 +279,7 @@ export default function CartComponent() {
                                         placeholder="Ponto de Referência"
                                         value={customer.reference}
                                         onChange={e => setCustomer({ ...customer, reference: e.target.value })}
+                                        aria-label="Ponto de Referência (Opcional)"
                                     />
                                 </div>
 
@@ -283,6 +288,7 @@ export default function CartComponent() {
                                     <select
                                         value={customer.payment}
                                         onChange={e => setCustomer({ ...customer, payment: e.target.value })}
+                                        aria-label="Método de Pagamento"
                                     >
                                         <option value="Pix">Pix</option>
                                         <option value="Dinheiro">Dinheiro</option>
@@ -313,316 +319,7 @@ export default function CartComponent() {
                     )}
                 </div>
             </div>
-            <style>{`
-        .floating-cart-btn {
-          position: fixed;
-          bottom: 2rem;
-          right: 2rem;
-          background: rgba(15, 23, 42, 0.8);
-          backdrop-filter: blur(12px);
-          color: #38BDF8;
-          width: auto;
-          height: auto;
-          min-width: 56px;
-          min-height: 56px;
-          padding: 0 1.25rem;
-          border-radius: 28px;
-          border: 1px solid rgba(56, 189, 248, 0.3);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(56, 189, 248, 0.1);
-          cursor: pointer;
-          display: flex;
-          align-items: center !important;
-          justify-content: center !important;
-          gap: 0.75rem;
-          z-index: 1000;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          flex-direction: row !important; /* Force row definitely */
-          white-space: nowrap !important; /* Prevent wrapping */
-        }
-        .floating-cart-btn:hover {
-          transform: translateY(-4px);
-          background: rgba(15, 23, 42, 0.95);
-          border-color: #38BDF8;
-          box-shadow: 0 12px 40px rgba(12, 170, 220, 0.3), 0 0 0 1px rgba(56, 189, 248, 0.3);
-          color: #ffffff;
-        }
-        .floating-cart-btn:active {
-          transform: translateY(0);
-        }
 
-        .cart-icon-wrapper {
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .cart-label {
-          font-weight: 700;
-          font-size: 0.9rem;
-          letter-spacing: 0.02em;
-          display: block !important;
-          color: #fbbf24; /* Amber/Orange color as requested/implied for visibility */
-          text-transform: uppercase;
-          margin-top: 0 !important; /* Ensure no top margin pushing it down */
-        }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateX(-5px); } to { opacity: 1; transform: translateX(0); } }
-
-        .cart-badge {
-          position: absolute;
-          top: -8px;
-          right: -8px;
-          background: #ef4444;
-          color: white;
-          font-size: 0.7rem;
-          font-weight: 800;
-          min-width: 18px;
-          height: 18px;
-          padding: 0 4px;
-          border-radius: 9px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: 2px solid #0f172a;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-          z-index: 10;
-        }
-        
-        .cart-total-preview {
-          font-size: 0.85rem;
-          color: #94a3b8;
-          margin-left: 0.5rem;
-          padding-left: 0.75rem;
-          border-left: 1px solid rgba(255,255,255,0.1);
-          font-weight: 500;
-        }
-        
-        .floating-cart-btn:hover .cart-total-preview {
-          color: #e2e8f0;
-        }
-
-        .cart-overlay {
-          position: fixed;
-          top: 0; right: 0;
-          width: 100%; height: 100%;
-          background: rgba(0,0,0,0.6);
-          backdrop-filter: blur(8px);
-          z-index: 2000;
-          display: flex;
-          justify-content: flex-end;
-          transition: opacity 0.3s ease;
-        }
-
-        .cart-container {
-          background: #0f172a;
-          width: 100%;
-          max-width: 450px;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          box-shadow: -5px 0 20px rgba(0,0,0,0.5);
-          animation: slideIn 0.3s ease-out;
-        }
-        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-
-        .cart-header {
-          padding: 1.5rem;
-          border-bottom: 1px solid #1e293b;
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .btn-close { background: none; border: none; color: #94a3b8; cursor: pointer; }
-        
-        .btn-back-text {
-            background: rgba(51, 65, 85, 0.5);
-            color: #38BDF8;
-            border: 1px solid rgba(56, 189, 248, 0.2);
-            padding: 0.6rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            width: fit-content;
-            transition: all 0.2s;
-        }
-        .btn-back-text:hover {
-            background: rgba(56, 189, 248, 0.1);
-            color: white;
-            border-color: #38BDF8;
-        }
-
-        .cart-body {
-          flex: 1;
-          overflow-y: auto;
-          padding: 1.5rem;
-        }
-
-        .empty-cart {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 100%;
-          color: #64748b;
-          gap: 1rem;
-        }
-        .btn-continue {
-            padding: 0.75rem 1.5rem;
-            background: #1e293b;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .cart-items {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #1e293b;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid transparent;
-            transition: border-color 0.2s;
-        }
-        .cart-item:hover {
-            border-color: #334155;
-        }
-        .item-info { flex: 1; min-width: 0; }
-        .item-info h4 { 
-            margin: 0; font-size: 0.95rem; color: white; 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .item-variant { font-size: 0.8rem; color: #94a3b8; margin: 2px 0; }
-        .item-price { font-weight: bold; color: #38bdf8; }
-
-        .item-controls {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: #0f172a;
-            padding: 4px;
-            border-radius: 8px;
-            border: 1px solid #334155;
-        }
-        
-        .btn-qty {
-            width: 32px; height: 32px;
-            background: #334155;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s;
-        }
-        .btn-qty:hover {
-            background: #475569;
-            color: #38bdf8;
-        }
-        .qty-value {
-            font-weight: bold;
-            font-size: 1rem;
-            min-width: 20px;
-            text-align: center;
-            color: white;
-        }
-        
-        .btn-trash-item { 
-            background: rgba(239, 68, 68, 0.1); 
-            color: #f87171; 
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            border-radius: 8px;
-            width: 36px; height: 36px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin: 0 1rem;
-            flex-shrink: 0;
-        }
-        .btn-trash-item:hover {
-            background: rgba(239, 68, 68, 0.2); 
-            transform: scale(1.1);
-            color: #ef4444;
-        }
-
-        .cart-total {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.25rem;
-            font-weight: bold;
-            padding: 1rem 0;
-            border-top: 1px solid #334155;
-            border-bottom: 1px solid #334155;
-            margin-bottom: 2rem;
-        }
-        .total-value { color: #38bdf8; }
-
-        .checkout-form h3 { margin-bottom: 1rem; color: white; }
-        .input-group {
-            position: relative;
-            margin-bottom: 1rem;
-        }
-        .input-group svg {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #64748b;
-        }
-        .input-group input, .input-group textarea, .input-group select {
-            width: 100%;
-            padding: 12px 12px 12px 40px;
-            background: #020617;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            color: white;
-            font-family: inherit;
-        }
-        .input-group textarea { min-height: 80px; resize: vertical; }
-        
-        .btn-whatsapp {
-            width: 100%;
-            padding: 1rem;
-            background: #22c55e; /* WhatsApp Green */
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            text-transform: uppercase;
-            margin-top: 1rem;
-            transition: background 0.2s;
-        }
-        .btn-whatsapp:hover { background: #16a34a; }
-        .btn-whatsapp:disabled { opacity: 0.7; cursor: not-allowed; }
-        .animate-spin { animation: spin 1s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-      `}</style>
         </div>
     );
 }

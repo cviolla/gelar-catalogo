@@ -20,6 +20,7 @@ function App() {
     const [products, setProducts] = useState([]);
     const [trash, setTrash] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const [activeCategory, setActiveCategory] = useState(categories[0]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -147,8 +148,10 @@ function App() {
 
         if (error) {
             console.error('Erro ao buscar produtos:', error);
+            setError('Não foi possível carregar os produtos. Tente novamente mais tarde.');
         } else {
             setProducts(data || []);
+            setError(null);
         }
         setLoading(false);
     };
@@ -355,6 +358,15 @@ function App() {
 
                 {loading && <div className="loading">Carregando estoque...</div>}
 
+                {error && (
+                    <div className="empty-db-state" style={{ borderColor: '#ef4444' }}>
+                        <Info size={48} color="#ef4444" />
+                        <h2>Erro de Conexão</h2>
+                        <p>{error}</p>
+                        <button className="btn btn-primary" onClick={fetchProducts}>Tentar Novamente</button>
+                    </div>
+                )}
+
                 {!loading && products.length === 0 && !showTrash && (
                     <div className="empty-db-state">
                         <Database size={48} color="#fbbf24" />
@@ -371,12 +383,14 @@ function App() {
                 {showTrash ? (
                     <div className="trash-view">
                         <div className="trash-header">
-                            <h2>Lixeira (Não salvos no banco)</h2>
+                            <h2>Lixeira (Sessão Atual)</h2>
                             <button className="btn btn-secondary" onClick={() => setShowTrash(false)}>
                                 <X size={20} /> Fechar
                             </button>
                         </div>
-                        <p style={{ marginBottom: '1rem', color: '#ef4444' }}>Itens aqui ainda existem no banco, mas estão ocultos. Exclua definitivamente para limpar.</p>
+                        <p style={{ marginBottom: '1rem', color: '#94a3b8', fontSize: '0.9rem' }}>
+                            Produtos removidos nesta sessão. Eles ainda aparecem no catálogo após atualizar a página, a menos que sejam <strong>excluídos permanentemente</strong>.
+                        </p>
 
                         {trash.map(item => (
                             <div key={item.id} className="trash-item">
