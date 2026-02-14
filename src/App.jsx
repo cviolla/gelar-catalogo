@@ -478,7 +478,7 @@ function App() {
                                         product={product}
                                         onUpdate={handleUpdateProduct}
                                         onDelete={handleDeleteProduct}
-                                        onExpand={setExpandedProduct} // Novo prop
+                                        onExpand={setExpandedProduct}
                                         readOnly={!isAuthenticated}
                                     />
                                 ))}
@@ -501,7 +501,7 @@ function App() {
                                                     product={product}
                                                     onUpdate={handleUpdateProduct}
                                                     onDelete={handleDeleteProduct}
-                                                    onExpand={setExpandedProduct} // Novo prop
+                                                    onExpand={setExpandedProduct}
                                                     readOnly={!isAuthenticated}
                                                 />
                                             ))}
@@ -510,96 +510,103 @@ function App() {
                                 );
                             })
                         )}
+
+                        {/* CART CARD AT THE END */}
+                        {!showTrash && products.length > 0 && (
+                            <CartComponent />
+                        )}
                     </div>
                 )}
             </main>
 
             {/* PRODUCT EXPANDED MODAL */}
-            {expandedProduct && (
-                <div
-                    className="product-modal-overlay"
-                    onClick={() => setExpandedProduct(null)}
-                >
-                    <div className="product-card expanded-card" onClick={(e) => e.stopPropagation()}>
-                        <div className="card-image-area">
-                            <img
-                                src={expandedProduct.image_url || expandedProduct.image}
-                                alt={expandedProduct.name}
-                                className="product-img"
-                                onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.src = 'https://placehold.co/400x300?text=Sem+Imagem';
-                                }}
-                            />
-                            <div className="volume-badge">{expandedProduct.volume}</div>
-                            <button className="btn-close-modal" onClick={() => setExpandedProduct(null)}>
-                                <X size={20} />
-                            </button>
-                        </div>
-
-                        <div className="card-content">
-                            <div className="card-header">
-                                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                    <span className="category-badge" style={{ alignSelf: 'flex-start', marginBottom: '4px' }}>
-                                        {expandedProduct.category}
-                                    </span>
-                                    <h3>{expandedProduct.name}</h3>
-                                </div>
+            {
+                expandedProduct && (
+                    <div
+                        className="product-modal-overlay"
+                        onClick={() => setExpandedProduct(null)}
+                    >
+                        <div className="product-card expanded-card" onClick={(e) => e.stopPropagation()}>
+                            <div className="card-image-area">
+                                <img
+                                    src={expandedProduct.image_url || expandedProduct.image}
+                                    alt={expandedProduct.name}
+                                    className="product-img"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = 'https://placehold.co/400x300?text=Sem+Imagem';
+                                    }}
+                                />
+                                <div className="volume-badge">{expandedProduct.volume}</div>
+                                <button className="btn-close-modal" onClick={() => setExpandedProduct(null)}>
+                                    <X size={20} />
+                                </button>
                             </div>
 
-                            <div className="prices-list">
-                                {expandedProduct.prices?.map((price, idx) => {
-                                    const cartItemId = `${expandedProduct.id}-${price.label}`;
-                                    const itemInCart = cart.find(item => item.cartItemId === cartItemId);
-                                    const quantity = itemInCart ? itemInCart.quantity : 1;
+                            <div className="card-content">
+                                <div className="card-header">
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <span className="category-badge" style={{ alignSelf: 'flex-start', marginBottom: '4px' }}>
+                                            {expandedProduct.category}
+                                        </span>
+                                        <h3>{expandedProduct.name}</h3>
+                                    </div>
+                                </div>
 
-                                    return (
-                                        <div key={idx} className={`price-row ${itemInCart ? 'in-cart' : ''}`}>
-                                            <div className="price-details">
-                                                <span className={`price-label ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
-                                                    {price.label === 'Promoção' ? 'PROMO' : price.label}{price.label === 'Promoção' ? '' : ':'}
-                                                </span>
-                                                <span className={`price-value ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
-                                                    {formatPrice(parsePrice(price.value) * quantity)}
-                                                </span>
-                                            </div>
+                                <div className="prices-list">
+                                    {expandedProduct.prices?.map((price, idx) => {
+                                        const cartItemId = `${expandedProduct.id}-${price.label}`;
+                                        const itemInCart = cart.find(item => item.cartItemId === cartItemId);
+                                        const quantity = itemInCart ? itemInCart.quantity : 1;
 
-                                            <div className="price-action">
-                                                {itemInCart ? (
-                                                    <div className="quantity-control-expanded">
+                                        return (
+                                            <div key={idx} className={`price-row ${itemInCart ? 'in-cart' : ''}`}>
+                                                <div className="price-details">
+                                                    <span className={`price-label ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
+                                                        {price.label === 'Promoção' ? 'PROMO' : price.label}{price.label === 'Promoção' ? '' : ':'}
+                                                    </span>
+                                                    <span className={`price-value ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
+                                                        {formatPrice(parsePrice(price.value) * quantity)}
+                                                    </span>
+                                                </div>
+
+                                                <div className="price-action">
+                                                    {itemInCart ? (
+                                                        <div className="quantity-control-expanded">
+                                                            <button
+                                                                className="btn-qty-minus"
+                                                                onClick={() => updateQuantity(cartItemId, itemInCart.quantity - 1)}
+                                                            >
+                                                                -
+                                                            </button>
+                                                            <span className="qty-value">{itemInCart.quantity}</span>
+                                                            <button
+                                                                className="btn-qty-plus"
+                                                                onClick={() => addToCart(expandedProduct, price)}
+                                                            >
+                                                                +
+                                                            </button>
+                                                        </div>
+                                                    ) : (
                                                         <button
-                                                            className="btn-qty-minus"
-                                                            onClick={() => updateQuantity(cartItemId, itemInCart.quantity - 1)}
-                                                        >
-                                                            -
-                                                        </button>
-                                                        <span className="qty-value">{itemInCart.quantity}</span>
-                                                        <button
-                                                            className="btn-qty-plus"
+                                                            className="btn-add-cart"
                                                             onClick={() => addToCart(expandedProduct, price)}
                                                         >
                                                             +
                                                         </button>
-                                                    </div>
-                                                ) : (
-                                                    <button
-                                                        className="btn-add-cart"
-                                                        onClick={() => addToCart(expandedProduct, price)}
-                                                    >
-                                                        +
-                                                    </button>
-                                                )}
+                                                    )}
+                                                </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
-            <CartComponent />
+
 
             <footer className="footer">
                 <div className="container">
@@ -617,7 +624,7 @@ function App() {
 
             {/* ORDER HISTORY OVERLAY */}
             {showOrderHistory && <OrderHistory onClose={() => setShowOrderHistory(false)} />}
-        </div>
+        </div >
     );
 }
 
