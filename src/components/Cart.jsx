@@ -114,50 +114,24 @@ export default function CartComponent() {
         <button
             className="floating-cart-btn"
             onClick={() => setIsCartOpen(true)}
-            style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '12px',
-                backgroundColor: 'rgba(15, 23, 42, 0.95)',
-                color: 'white',
-                border: '1px solid rgba(56, 189, 248, 0.3)',
-                padding: '0 20px',
-                height: '56px',
-                borderRadius: '28px',
-                whiteSpace: 'nowrap'
-            }}
         >
-            <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+            <div className="cart-icon-wrapper">
                 <ShoppingCart size={24} color="#38BDF8" />
                 {cart.length > 0 && (
-                    <span className="cart-badge" style={{
-                        position: 'absolute', top: '-8px', right: '-8px',
-                        background: '#ef4444', color: 'white',
-                        fontSize: '10px', width: '18px', height: '18px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        borderRadius: '50%'
-                    }}>
+                    <span className="cart-badge">
                         {cart.reduce((a, b) => a + b.quantity, 0)}
                     </span>
                 )}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <div className="cart-label-container">
                 {cart.length > 0 ? (
-                    <>
-                        <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#fbbf24', textTransform: 'uppercase' }}>
-                            Ver Carrinho
-                        </span>
-                        <span style={{ fontSize: '12px', color: '#94a3b8' }}>
-                            {formatPrice(cartTotal)}
-                        </span>
-                    </>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span className="cart-label">VER PEDIDO ✨</span>
+                        <span className="cart-total-preview">{formatPrice(cartTotal)}</span>
+                    </div>
                 ) : (
-                    <span style={{ fontWeight: 'bold', fontSize: '14px', color: '#fbbf24', textTransform: 'uppercase' }}>
-                        Carrinho Vazio
-                    </span>
+                    <span className="cart-label">CARRINHO VAZIO</span>
                 )}
             </div>
         </button>

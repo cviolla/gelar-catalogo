@@ -191,7 +191,7 @@ label {
 .main-content {
   flex: 1;
   padding-top: 1rem;
-  padding-bottom: 3.5rem;
+  padding-bottom: 5rem;
 }
 
 .products-grid {
@@ -1451,40 +1451,32 @@ label {
 /* --- CART COMPONENT STYLES --- */
 .floating-cart-btn {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  background: rgba(15, 23, 42, 0.8);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #0f172a;
   backdrop-filter: blur(12px);
   color: #38BDF8;
-  width: auto;
-  height: auto;
-  min-width: 56px;
-  min-height: 56px;
-  padding: 0 1.25rem;
-  border-radius: 28px;
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(56, 189, 248, 0.1);
+  width: 100%;
+  height: 65px;
+  padding: 0 1.5rem;
+  border-radius: 0;
+  border-top: 1px solid rgba(56, 189, 248, 0.3);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
   cursor: pointer;
   display: flex;
   align-items: center !important;
   justify-content: center !important;
-  gap: 0.75rem;
+  gap: 1rem;
   z-index: 1000;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   flex-direction: row !important;
   white-space: nowrap !important;
 }
 
 .floating-cart-btn:hover {
-  transform: translateY(-4px);
-  background: rgba(15, 23, 42, 0.95);
-  border-color: #38BDF8;
-  box-shadow: 0 12px 40px rgba(12, 170, 220, 0.3), 0 0 0 1px rgba(56, 189, 248, 0.3);
+  background: #1e293b;
   color: #ffffff;
-}
-
-.floating-cart-btn:active {
-  transform: translateY(0);
 }
 
 .cart-icon-wrapper {
