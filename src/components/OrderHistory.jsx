@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { X, Calendar, User, Phone, MapPin, DollarSign, Package, Search, ChevronDown, ChevronUp, Trash2, RotateCcw, AlertTriangle } from 'lucide-react';
+import { parsePrice, formatPrice } from '../utils/helpers';
 
 export default function OrderHistory({ onClose }) {
     const [orders, setOrders] = useState([]);
@@ -10,10 +11,6 @@ export default function OrderHistory({ onClose }) {
 
     // 'active' = Pedidos Normais | 'trash' = Lixeira
     const [viewMode, setViewMode] = useState('active');
-
-    useEffect(() => {
-        fetchOrders();
-    }, [viewMode]); // Recarrega quando muda a aba
 
     const fetchOrders = async () => {
         setLoading(true);
@@ -41,6 +38,11 @@ export default function OrderHistory({ onClose }) {
         }
         setLoading(false);
     };
+
+    useEffect(() => {
+        fetchOrders();
+    }, [viewMode]); // Recarrega quando muda a aba
+
 
     // 1. Soft Delete (Mover para Lixeira)
     const handleSoftDelete = async (id, e) => {
@@ -160,7 +162,7 @@ export default function OrderHistory({ onClose }) {
                                             </span>
                                         </div>
                                         <div className="order-info-value">
-                                            <span className="order-total">R$ {parseFloat(order.total_value).toFixed(2).replace('.', ',')}</span>
+                                            <span className="order-total">{formatPrice(order.total_value)}</span>
 
                                             {/* ACTIONS TOOLBAR */}
                                             <div className="card-actions">
@@ -221,7 +223,7 @@ export default function OrderHistory({ onClose }) {
                                                 {order.items && order.items.map((item, idx) => (
                                                     <div key={idx} className="order-item-row">
                                                         <span>{item.quantity}x {item.productName} ({item.priceLabel})</span>
-                                                        <span>R$ {item.priceValue}</span>
+                                                        <span>{formatPrice(item.priceValue)}</span>
                                                     </div>
                                                 ))}
                                             </div>

@@ -1,25 +1,26 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
+import { parsePrice } from '../utils/helpers';
+
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-    const [cart, setCart] = useState([]);
-    const [isCartOpen, setIsCartOpen] = useState(false);
-    const [lastAddedTime, setLastAddedTime] = useState(0);
-
-    // Load cart from localStorage on mount
-    useEffect(() => {
+    const [cart, setCart] = useState(() => {
         const savedCart = localStorage.getItem('gelar_cart');
         if (savedCart) {
             try {
-                setCart(JSON.parse(savedCart));
+                return JSON.parse(savedCart);
             } catch (e) {
                 console.error("Failed to parse cart", e);
             }
         }
-    }, []);
+        return [];
+    });
+    const [isCartOpen, setIsCartOpen] = useState(false);
+    const [lastAddedTime, setLastAddedTime] = useState(0);
+
 
     // Save cart to localStorage whenever it changes
     useEffect(() => {
@@ -76,8 +77,7 @@ export const CartProvider = ({ children }) => {
     };
 
     const cartTotal = cart.reduce((total, item) => {
-        // Parse "R$ 10,00" to 10.00
-        const val = parseFloat(String(item.priceValue).replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
+        const val = parsePrice(item.priceValue);
         return total + (val * item.quantity);
     }, 0);
 

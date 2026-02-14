@@ -8,11 +8,11 @@ import { supabase } from './lib/supabase'; // Real DB
 import { products as initialSeedData, categories } from './data/products';
 import { useCart } from './context/CartContext';
 import { Info, RotateCcw, Trash2, X, Database, Lock, Plus } from 'lucide-react';
-import { normalizeText, NAVBAR_HEIGHT_DESKTOP, NAVBAR_HEIGHT_MOBILE } from './utils/helpers';
+import { normalizeText, NAVBAR_HEIGHT_DESKTOP, NAVBAR_HEIGHT_MOBILE, parsePrice, formatPrice } from './utils/helpers';
 
 function App() {
     const { cart, addToCart, updateQuantity } = useCart();
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem("gelar_auth") === "true");
     const [showLogin, setShowLogin] = useState(false); // Modal de Login
     const [passwordInput, setPasswordInput] = useState("");
     const [loginError, setLoginError] = useState(false);
@@ -112,7 +112,7 @@ function App() {
     const handleLogin = (e) => {
         e.preventDefault();
         // SENHA DEFINIDA AQUI (Você pode mudar depois)
-        const SECRET_PASS = "hionas060226";
+        const SECRET_PASS = import.meta.env.VITE_ADMIN_PASSWORD;
 
         if (passwordInput === SECRET_PASS) {
             setIsAuthenticated(true);
@@ -134,6 +134,11 @@ function App() {
 
     // 1. Fetch Products
     const fetchProducts = async () => {
+        if (!supabase) {
+            console.error('Supabase client not initialized. Check your environment variables.');
+            setLoading(false);
+            return;
+        }
         setLoading(true);
         const { data, error } = await supabase
             .from('products')
@@ -149,10 +154,6 @@ function App() {
     };
 
     useEffect(() => {
-        // Verificar se já logou antes
-        const savedAuth = localStorage.getItem("gelar_auth");
-        if (savedAuth === "true") setIsAuthenticated(true);
-
         // FETCH PRODUCTS ON START (ALWAYS)
         fetchProducts();
     }, []);
@@ -166,6 +167,11 @@ function App() {
             image_url: null,
             prices: [{ label: 'Unidade', value: '0,00' }]
         };
+
+        if (!supabase) {
+            alert('Configuração do banco de dados ausente (VITE_SUPABASE_URL / ANON_KEY)');
+            return;
+        }
 
         const { data, error } = await supabase
             .from('products')
@@ -186,6 +192,7 @@ function App() {
     const handleUpdateProduct = async (updatedProduct) => {
         setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
 
+        if (!supabase) return;
         const { error } = await supabase
             .from('products')
             .update({
@@ -210,11 +217,11 @@ function App() {
     };
 
     const handlePermanentDelete = async (id) => {
-        if (window.confirm("Isso excluirá do banco de dados para sempre. Confirmar?")) {
-            const { error } = await supabase.from('products').delete().eq('id', id);
-            if (!error) {
-                setTrash(trash.filter(p => p.id !== id));
-            }
+        if (!window.confirm("Isso excluirá do banco de dados para sempre. Confirmar?")) return;
+        if (!supabase) return;
+        const { error } = await supabase.from('products').delete().eq('id', id);
+        if (!error) {
+            setTrash(trash.filter(p => p.id !== id));
         }
     };
 
@@ -231,11 +238,16 @@ function App() {
         if (!window.confirm("Isso vai inserir todos os produtos iniciais no banco. Pode duplicar se já existirem. Continuar?")) return;
 
         setLoading(true);
-        const seed = initialSeedData.map(({ id, image, ...rest }) => ({
+        const seed = initialSeedData.map(({ id: _id, image: _image, ...rest }) => ({
             ...rest,
             image_url: null
         }));
 
+        if (!supabase) {
+            alert("Erro: Cliente Supabase não inicializado.");
+            setLoading(false);
+            return;
+        }
         const { error } = await supabase.from('products').insert(seed);
         if (error) alert("Erro ao popular banco: " + error.message);
         else {
@@ -469,15 +481,7 @@ function App() {
                                                     {price.label === 'Promoção' ? 'PROMO' : price.label}{price.label === 'Promoção' ? '' : ':'}
                                                 </span>
                                                 <span className={`price-value ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
-                                                    {(() => {
-                                                        const isTextPrice = /[a-zA-Z]/.test(String(price.value).replace(/^R\$\s*/, ''));
-                                                        if (isTextPrice) return price.value;
-
-                                                        const unitValue = parseFloat(String(price.value).replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
-                                                        const totalValue = unitValue * quantity;
-
-                                                        return `R$ ${totalValue.toFixed(2).replace('.', ',')}`;
-                                                    })()}
+                                                    {formatPrice(parsePrice(price.value) * quantity)}
                                                 </span>
                                             </div>
 

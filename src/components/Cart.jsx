@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { X, Trash2, Home, User, Phone, MapPin, CreditCard, ShoppingCart, ArrowLeft, Send, Loader2, Minus, Plus } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { parsePrice, formatPrice } from '../utils/helpers';
 
 export default function CartComponent() {
     const { cart, removeFromCart, updateQuantity, clearCart, isCartOpen, setIsCartOpen, cartTotal } = useCart();
@@ -12,6 +13,10 @@ export default function CartComponent() {
     // Buscar configurações do banco (WhatsApp)
     React.useEffect(() => {
         async function fetchConfig() {
+            if (!supabase) {
+                console.warn("Supabase not initialized, using default WhatsApp number.");
+                return;
+            }
             try {
                 const { data, error } = await supabase
                     .from('store_config')
@@ -55,10 +60,10 @@ export default function CartComponent() {
 
         // FORMAT WHATSAPP MESSAGE
         const orderItems = cart.map(item =>
-            `- ${item.productName} (${item.priceLabel}): ${item.quantity}x R$ ${item.priceValue} = *R$ ${(parseFloat(item.priceValue.replace('R$ ', '').replace(',', '.')) * item.quantity).toFixed(2).replace('.', ',')}*`
+            `- ${item.productName} (${item.priceLabel}): ${item.quantity}x ${item.priceValue} = *${formatPrice(parsePrice(item.priceValue) * item.quantity)}*`
         ).join('\n');
 
-        const totalFormatted = `*R$ ${cartTotal.toFixed(2).replace('.', ',')}*`;
+        const totalFormatted = `*${formatPrice(cartTotal)}*`;
 
         const message = `*NOVO PEDIDO - GELAR DEPÓSITO*\n\n` +
             `*Cliente:* ${customer.name}\n` +
@@ -75,19 +80,23 @@ export default function CartComponent() {
 
         // SAVE ORDER TO SUPABASE
         try {
-            const { error } = await supabase.from('orders').insert([{
-                customer_name: customer.name,
-                customer_phone: formattedPhone,
-                customer_address: customer.address,
-                customer_neighborhood: customer.neighborhood,
-                customer_reference: customer.reference,
-                payment_method: customer.payment,
-                items: cart, // Supabase stores JSON automatically
-                total_value: cartTotal
-            }]);
+            if (supabase) {
+                const { error } = await supabase.from('orders').insert([{
+                    customer_name: customer.name,
+                    customer_phone: formattedPhone,
+                    customer_address: customer.address,
+                    customer_neighborhood: customer.neighborhood,
+                    customer_reference: customer.reference,
+                    payment_method: customer.payment,
+                    items: cart, // Supabase stores JSON automatically
+                    total_value: cartTotal
+                }]);
 
-            if (error) {
-                console.error("Error saving order:", error);
+                if (error) {
+                    console.error("Error saving order:", error);
+                }
+            } else {
+                console.warn("Supabase client not available, order not saved to DB.");
             }
         } catch (err) {
             console.error("Unexpected error saving order:", err);
@@ -142,7 +151,7 @@ export default function CartComponent() {
                             Ver Carrinho
                         </span>
                         <span style={{ fontSize: '12px', color: '#94a3b8' }}>
-                            R$ {cartTotal.toFixed(2).replace('.', ',')}
+                            {formatPrice(cartTotal)}
                         </span>
                     </>
                 ) : (
@@ -211,7 +220,7 @@ export default function CartComponent() {
 
                             <div className="cart-total">
                                 <span>Total:</span>
-                                <span className="total-value">R$ {cartTotal.toFixed(2).replace('.', ',')}</span>
+                                <span className="total-value">{formatPrice(cartTotal)}</span>
                             </div>
                             <p style={{ textAlign: 'center', color: '#fbbf24', fontSize: '0.9rem', marginBottom: '1.5rem', fontStyle: 'italic', fontWeight: 'bold' }}>
                                 * TAXA DE ENTREGA A COMBINAR

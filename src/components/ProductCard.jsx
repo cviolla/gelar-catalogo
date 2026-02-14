@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Edit2, Save, X, Upload, Image as ImageIcon, Plus, Trash2, RotateCcw, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useCart } from '../context/CartContext';
-import { autoCategorize } from '../utils/helpers';
+import { autoCategorize, parsePrice, formatPrice } from '../utils/helpers';
 import { categories } from '../data/products';
 
 export default function ProductCard({ product, onUpdate, onDelete, onExpand, readOnly }) {
@@ -64,6 +64,10 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
       const filePath = `${fileName}`;
+
+      if (!supabase) {
+        throw new Error("Cliente Supabase não inicializado.");
+      }
 
       // Upload to 'products' bucket
       const { error: uploadError } = await supabase.storage
@@ -226,9 +230,7 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
         {/* Prices List - Sorted Low to High on View */}
         <div className="prices-list">
           {(isEditing ? (editedProduct.prices || []) : [...(editedProduct.prices || [])].sort((a, b) => {
-            // Helper to parse "95,00" -> 95.00
-            const parseVal = (v) => parseFloat(String(v?.value || '0').replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
-            return parseVal(a) - parseVal(b);
+            return parsePrice(a) - parsePrice(b);
           })).map((price, index) => {
             const cartItemId = `${product.id}-${price.label}`;
             const itemInCart = cart.find(item => item.cartItemId === cartItemId);
@@ -260,15 +262,7 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
                       {price.label === 'Promoção' ? 'PROMO' : price.label}{price.label === 'Promoção' ? '' : ':'}
                     </span>
                     <span className={`price-value ${price.label === 'Promoção' ? 'text-promo' : ''}`}>
-                      {(() => {
-                        const isTextPrice = /[a-zA-Z]/.test(String(price.value).replace(/^R\$\s*/, ''));
-                        if (isTextPrice) return price.value;
-
-                        const unitValue = parseFloat(String(price.value).replace('R$ ', '').replace(/\./g, '').replace(',', '.') || 0);
-                        const totalValue = unitValue * quantity;
-
-                        return `R$ ${totalValue.toFixed(2).replace('.', ',')}`;
-                      })()}
+                      {formatPrice(parsePrice(price.value) * quantity)}
                     </span>
                   </div>
                 )}
