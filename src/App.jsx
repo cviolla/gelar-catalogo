@@ -176,7 +176,7 @@ function App() {
     // --- AUTH LOGIC ---
     const handleLogin = (e) => {
         e.preventDefault();
-        // SENHA DEFINIDA AQUI (Você pode mudar depois)
+        // A SENHA É RECEBIDA DINAMICAMENTE DA CLOUDFLARE (VARIÁVEL DE AMBIENTE VITE_ADMIN_PASSWORD)
         const SECRET_PASS = import.meta.env.VITE_ADMIN_PASSWORD;
 
         if (passwordInput === SECRET_PASS) {
