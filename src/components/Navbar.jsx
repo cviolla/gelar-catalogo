@@ -51,6 +51,7 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
               placeholder="Buscar no catálogo..."
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
+              aria-label="Buscar no catálogo de bebidas"
             />
             {searchTerm && (
               <button
@@ -64,43 +65,49 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
           </div>
 
           <div className="actions-area">
-            {/* Status Indicator */}
-            <div className="online-badge" onClick={onManualRefresh} style={{ cursor: 'pointer' }} title="Sincronizar App">
+            {/* Status Indicator - botão semântico com suporte a teclado */}
+            <button
+              className="online-badge"
+              onClick={onManualRefresh}
+              onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onManualRefresh()}
+              aria-label="Sincronizar aplicativo"
+              title="Sincronizar App"
+            >
               <div className="status-dot"></div>
               <span className="status-text">{isAuthenticated ? 'ADMIN' : 'ONLINE'}</span>
               <RefreshCcw size={12} className="refresh-icon-mini" style={{ marginLeft: '4px', opacity: 0.5 }} />
-            </div>
+            </button>
 
             {isAuthenticated ? (
               <>
                 {trashCount > 0 && (
-                  <button className="btn btn-secondary btn-trash" onClick={onOpenTrash} title="Lixeira">
-                    <Trash2 size={20} /> <span className="badge">{trashCount}</span>
+                  <button className="btn btn-secondary btn-trash" onClick={onOpenTrash} aria-label={`Lixeira com ${trashCount} ${trashCount === 1 ? 'item' : 'itens'}`}>
+                    <Trash2 size={20} /> <span className="badge" aria-hidden="true">{trashCount}</span>
                   </button>
                 )}
-                <button className="btn btn-primary" onClick={onAddProduct}>
-                  <Plus size={20} /> <span className="btn-text">Novo</span>
+                <button className="btn btn-primary" onClick={onAddProduct} aria-label="Adicionar novo produto">
+                  <Plus size={20} aria-hidden="true" /> <span className="btn-text">Novo</span>
                 </button>
               </>
             ) : (
-              <button className="btn btn-secondary" onClick={onLoginClick} title="Área Restrita" style={{ background: 'rgba(255,255,255,0.05)', color: '#64748b' }}>
-                <Lock size={18} />
+              <button className="btn btn-secondary" onClick={onLoginClick} aria-label="Acessar área restrita" style={{ background: 'rgba(255,255,255,0.05)', color: '#64748b' }}>
+                <Lock size={18} aria-hidden="true" />
               </button>
             )}
 
             <button
               className={`btn-cart-nav ${isAnimating ? 'bump' : ''}`}
               onClick={() => setIsCartOpen(true)}
-              title="Ir para Carrinho"
+              aria-label={`Carrinho${cartItemCount > 0 ? ` com ${cartItemCount} ${cartItemCount === 1 ? 'item' : 'itens'}` : ' vazio'}`}
             >
-              <ShoppingCart size={20} color={isAnimating ? '#fbbf24' : 'white'} />
-              {cartItemCount > 0 && <span className="nav-cart-badge">{cartItemCount}</span>}
+              <ShoppingCart size={20} color={isAnimating ? '#fbbf24' : 'white'} aria-hidden="true" />
+              {cartItemCount > 0 && <span className="nav-cart-badge" aria-hidden="true">{cartItemCount}</span>}
             </button>
           </div>
         </div>
 
         {/* Categories Scroll */}
-        <nav className="categories-nav">
+        <nav className="categories-nav" aria-label="Filtrar por categoria">
           <ul className="categories-list" ref={scrollRef}>
             {categories.map((cat) => (
               <li key={cat}>
@@ -108,6 +115,8 @@ export default function Navbar({ activeCategory, onCategoryChange, searchTerm, o
                   ref={el => itemsRef.current[cat] = el}
                   className={`cat-btn ${activeCategory === cat ? 'active' : ''}`}
                   onClick={() => onCategoryChange(cat)}
+                  aria-pressed={activeCategory === cat}
+                  aria-label={`Filtrar por ${cat}`}
                 >
                   {cat}
                 </button>

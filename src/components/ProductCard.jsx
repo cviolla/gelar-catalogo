@@ -127,9 +127,11 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
             src={editedProduct.image_url || editedProduct.image}
             alt={editedProduct.name}
             className="product-img"
+            loading="lazy"
+            decoding="async"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = 'https://placehold.co/400x300?text=Sem+Imagem'; // Fallback
+              e.target.src = 'https://placehold.co/400x300?text=Sem+Imagem';
             }}
           />
         ) : (
@@ -218,9 +220,9 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
                   stopProp(e);
                   if (window.confirm('Mover para lixeira?')) onDelete(product.id);
                 }}
-                title="Excluir"
+                aria-label={`Mover ${editedProduct.name} para lixeira`}
               >
-                <Trash2 size={18} />
+                <Trash2 size={18} aria-hidden="true" />
               </button>
               <button
                 className="btn-icon btn-edit"
@@ -228,9 +230,9 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
                   stopProp(e);
                   setIsEditing(true);
                 }}
-                title="Editar"
+                aria-label={`Editar ${editedProduct.name}`}
               >
-                <Edit2 size={18} />
+                <Edit2 size={18} aria-hidden="true" />
               </button>
             </div>
           )}
@@ -280,15 +282,17 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
                         <button
                           className="btn-qty-minus"
                           onClick={(e) => { stopProp(e); updateQuantity(cartItemId, itemInCart.quantity - 1); }}
+                          aria-label={`Remover uma unidade de ${editedProduct.name} - ${price.label}`}
                         >
                           -
                         </button>
-                        <span className="qty-value">
+                        <span className="qty-value" aria-live="polite" aria-atomic="true">
                           {itemInCart.quantity}
                         </span>
                         <button
                           className="btn-qty-plus"
                           onClick={(e) => { stopProp(e); addToCart(product, price); }}
+                          aria-label={`Adicionar mais uma unidade de ${editedProduct.name} - ${price.label}`}
                         >
                           +
                         </button>
@@ -297,6 +301,7 @@ export default function ProductCard({ product, onUpdate, onDelete, onExpand, rea
                       <button
                         className="btn-add-cart"
                         onClick={(e) => { stopProp(e); addToCart(product, price); }}
+                        aria-label={`Adicionar ${editedProduct.name} - ${price.label} ao carrinho`}
                       >
                         +
                       </button>

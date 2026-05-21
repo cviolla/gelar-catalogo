@@ -261,9 +261,9 @@ label {
   align-items: center;
   gap: 1rem;
   padding: 4rem;
-  background: #18181b;
+  background: var(--bg-card);
   border-radius: 12px;
-  border: 1px dashed #3f3f46;
+  border: 1px dashed var(--border-color);
 }
 
 .footer {
@@ -296,10 +296,10 @@ label {
 }
 
 .trash-view {
-  background: #18181b;
+  background: var(--bg-card);
   padding: 2rem;
   border-radius: 12px;
-  border: 1px solid #334155;
+  border: 1px solid var(--border-color);
 }
 
 .trash-header {
@@ -314,7 +314,7 @@ label {
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background: #27272a;
+  background: var(--bg-input);
   margin-bottom: 0.5rem;
   border-radius: 8px;
 }
@@ -403,19 +403,8 @@ label {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: conic-gradient(from 0deg, transparent, rgba(56, 189, 248, 0.1), transparent 30%);
-  animation: rotate 10s linear infinite;
+  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 60%);
   z-index: -1;
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .login-header-text {
@@ -591,7 +580,16 @@ label {
   align-items: center;
   gap: 6px;
   margin-right: 0.5rem;
-  animation: fade-pulse 2s infinite ease-in-out;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.online-badge:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .status-dot {
@@ -616,17 +614,7 @@ label {
   transition: all 0.5s ease;
 }
 
-@keyframes fade-pulse {
 
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.5;
-  }
-}
 
 .logo span {
   font-size: 0.75rem;
@@ -723,15 +711,16 @@ label {
 .cat-btn {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #94a3b8;
-  padding: 0.4rem 0.65rem;
-  margin: 0.4rem 0;
+  color: var(--text-muted);
+  padding: 0.55rem 0.85rem;
+  margin: 0.3rem 0;
   font-size: 0.765rem;
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
   border-radius: 9999px;
   transition: all 0.2s ease;
+  min-height: 36px;
 }
 
 .cat-btn:hover {
@@ -1280,7 +1269,7 @@ label {
   border: 1px solid rgba(56, 189, 248, 0.3);
   border-radius: 6px;
   overflow: hidden;
-  height: 26px;
+  height: 32px;
   flex-shrink: 0;
 }
 
@@ -1288,14 +1277,15 @@ label {
   background: #2563EB;
   color: white;
   border: none;
-  width: 24px;
+  width: 32px;
   height: 100%;
+  min-height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   font-weight: 800;
-  font-size: 0.9rem;
+  font-size: 1rem;
   transition: all 0.2s;
 }
 

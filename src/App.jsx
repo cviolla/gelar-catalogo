@@ -360,32 +360,34 @@ function App() {
         <div className="app-container">
             {/* LOGIN OVERLAY */}
             {showLogin && (
-                <div className="login-overlay">
+                <div className="login-overlay" role="dialog" aria-modal="true" aria-label="Área restrita - faça login">
                     <div className="login-card">
                         <div className="navbar-logo">
                             <img src="/logo.png" style={{ height: '42px', width: 'auto' }} alt="Gelar" />
                         </div>
 
                         <div className="login-header-text">
-                            <h2>Bem-vindo</h2>
+                            <h2 id="login-title">Bem-vindo</h2>
                             <p>ÁREA RESTRITA</p>
                         </div>
 
-                        <form onSubmit={handleLogin}>
+                        <form onSubmit={handleLogin} aria-labelledby="login-title">
                             <div className="input-group">
                                 <input
                                     type="password"
                                     placeholder="Senha de Acesso"
                                     value={passwordInput}
                                     onChange={(e) => setPasswordInput(e.target.value)}
+                                    aria-label="Senha de acesso à área administrativa"
+                                    aria-describedby={loginError ? "login-error" : undefined}
                                     autoFocus
                                 />
-                                <Lock className="input-icon" size={18} />
+                                <Lock className="input-icon" size={18} aria-hidden="true" />
                             </div>
 
                             {loginError && (
-                                <div className="error-msg">
-                                    <Info size={14} /> Senha incorreta
+                                <div className="error-msg" id="login-error" role="alert">
+                                    <Info size={14} aria-hidden="true" /> Senha incorreta
                                 </div>
                             )}
 

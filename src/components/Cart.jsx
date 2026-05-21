@@ -138,15 +138,15 @@ export default function CartComponent() {
     );
 
     return (
-        <div className="cart-overlay">
+        <div className="cart-overlay" role="dialog" aria-modal="true" aria-label="Carrinho de compras">
             <div className="cart-container">
                 <div className="cart-header">
                     <div className="header-top">
                         <h2>Seu Carrinho</h2>
-                        <button className="btn-close" onClick={() => setIsCartOpen(false)}><X size={24} /></button>
+                        <button className="btn-close" onClick={() => setIsCartOpen(false)} aria-label="Fechar carrinho"><X size={24} aria-hidden="true" /></button>
                     </div>
-                    <button className="btn-back-text" onClick={() => setIsCartOpen(false)}>
-                        <ArrowLeft size={18} /> VOLTAR PARA PEDIDOS
+                    <button className="btn-back-text" onClick={() => setIsCartOpen(false)} aria-label="Voltar para o catálogo">
+                        <ArrowLeft size={18} aria-hidden="true" /> VOLTAR PARA PEDIDOS
                     </button>
                 </div>
 
@@ -174,18 +174,18 @@ export default function CartComponent() {
                                         <button
                                             onClick={() => removeFromCart(item.cartItemId)}
                                             className="btn-trash-item"
-                                            title="Remover Item"
+                                            aria-label={`Remover ${item.productName} (${item.priceLabel}) do carrinho`}
                                         >
-                                            <Trash2 size={18} />
+                                            <Trash2 size={18} aria-hidden="true" />
                                         </button>
 
                                         <div className="item-controls">
-                                            <button onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)} className="btn-qty">
-                                                <Minus size={16} />
+                                            <button onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)} className="btn-qty" aria-label={`Diminuir quantidade de ${item.productName}`}>
+                                                <Minus size={16} aria-hidden="true" />
                                             </button>
-                                            <span className="qty-value">{item.quantity}</span>
-                                            <button onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)} className="btn-qty">
-                                                <Plus size={16} />
+                                            <span className="qty-value" aria-live="polite" aria-atomic="true">{item.quantity}</span>
+                                            <button onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)} className="btn-qty" aria-label={`Aumentar quantidade de ${item.productName}`}>
+                                                <Plus size={16} aria-hidden="true" />
                                             </button>
                                         </div>
                                     </div>
