@@ -42,7 +42,7 @@ export const products = [
         category: 'Cerveja',
         image: null,
         prices: [
-            { label: 'Caixa', value: '151,00' },
+            { label: 'Caixa', value: '156,00' },
             { label: 'Gelada', value: '8,50' }
         ]
     },
@@ -68,8 +68,8 @@ export const products = [
         ]
     },
     {
-        id: 'a-outra-600',
-        name: 'A Outra',
+        id: 'lokal-600',
+        name: 'Lokal',
         volume: '600 ml',
         category: 'Cerveja',
         image: null,
@@ -98,7 +98,7 @@ export const products = [
         category: 'Refrigerante',
         image: null,
         prices: [
-            { label: 'Fardo (6un)', value: '55,00' },
+            { label: 'Fardo (6un)', value: '57,00' },
             { label: 'Gelada', value: '12,00' }
         ]
     },
@@ -159,7 +159,7 @@ export const products = [
         category: 'Refrigerante',
         image: null,
         prices: [
-            { label: 'Fardo (6un)', value: '24,50' },
+            { label: 'Fardo (6un)', value: '27,50' },
             { label: 'Gelado', value: '5,50' }
         ]
     },
@@ -350,7 +350,7 @@ export const products = [
         category: 'Lata',
         image: null,
         prices: [
-            { label: 'Pack (12un)', value: '55,00' },
+            { label: 'Pack (12un)', value: '60,00' },
             { label: 'Pack Gelado', value: '60,00' },
             { label: 'Gelada', value: '5,99' }
         ]
@@ -388,7 +388,7 @@ export const products = [
         category: 'Carvão',
         image: null,
         prices: [
-            { label: 'Unidade', value: '15,00' }
+            { label: 'Unidade', value: '16,00' }
         ]
     }
 ];
